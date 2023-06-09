@@ -592,6 +592,9 @@ float calculateFresnel(float cosR, float r0){
 	//return r0 + (1.0-r0)*exp(-6.0*cosR);
 }
 
+// ore glow intensity
+#define GLOW_TEX 1.7
+
 
 //// Implementation
 
@@ -727,4 +730,11 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	color.rgb = waterCol*(1.0-0.4*fresnel) + waterRefl*fresnel;
 
 	return color;
+}
+
+void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1){
+	if(diffuse.a>0.9875 && diffuse.a<0.9925 && abs(diffuse.r-diffuse.b)+abs(diffuse.b-diffuse.g)>0.02){
+		color.rgb = max(color.rgb,(vec3(GLOW_TEX*(diffuse.a>0.989 ? 0.4 : 1.0)) + 0.6*diffuse.rgb)*(1.0-uv1.y));
+		light_tint = vec3(0.2) + 0.8*light_tint;
+	}
 }

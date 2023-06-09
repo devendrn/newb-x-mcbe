@@ -1,0 +1,23 @@
+/* end uses a custom color to help in detection */
+{
+  "format_version": "1.16.100",
+  "minecraft:fog_settings": {
+    "description": {
+      "identifier": "newb:fog_the_end"
+    },
+    "distance": {
+      "air": {
+        "fog_start": 0.92,
+        "fog_end": 1.0,
+        "fog_color": "#400040",
+        "render_distance_type": "render"
+      },
+      "water": {
+        "fog_start": 0.0,
+        "fog_end": 15.0,
+        "fog_color": "#62529e",
+        "render_distance_type": "fixed"
+      }
+    }
+  }
+}
