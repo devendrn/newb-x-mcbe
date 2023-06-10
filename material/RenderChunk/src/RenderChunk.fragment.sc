@@ -11,7 +11,7 @@ SAMPLER2D(s_SeasonsTexture, 2);
 
 void main() {
     vec4 diffuse;
-    vec4 color = vec4(1.0);
+    vec4 color = vec4_splat(1.0);
 
 #if defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY)
     diffuse.rgb = vec3(1.0, 1.0, 1.0);
@@ -43,7 +43,7 @@ void main() {
     nl_glow(diffuse, color, light_tint, v_lightmapUV);
 
     if ( v_extra.b > 0.5 ) {
-		diffuse.rgb = vec3(mix(1.0,diffuse.b*1.8,WATER_TEX_OPACITY));
+		diffuse.rgb = vec3_splat(mix(1.0,diffuse.b*1.8,WATER_TEX_OPACITY));
         diffuse.a = color.a;
 	}
 

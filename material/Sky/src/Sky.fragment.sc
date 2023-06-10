@@ -43,14 +43,14 @@ void main() {
     //Normal
     gl_FragData[1].x = isDownFace ? ((1.0f - abs(NY)) * ((NX >= 0.0) ? 1.0 : (-1.0))) : NX;
     gl_FragData[1].y = isDownFace ? ((1.0f - abs(NX)) * ((NY >= 0.0) ? 1.0 : (-1.0))) : NY;
-    gl_FragData[1].zw = vec2(0.0);
+    gl_FragData[1].zw = vec2_splat(0.0);
 
     //EmissiveAmbientLinearRoughness
     gl_FragData[2] = vec4(1.0, 0.0, 0.0, 0.5);
 
     //MotionVectors
     gl_FragData[3].xy = motionVector;
-    gl_FragData[3].zw = vec2(0.0);
+    gl_FragData[3].zw = vec2_splat(0.0);
 
 #else
     //Fallback

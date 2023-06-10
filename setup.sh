@@ -5,5 +5,7 @@ MB_DIRS=data/*
 
 for i in $MB_DIRS
 do
-  java -jar $MBT_JAR --unpack $MB_DIRS
+  echo 
+  echo $i
+  java -jar $MBT_JAR --unpack $i
 done

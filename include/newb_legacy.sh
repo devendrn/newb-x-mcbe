@@ -36,7 +36,7 @@ float detectRain(float RENDER_DISTANCE, vec2 FOG_CONTROL){
 	vec2 start = vec2(0.5 + (1.09/((RENDER_DISTANCE*0.0625)-0.8)),0.99);
 	const vec2 end = vec2(0.2305,0.7005);
 
-	vec2 factor = clamp((start-FOG_CONTROL)/(start-end),vec2(0.0),vec2(1.0));
+	vec2 factor = clamp((start-FOG_CONTROL)/(start-end),vec2(0,0),vec2(1,1));
 
 	// ease in ease out for Y
 	factor.y = factor.y*factor.y*(3.0 - 2.0*factor.y);
@@ -69,7 +69,7 @@ float noise2D(vec2 p){
 	float c1 = rand(p0);
 	float c2 = rand(p0+vec2(1.0,0.0));
 	float c3 = rand(p0+vec2(0.0,1.0));
-	float c4 = rand(p0+vec2(1.0));
+	float c4 = rand(p0+vec2(1.0,1.0));
 
 	float n = v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x);
 
@@ -128,9 +128,9 @@ vec4 renderFog(vec3 fogColor, float len, bool nether, vec3 FOG_COLOR, vec2 FOG_C
 	if(nether){
 		// inverse color correction
 		fog.rgb = FOG_COLOR.rgb;
-		fog.rgb = pow(fog.rgb,vec3(1.37));
-		vec3 w = vec3(0.7966);
-		fog.rgb = fog.rgb*(w + fog.rgb)/(w + fog.rgb*(vec3(1.0) - w));
+		fog.rgb = pow(fog.rgb,vec3_splat(1.37));
+		vec3 w = vec3_splat(0.7966);
+		fog.rgb = fog.rgb*(w + fog.rgb)/(w + fog.rgb*(vec3_splat(1.0) - w));
 	}
 	else{ fog.rgb = fogColor; }
 
@@ -166,8 +166,6 @@ const vec3 horizonEdgeCol = vec3(1.0,0.4,0.2);
 // color - Underwater fog color
 const vec3 underwaterBaseCol = vec3(0.0,0.6,1.0);
 
-const vec3 horizonEdgeAbsCol = 1.0-horizonEdgeCol;
-
 vec3 getUnderwaterCol(vec3 FOG_COLOR){
 	return underwaterBaseCol*FOG_COLOR.b;
 }
@@ -183,7 +181,9 @@ vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR){
 
 	// rain sky
 	float brightness = min(FOG_COLOR.g,0.26);
+
 	brightness *= brightness*13.2;
+
 	zenithCol = mix(zenithCol*(1.0+0.5*rainFactor),vec3(0.85,0.9,1.0)*brightness,rainFactor);
 
 	return zenithCol;
@@ -209,7 +209,7 @@ vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR){
 	// rain horizon
 	float brightness = min(FOG_COLOR.g,0.26);
 	brightness *= brightness*19.6;
-	horizonCol = mix(horizonCol,vec3(brightness),rainFactor);
+	horizonCol = mix(horizonCol,vec3_splat(brightness),rainFactor);
 
 	return horizonCol;
 }
@@ -218,7 +218,7 @@ vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR){
 	float val = (1.1-FOG_COLOR.b)*FOG_COLOR.g*2.1;
 	val *= 1.0-rainFactor;
 
-	vec3 tint = vec3(1.0)-val*horizonEdgeAbsCol;
+	vec3 tint = vec3_splat(1.0)-val*(vec3_splat(1.0)-horizonEdgeCol);
 	return horizonCol*tint;
 }
 
@@ -316,7 +316,7 @@ vec3 colorCorrection(vec3 color){
 	color = tonemap(color);
 
 	// actually supposed to be gamma correction
-	color = pow(color, vec3(CONTRAST));
+	color = pow(color, vec3_splat(CONTRAST));
 
 	#ifdef SATURATION
 		color = mix(vec3(dot(color,vec3(0.21, 0.71, 0.08))), color, SATURATION);
@@ -375,7 +375,7 @@ float cloudNoise2D(vec2 p, highp float t, float rain){
 	float start = start_normal + (normal_cloud_size)*(0.1+0.1*sin(t + p.y*0.3));
 	start = mix(start,start_rain,rain);
 
-	p += vec2(t);
+	p += vec2_splat(t);
 	p.x += sin(p.y*0.4 + t);
 
 	vec2 p0 = floor(p);
@@ -387,7 +387,7 @@ float cloudNoise2D(vec2 p, highp float t, float rain){
 	float c1 = rand01(p0,start);
 	float c2 = rand01(p0+vec2(1.0,0.0),start);
 	float c3 = rand01(p0+vec2(0.0,1.0),start);
-	float c4 = rand01(p0+vec2(1.0),start);
+	float c4 = rand01(p0+vec2(1.0,1.0),start);
 
 	return v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x);
 }
@@ -401,7 +401,7 @@ vec4 renderClouds(vec4 color, vec2 uv, highp float t, float rain){
 	cloudAlpha = max(cloudAlpha-cloudShadow,0.0);
 
 	// rainy clouds color
-	color.rgb = mix(color.rgb,vec3(0.7),rain*0.5);
+	color.rgb = mix(color.rgb,vec3_splat(0.7),rain*0.5);
 
 	// highlight at edge
 	color.rgb += vec3(0.6,0.6,1.0)*(0.2-cloudShadow);
@@ -549,7 +549,7 @@ float fastRand(vec2 n){
 // water displacement map (also used by caustic)
 float disp(vec3 pos, highp float t){
 	float val = 0.5 + 0.5*sin(t*1.7+((pos.x+pos.y)*rd));
-	return mix(fastRand(pos.xz),fastRand(pos.xz+vec2(1.0)),val);
+	return mix(fastRand(pos.xz),fastRand(pos.xz+vec2_splat(1.0)),val);
 }
 
 // sky reflection on plane - used by water, wet reflection
@@ -633,7 +633,7 @@ vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool is
         float lightIntensity = sun_intensity*(1.0 - rainDim)*(1.0 + night_brightness*nightFactor);
 
         // min ambient in caves
-        light = vec3((1.35+cave_brightness)*(1.0-uv1.x)*(1.0-uv1.y));
+        light = vec3_splat((1.35+cave_brightness)*(1.0-uv1.x)*(1.0-uv1.y));
 
         // sky ambient
         light += mix(horizonCol,zenithCol,0.5+uv1.y-0.5*lit.y)*(lit.y*(3.0-2.0*uv1.y)*(1.3 + (4.0*nightFactor) - rainDim));
@@ -652,7 +652,7 @@ vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool is
         light += dirLight*sunLightTint(night_color,morning_color,noon_color,dayFactor,rainFactor,FOG_COLOR);
 
         // extra indirect light
-        light += vec3(0.3*lit.y*uv1.y*(1.2-shadow)*lightIntensity);
+        light += vec3_splat(0.3*lit.y*uv1.y*(1.2-shadow)*lightIntensity);
 
         // torch light
         light += torchLight*(1.0-(max(shadow,0.65*lit.y)*dayFactor*(1.0-0.3*rainFactor)));
@@ -689,7 +689,7 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	if( fractCposY > 0.0 ){
 
 		// calculate cosine of incidence angle and apply water bump
-		float bump = disp(tiledCpos,t) + 0.12*sin(t*2.0 + dot(cPos,vec3(rd)));
+		float bump = disp(tiledCpos,t) + 0.12*sin(t*2.0 + dot(cPos,vec3_splat(rd)));
 		bump *= water_bump;
 		cosR = abs(viewDir.y);
 		cosR = mix(cosR,(1.0-cosR*cosR),bump);
@@ -702,7 +702,7 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 		if(uv1.y < 0.93 && !end){waterRefl *= 0.7*uv1.y;}
 
 		// ambient,torch light reflection
-		waterRefl += vec3(0.02-(0.02*uv1.y)) + torchColor*torch_intensity*((uv1.x>0.83 ? 0.6 : 0.0) + uv1.x*uv1.x*bump*10.0);
+		waterRefl += vec3_splat(0.02-(0.02*uv1.y)) + torchColor*torch_intensity*((uv1.x>0.83 ? 0.6 : 0.0) + uv1.x*uv1.x*bump*10.0);
 
 		// flat plane
 		if( is(fractCposY,0.8,0.9) ){ waterRefl *= 1.0 - 0.66*clamp(wPos.y,0.0,1.0); }
@@ -713,7 +713,7 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	// reflection for side plane
 	else{
 		cosR = max(sqrt(dot(viewDir.xz,viewDir.xz)),float(wPos.y<0.5));
-		cosR += (1.0-cosR*cosR)*water_bump*(0.5 + 0.5*sin(1.5*t + dot(cPos,vec3(rd)) ));
+		cosR += (1.0-cosR*cosR)*water_bump*(0.5 + 0.5*sin(1.5*t + dot(cPos,vec3_splat(rd)) ));
 
 		waterRefl = zenithCol*uv1.y*uv1.y*1.3;
 	}
@@ -734,7 +734,7 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 
 void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1){
 	if(diffuse.a>0.9875 && diffuse.a<0.9925 && abs(diffuse.r-diffuse.b)+abs(diffuse.b-diffuse.g)>0.02){
-		color.rgb = max(color.rgb,(vec3(GLOW_TEX*(diffuse.a>0.989 ? 0.4 : 1.0)) + 0.6*diffuse.rgb)*(1.0-uv1.y));
-		light_tint = vec3(0.2) + 0.8*light_tint;
+		color.rgb = max(color.rgb,(vec3_splat(GLOW_TEX*(diffuse.a>0.989 ? 0.4 : 1.0)) + 0.6*diffuse.rgb)*(1.0-uv1.y));
+		light_tint = vec3_splat(0.2) + 0.8*light_tint;
 	}
 }

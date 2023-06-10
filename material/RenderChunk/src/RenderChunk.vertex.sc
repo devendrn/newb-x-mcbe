@@ -107,7 +107,7 @@ highp float t = ViewPositionAndTime.w;
 #ifdef SEASONS
 	// season tree leaves are colored in fragment using sCol values
 	vec3 sCol = COLOR.rgb;
-	color.rgb = vec3(1.0);
+	color.rgb = vec3_splat(1.0);
 
 	uv1.y *= 1.00151;
 #else

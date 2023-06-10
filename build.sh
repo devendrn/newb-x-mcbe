@@ -11,7 +11,15 @@ BUILD_DIR=build
 MATERIAL_DIR=material
 
 #TARGETS="android windows ios"
-TARGETS="android"
+TARGETS=""
+
+ARGS=("$@")
+for t in "${ARGS[@]}"; do
+  if [ "$t" == "android" ] || [ "$t" == "windows" ]; then
+    TARGETS+="$t "
+  fi
+  shift
+done
 
 for p in $TARGETS
 do
