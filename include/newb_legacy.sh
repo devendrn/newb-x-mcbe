@@ -148,26 +148,15 @@ vec4 renderFog(vec3 fogColor, float len, bool nether, vec3 FOG_COLOR, vec2 FOG_C
 
 }
 
-// color - Night sky color
-const vec3 nightSkyCol = vec3(0.01,0.06,0.1);
-
-// color - Sky base color
-const vec3 skyBaseCol = vec3(0.15,0.45,1.0);
-
-// value - Day sky clarity (0-1)
-const float daySkyClarity = 0.3;
-
-// color - Sunrise base color
-const vec3 horizonBaseCol = vec3(1.0,0.4,0.3);
-
-// color - Sunrise edge color
-const vec3 horizonEdgeCol = vec3(1.0,0.4,0.2);
-
-// color - Underwater fog color
-const vec3 underwaterBaseCol = vec3(0.0,0.6,1.0);
+#define NL_NIGHT_SKY_COL vec3(0.01,0.06,0.1)
+#define NL_BASE_SKY_COL vec3(0.15,0.45,1.0)
+#define NL_DAY_SKY_CLARITY 0.3
+#define NL_BASE_HORIZON_COL vec3(1.0,0.4,0.3)
+#define NL_EDGE_HORIZON_COL vec3(1.0,0.4,0.2)
+#define NL_BASE_UNDERWATER_COL vec3(0.0,0.6,1.0)
 
 vec3 getUnderwaterCol(vec3 FOG_COLOR){
-	return underwaterBaseCol*FOG_COLOR.b;
+	return NL_BASE_UNDERWATER_COL*FOG_COLOR.b;
 }
 
 vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR){
@@ -176,8 +165,8 @@ vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR){
 	float val = max(FOG_COLOR.r*0.6,max(FOG_COLOR.g,FOG_COLOR.b));
 
 	// zenith color
-	vec3 zenithCol = (0.77*val*val + 0.33*val)*skyBaseCol;
-	zenithCol += nightSkyCol*(0.4-0.4*FOG_COLOR.b);
+	vec3 zenithCol = (0.77*val*val + 0.33*val)*NL_BASE_SKY_COL;
+	zenithCol += NL_NIGHT_SKY_COL*(0.4-0.4*FOG_COLOR.b);
 
 	// rain sky
 	float brightness = min(FOG_COLOR.g,0.26);
@@ -197,13 +186,13 @@ vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR){
 	float sun = max(FOG_COLOR.r-FOG_COLOR.b,0.0);
 
 	// horizon color
-	vec3 horizonCol = horizonBaseCol*(((0.7*val*val) + (0.4*val) + sun)*2.4);
+	vec3 horizonCol = NL_BASE_HORIZON_COL*(((0.7*val*val) + (0.4*val) + sun)*2.4);
 
-	horizonCol += nightSkyCol;
+	horizonCol += NL_NIGHT_SKY_COL;
 
 	horizonCol = mix(
 		horizonCol,
-		2.0*val*mix(vec3(0.7,1.0,0.9),skyBaseCol,daySkyClarity),
+		2.0*val*mix(vec3(0.7,1.0,0.9),NL_BASE_SKY_COL,NL_DAY_SKY_CLARITY),
 		val*val);
 
 	// rain horizon
@@ -218,24 +207,8 @@ vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR){
 	float val = (1.1-FOG_COLOR.b)*FOG_COLOR.g*2.1;
 	val *= 1.0-rainFactor;
 
-	vec3 tint = vec3_splat(1.0)-val*(vec3_splat(1.0)-horizonEdgeCol);
+	vec3 tint = vec3_splat(1.0)-val*(vec3_splat(1.0)-NL_EDGE_HORIZON_COL);
 	return horizonCol*tint;
-}
-
-// sunlight tinting
-vec3 sunLightTint(vec3 night_color,vec3 morning_color,vec3 day_color,float dayFactor,float rain, vec3 FOG_COLOR){
-
-	float tintFactor = FOG_COLOR.g + 0.1*FOG_COLOR.r;
-	float noon = clamp((tintFactor-0.37)/0.45,0.0,1.0);
-	float morning = clamp((tintFactor-0.05)*3.125,0.0,1.0);
-
-	float r = 1.0-rain;
-	r *= r;
-
-	return mix(vec3(0.65,0.65,0.75),mix(
-		mix(night_color,morning_color,morning),
-		mix(morning_color,day_color,noon),
-		dayFactor),r*r);
 }
 
 // 1D sky with three color gradient
@@ -431,37 +404,41 @@ vec4 renderAurora(vec2 uv, highp float t, float rain){
 		aurora*aurora*(0.5-0.5*rain) );
 }
 
-// Toggle - Flickering torch light
 //#define BLINKING_TORCH
 
-// Toggle - God rays (incomplete)
-//#define GOD_RAYS
-
-// Value - Change to 0.87 to fix slab bug (makes shadow smaller)
 #define shadow_edge 0.876
 
 // Value - Intensity of soft shadow (0-1)
 #define shadow_intensity 0.7
-
-// Value - Night extra brightness
 #define night_brightness 0.1
-
-// Value - Cave extra brightness
 #define cave_brightness 0.1
-
-// Value - Torch brightness
 #define torch_intensity 1.0
 
 // Color - Top light color (Sunlight color)
-const vec3 morning_color = vec3(1.0,0.45,0.14);
-const vec3 noon_color = vec3(1.0,0.75,0.57);
-const vec3 night_color = vec3(0.5,0.64,1.0);
+#define NL_MORNING_SUN_COL vec3(1.0,0.45,0.14)
+#define NL_NOON_SUN_COL vec3(1.0,0.75,0.57)
+#define NL_NIGHT_SUN_COL vec3(0.5,0.64,1.0)
 
-// Color - Torch light color
-const vec3 overworld_torch = vec3(1.0,0.52,0.18);
-const vec3 underwater_torch = vec3(1.0,0.52,0.18);
-const vec3 nether_torch = vec3(1.0,0.52,0.18);
-const vec3 end_torch = vec3(1.0,0.52,0.18);
+#define NL_OVERWORLD_TORCH_COL vec3(1.0,0.52,0.18)
+#define NL_UNDERWATER_TORCH_COL vec3(1.0,0.52,0.18)
+#define NL_NETHER_TORCH_COL vec3(1.0,0.52,0.18)
+#define NL_END_TORCH_COL vec3(1.0,0.52,0.18)
+
+// sunlight tinting
+vec3 sunLightTint(float dayFactor,float rain, vec3 FOG_COLOR){
+
+	float tintFactor = FOG_COLOR.g + 0.1*FOG_COLOR.r;
+	float noon = clamp((tintFactor-0.37)/0.45,0.0,1.0);
+	float morning = clamp((tintFactor-0.05)*3.125,0.0,1.0);
+
+	float r = 1.0-rain;
+	r *= r;
+
+	return mix(vec3(0.65,0.65,0.75),mix(
+		mix(NL_NIGHT_SUN_COL,NL_MORNING_SUN_COL,morning),
+		mix(NL_MORNING_SUN_COL,NL_NOON_SUN_COL,noon),
+		dayFactor),r*r);
+}
 
 // Toggle - Plants Wave (leaves/plants)
 // Value - Wave animation intensity (Plants)
@@ -500,9 +477,9 @@ const vec3 end_torch = vec3(1.0,0.52,0.18);
 #define water_bump 0.07
 
 // Color - Water color
-const vec3 sea_water_color = vec3(0.13,0.65,0.87);
-const vec3 fresh_water_color = vec3(0.07,0.55,0.55);
-const vec3 marshy_water_color = vec3(0.27,0.4,0.1);
+#define NL_SEA_WATER_COL vec3(0.13,0.65,0.87)
+#define NL_FRESH_WATER_COL vec3(0.07,0.55,0.55)
+#define NL_MARSHY_WATER_COL vec3(0.27,0.4,0.1)
 
 // Value - Water texture overlay
 #define WATER_TEX_OPACITY 0.0
@@ -521,10 +498,10 @@ const vec3 marshy_water_color = vec3(0.27,0.4,0.1);
 #define caustic_intensity 2.5
 
 // Color - Underwater lighting color
-const vec3 underwater_color = vec3(0.2,0.6,1.0);
+#define NL_UNDERWATER_COL vec3(0.2,0.6,1.0)
 
-const float rd = 1.57079; // pi by 2
-const float shadowIntensity = 1.0-shadow_intensity;
+// pi by 2
+#define NL_CONST_PI_HALF 1.57079
 
 // bool between function
 bool is(float val,float val1,float val2){
@@ -548,7 +525,7 @@ float fastRand(vec2 n){
 
 // water displacement map (also used by caustic)
 float disp(vec3 pos, highp float t){
-	float val = 0.5 + 0.5*sin(t*1.7+((pos.x+pos.y)*rd));
+	float val = 0.5 + 0.5*sin(t*1.7+((pos.x+pos.y)*NL_CONST_PI_HALF));
 	return mix(fastRand(pos.xz),fastRand(pos.xz+vec2_splat(1.0)),val);
 }
 
@@ -606,13 +583,13 @@ vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool is
     vec3 light;
     vec2 lit = uv1*uv1;
 #ifdef UNDERWATER
-	torchColor = underwater_torch;
+	torchColor = NL_UNDERWATER_TORCH_COL;
 #endif
     float torch_attenuation = (torch_intensity*uv1.x)/(0.5-0.45*lit.x);
 #ifdef BLINKING_TORCH
 	torch_attenuation *= 1.0 - 0.19*noise1D(t*8.0);
 #endif
-    vec3 torchColor = end ? end_torch : (nether ? nether_torch : overworld_torch);
+    vec3 torchColor = end ? NL_END_TORCH_COL : (nether ? NL_NETHER_TORCH_COL : NL_OVERWORLD_TORCH_COL);
     vec3 torchLight = torchColor*torch_attenuation;
 
     if(nether || end){
@@ -644,12 +621,12 @@ vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool is
         // make shadow a bit softer and more softer when raining
         shadow += uv1.y > 0.85 ? (0.2+0.3*rainFactor)*(1.0-shadow) : 0.0;
 
-        shadow = max(shadow,(shadowIntensity + (0.6*shadow_intensity*nightFactor))*lit.y);
+        shadow = max(shadow,(1.0 - shadow_intensity + (0.6*shadow_intensity*nightFactor))*lit.y);
         shadow *= shade>0.8 ? 1.0 : 0.8;
 
         // direct light from top
         float dirLight = shadow*(1.0-uv1.x*nightFactor)*lightIntensity;
-        light += dirLight*sunLightTint(night_color,morning_color,noon_color,dayFactor,rainFactor,FOG_COLOR);
+        light += dirLight*sunLightTint(dayFactor,rainFactor,FOG_COLOR);
 
         // extra indirect light
         light += vec3_splat(0.3*lit.y*uv1.y*(1.2-shadow)*lightIntensity);
@@ -675,8 +652,8 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	float fractCposY = fract(cPos.y);
 
 	// get water color (r-tint,g-lightness)
-	vec3 waterCol = fresh_water_color;
-	waterCol = COLOR.r < 0.5 ? mix(marshy_water_color,waterCol,COLOR.r*2.0) : mix(waterCol,sea_water_color,(COLOR.r*2.0)-1.0);
+	vec3 waterCol = NL_FRESH_WATER_COL;
+	waterCol = COLOR.r < 0.5 ? mix(NL_MARSHY_WATER_COL,waterCol,COLOR.r*2.0) : mix(waterCol,NL_SEA_WATER_COL,(COLOR.r*2.0)-1.0);
 	waterCol *= COLOR.g;
 
 	waterCol *= 0.3 + (FOG_COLOR.g*(2.0-2.0*FOG_COLOR.g)*rainFactor);
@@ -689,7 +666,7 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	if( fractCposY > 0.0 ){
 
 		// calculate cosine of incidence angle and apply water bump
-		float bump = disp(tiledCpos,t) + 0.12*sin(t*2.0 + dot(cPos,vec3_splat(rd)));
+		float bump = disp(tiledCpos,t) + 0.12*sin(t*2.0 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
 		bump *= water_bump;
 		cosR = abs(viewDir.y);
 		cosR = mix(cosR,(1.0-cosR*cosR),bump);
@@ -713,7 +690,7 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	// reflection for side plane
 	else{
 		cosR = max(sqrt(dot(viewDir.xz,viewDir.xz)),float(wPos.y<0.5));
-		cosR += (1.0-cosR*cosR)*water_bump*(0.5 + 0.5*sin(1.5*t + dot(cPos,vec3_splat(rd)) ));
+		cosR += (1.0-cosR*cosR)*water_bump*(0.5 + 0.5*sin(1.5*t + dot(cPos,vec3_splat(NL_CONST_PI_HALF)) ));
 
 		waterRefl = zenithCol*uv1.y*uv1.y*1.3;
 	}
