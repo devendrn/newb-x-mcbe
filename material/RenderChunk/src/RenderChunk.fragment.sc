@@ -48,7 +48,9 @@ void main() {
 	}
 
 	diffuse.rgb *= color.rgb * light_tint;
-    //diffuse.rgb = mix(diffuse.rgb, FogColor.rgb, v_fog.a);
+
+    diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
+
 	diffuse.rgb = colorCorrection(diffuse.rgb);
 
 #ifndef TRANSPARENT

@@ -22,9 +22,11 @@ void main() {
 
     vec3 worldPos = mul(model, vec4(a_position, 1.0)).xyz;
     vec4 color;
+	vec3 viewDir;
+
 #ifdef RENDER_AS_BILLBOARDS
     worldPos += vec3(0.5, 0.5, 0.5);
-    vec3 viewDir = normalize(worldPos - ViewPositionAndTime.xyz);
+    viewDir = normalize(worldPos - ViewPositionAndTime.xyz);
     vec3 boardPlane = normalize(vec3(viewDir.z, 0.0, -viewDir.x));
     worldPos = (worldPos -
         ((((viewDir.yzx * boardPlane.zxy) - (viewDir.zxy * boardPlane.yzx)) *
@@ -37,10 +39,9 @@ void main() {
 
     vec3 modelCamPos = (ViewPositionAndTime.xyz - worldPos);
     float camDis = length(modelCamPos);
-    vec4 fogColor;
-    fogColor.rgb = FogColor.rgb;
-    fogColor.a = clamp(((((camDis / FogAndDistanceControl.z) + RenderChunkFogAlpha.x) -
-        FogAndDistanceControl.x) / (FogAndDistanceControl.y - FogAndDistanceControl.x)), 0.0, 1.0);
+	float relativeDist = camDis / FogAndDistanceControl.z;
+	viewDir = modelCamPos / camDis;
+
 
 #ifdef TRANSPARENT
     if(a_color0.a < 0.95) {
@@ -103,7 +104,6 @@ highp float t = ViewPositionAndTime.w;
 
 // convert color space to linear-space for color correction (not entirely accurate)
 // and tree leaves, slab lighting fix
-
 #ifdef SEASONS
 	// season tree leaves are colored in fragment using sCol values
 	vec3 sCol = COLOR.rgb;
@@ -119,16 +119,42 @@ highp float t = ViewPositionAndTime.w;
     vec3 light = nl_lighting(a_color0.rgb, FogColor.rgb, rainFactor,uv1, isTree,
                  horizonCol, zenithCol, shade, end, nether);
 
-	float camDist = length(wPos);
+	// mist (also used in underwater to decrease visibility)
+	vec4 mistColor = renderMist(horizonEdgeCol, relativeDist, lit.x, rainFactor, nether,underWater,end,FogColor.rgb);
+
+	mistColor.rgb *= max(0.75,uv1.y);
+	mistColor.rgb += torchColor*torch_intensity*lit.x*0.3;
 
 	if (isWater) {
 		color = nl_water(color, light, wPos,cPos, COLOR, FogColor.rgb, horizonCol,
-			  horizonEdgeCol, zenithCol, uv1, t, camDist,
+			  horizonEdgeCol, zenithCol, uv1, t, camDis,
 			  rainFactor, tiledCpos, end, torchColor);
 	}
 	else {
 		color.rgb *= light;
 	}
+
+	// loading chunks
+	relativeDist += RenderChunkFogAlpha.x;
+
+	vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
+
+	#ifndef UNDERWATER
+	if(nether){
+		fogColor.rgb = mix(fogColor.rgb,vec3(0.8,0.2,0.12)*1.5,lit.x*(1.67-fogColor.a*1.67));
+	}
+	else{
+		if(end){fogColor.rgb = vec3(0.16,0.06,0.2);}
+
+		// to remove fog in heights
+		float fogGradient = 1.0-max(-viewDir.y+0.1,0.0);
+		fogGradient *= fogGradient*fogGradient;
+		fogColor.a *= fogGradient;
+	}
+	#endif
+
+	// mix fog with mist
+	mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
 
 	v_extra.b = water;
     v_texcoord0 = a_texcoord0;
