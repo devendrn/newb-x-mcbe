@@ -574,7 +574,8 @@ float calculateFresnel(float cosR, float r0){
 
 
 //// Implementation
-
+// functions are used while porting to wrap previous code easily
+// parameters will be simplified later
 
 vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool isTree,
                  vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether) {
@@ -713,5 +714,57 @@ void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1){
 	if(diffuse.a>0.9875 && diffuse.a<0.9925 && abs(diffuse.r-diffuse.b)+abs(diffuse.b-diffuse.g)>0.02){
 		color.rgb = max(color.rgb,(vec3_splat(GLOW_TEX*(diffuse.a>0.989 ? 0.4 : 1.0)) + 0.6*diffuse.rgb)*(1.0-uv1.y));
 		light_tint = vec3_splat(0.2) + 0.8*light_tint;
+	}
+}
+
+void nl_foliage_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 lit,
+					 vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, float t,
+					 bool isColored, float camDist, bool underWater ) {
+	// texture space - (64x64) textures in uv0.xy
+	vec2 texMap = uv0*vec2(64.0,64.0);
+	float texPosY = fract(texMap.y);
+
+	int texNoX = int(texMap.x);
+	int texNoY = int(texMap.y);
+
+	// x and z distance from block center
+	vec2 bPosC = abs(bPos.xz-0.5);
+
+	float windStrength = lit.y*(noise1D(t*0.36) + (rainFactor*0.4));
+
+	bool isTop = texPosY<0.5;
+	bool isTreeLeaves = (COLOR.a==0.0) && max(COLOR.g,COLOR.r)>0.37 && bPos.x+bPos.y+bPos.z<0.01;
+	bool isPlants = (COLOR.r/COLOR.g<1.9);
+	bool isVines = (bPos.y + bPos.x*bPos.z)<0.00005 && is(bPosC.x+bPosC.y,0.94921,0.94922);
+	bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25);
+	bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop && !underWater);
+
+	// darken plants bottom - better to not move it elsewhere
+	light *= isFarmPlant && !isTop ? 0.65 : 1.0;
+	if(isColored && !isTreeLeaves && texNoY==12){
+		light *= isTop ? 1.2 : 1.2 - (bPos.y>0.0 ? 1.5-bPos.y : 0.5);
+	}
+
+	if(shouldWave && camDist<20.0){
+
+		// values must be a multiple of pi/4
+		float phaseDiff = dot(cPos,vec3(0.7854)) + fastRand(tiledCpos.xz + tiledCpos.y);
+
+		float amplitude = PLANTS_WAVE*windStrength;
+
+		amplitude *= isTreeLeaves ? 0.5 : 1.0;
+		amplitude = isVines ? min(0.024,amplitude*fract(0.01+tiledCpos.y*0.5)) : amplitude;
+
+		// wave the bottom of plants in opposite direction to make it look fixed
+		if(isPlants && isColored && !(isVines || isTreeLeaves || isTop)){amplitude *= bPos.y>0.0 ? bPos.y-1.0 : 0.0 ;}
+
+		float wave = 1.0+mix(
+			sin(t*wave_speed + phaseDiff),
+			sin(t*wave_speed*1.5 + phaseDiff),
+			rainFactor);
+		wave *= amplitude;
+
+		//worldPos.y -= 1.0-sqrt(1.0-wave*wave);
+		worldPos.xyz -= vec3(wave,wave*wave*0.5,wave);
 	}
 }

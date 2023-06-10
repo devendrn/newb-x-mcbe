@@ -76,13 +76,8 @@ void main() {
 	bool end = detectEnd(FogColor.rgb);
 	bool nether = detectNether(FogColor.rgb, FogAndDistanceControl.xy);
 
-	#ifdef FOG
-		bool underWater = detectUnderwater(FogColor.rgb);
-		float rainFactor = detectRain(FogColor.rgb);
-	#else
-		bool underWater = false;
-		float rainFactor = 0.0;
-	#endif
+	bool underWater = detectUnderwater(FogColor.rgb,FogAndDistanceControl.xy);
+	float rainFactor = detectRain(FogAndDistanceControl.z,FogAndDistanceControl.xy);
 
 	bool isWater = COLOR.b<0.02;
 	float water = float(isWater);
@@ -125,6 +120,13 @@ highp float t = ViewPositionAndTime.w;
 	mistColor.rgb *= max(0.75,uv1.y);
 	mistColor.rgb += torchColor*torch_intensity*lit.x*0.3;
 
+
+#ifdef ALPHA_TEST
+	nl_foliage_wave(worldPos, light, rainFactor, lit,
+					 uv0, bPos, COLOR, cPos, tiledCpos, t,
+					 isColored, camDis, underWater );
+#endif
+
 	if (isWater) {
 		color = nl_water(color, light, wPos,cPos, COLOR, FogColor.rgb, horizonCol,
 			  horizonEdgeCol, zenithCol, uv1, t, camDis,
@@ -141,10 +143,10 @@ highp float t = ViewPositionAndTime.w;
 
 	#ifndef UNDERWATER
 	if(nether){
-		fogColor.rgb = mix(fogColor.rgb,vec3(0.8,0.2,0.12)*1.5,lit.x*(1.67-fogColor.a*1.67));
+		//fogColor.rgb = mix(fogColor.rgb,vec3(0.8,0.2,0.12)*1.5,lit.x*(1.67-fogColor.a*1.67));
 	}
 	else{
-		if(end){fogColor.rgb = vec3(0.16,0.06,0.2);}
+		//if(end){fogColor.rgb = vec3(0.16,0.06,0.2);}
 
 		// to remove fog in heights
 		float fogGradient = 1.0-max(-viewDir.y+0.1,0.0);
@@ -154,7 +156,7 @@ highp float t = ViewPositionAndTime.w;
 	#endif
 
 	// mix fog with mist
-	mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
+	//mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
 
 	v_extra.b = water;
     v_texcoord0 = a_texcoord0;
