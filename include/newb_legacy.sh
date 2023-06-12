@@ -488,9 +488,6 @@ vec3 sunLightTint(float dayFactor,float rain, vec3 FOG_COLOR){
 // Value - Wave intensity
 #define UNDERWATER_WAVE 0.06
 
-// Toggle - Wave effect above water surface when underwater
-//#define WAVE_ABOVE_WATER
-
 // Value - Underwater brightness
 #define underwater_brightness 0.8
 
@@ -645,7 +642,7 @@ vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool is
     return light;
 }
 
-vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,
+vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,
 			  vec3 horizonEdgeCol, vec3 zenithCol, vec2 uv1, float t, float camDist,
 			  float rainFactor, vec3 tiledCpos, bool end, vec3 torchColor) {
 	vec3 viewDir = -wPos/camDist;
@@ -661,14 +658,14 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	waterCol *= light*max(max(FOG_COLOR.b,0.2+uv1.x*uv1.x),FOG_COLOR.r*1.2)*max(0.3+0.7*uv1.y,uv1.x);
 
 	float cosR;
+	float bump = water_bump;
 	vec3 waterRefl;
 
 	// reflection for top plane
 	if( fractCposY > 0.0 ){
 
 		// calculate cosine of incidence angle and apply water bump
-		float bump = disp(tiledCpos,t) + 0.12*sin(t*2.0 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
-		bump *= water_bump;
+		bump *= disp(tiledCpos,t) + 0.12*sin(t*2.0 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
 		cosR = abs(viewDir.y);
 		cosR = mix(cosR,(1.0-cosR*cosR),bump);
 
@@ -690,8 +687,9 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	}
 	// reflection for side plane
 	else{
+		bump *= 0.5 + 0.5*sin(1.5*t + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
 		cosR = max(sqrt(dot(viewDir.xz,viewDir.xz)),float(wPos.y<0.5));
-		cosR += (1.0-cosR*cosR)*water_bump*(0.5 + 0.5*sin(1.5*t + dot(cPos,vec3_splat(NL_CONST_PI_HALF)) ));
+		cosR += (1.0-cosR*cosR)*bump;
 
 		waterRefl = zenithCol*uv1.y*uv1.y*1.3;
 	}
@@ -706,6 +704,10 @@ vec4 nl_water(vec4 color, vec3 light, vec3 wPos, vec3 cPos, vec4 COLOR, vec3 FOG
 	#endif
 
 	color.rgb = waterCol*(1.0-0.4*fresnel) + waterRefl*fresnel;
+
+	if(camDist<10.0) {
+		wPos.y += bump;
+	}
 
 	return color;
 }
@@ -766,5 +768,26 @@ void nl_foliage_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, ve
 
 		//worldPos.y -= 1.0-sqrt(1.0-wave*wave);
 		worldPos.xyz -= vec3(wave,wave*wave*0.5,wave);
+	}
+}
+
+void nl_underwater_lighting(inout vec3 light, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, vec3 torchColor, float t){
+	// soft caustic effect
+	if(uv1.y < 0.9){
+		vec3 underWaterColor = mix(NL_UNDERWATER_COL,vec3(1.0),lit.y*0.7);
+
+		light = underWaterColor*(light*0.7 + vec3(underwater_brightness));
+
+		float caustics = disp(tiledCpos*vec3(1.0,0.1,1.0), t);
+		caustics += 0.25+0.25*sin(t + (cPos.x + cPos.z)*NL_CONST_PI_HALF);
+
+		//if(is(uv1.y,0.81,0.82) || is(uv1.y,0.68,0.69) || is(uv1.y,0.56,0.57) || is(uv1.y,0.43,0.44) || is(uv1.y,0.31,0.32)){light.rgb=vec3(1.0,0.0,0.0);}
+		caustics *= ( any(lessThan(abs(uv1.yyyy-vec4(0.815,0.685,0.565,0.435)),vec4(0.05))) || is(uv1.y,0.31,0.32)) ? 3.6 : 1.8 ;
+
+		light += caustics*underWaterColor*(0.1+lit.y+(lit.x*0.7))*caustic_intensity;
+
+		// use mist to make water foggy around lights
+		mistColor.rgb = (1.0+lit.y*0.6)*mix(mistColor.rgb,torchColor*torch_intensity*NL_UNDERWATER_COL,lit.x);
+		mistColor.a += (1.0-mistColor.a)*dot(lit,vec2(0.2));
 	}
 }

@@ -116,9 +116,12 @@ highp float t = ViewPositionAndTime.w;
 
 	// mist (also used in underwater to decrease visibility)
 	vec4 mistColor = renderMist(horizonEdgeCol, relativeDist, lit.x, rainFactor, nether,underWater,end,FogColor.rgb);
-
 	mistColor.rgb *= max(0.75,uv1.y);
 	mistColor.rgb += torchColor*torch_intensity*lit.x*0.3;
+
+	if(underWater){
+		nl_underwater_lighting(light, mistColor, lit, uv1, tiledCpos, cPos, torchColor, t);
+	}
 
 
 #ifdef ALPHA_TEST
@@ -128,7 +131,7 @@ highp float t = ViewPositionAndTime.w;
 #endif
 
 	if (isWater) {
-		color = nl_water(color, light, wPos,cPos, COLOR, FogColor.rgb, horizonCol,
+		color = nl_water(worldPos, color, light,cPos, COLOR, FogColor.rgb, horizonCol,
 			  horizonEdgeCol, zenithCol, uv1, t, camDis,
 			  rainFactor, tiledCpos, end, torchColor);
 	}
@@ -141,22 +144,20 @@ highp float t = ViewPositionAndTime.w;
 
 	vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
 
-	#ifndef UNDERWATER
 	if(nether){
-		//fogColor.rgb = mix(fogColor.rgb,vec3(0.8,0.2,0.12)*1.5,lit.x*(1.67-fogColor.a*1.67));
+		fogColor.rgb = mix(fogColor.rgb,vec3(0.8,0.2,0.12)*1.5,lit.x*(1.67-fogColor.a*1.67));
 	}
-	else{
-		//if(end){fogColor.rgb = vec3(0.16,0.06,0.2);}
+	else if(!underWater){
+		if(end){fogColor.rgb = vec3(0.16,0.06,0.2);}
 
 		// to remove fog in heights
 		float fogGradient = 1.0-max(-viewDir.y+0.1,0.0);
 		fogGradient *= fogGradient*fogGradient;
 		fogColor.a *= fogGradient;
 	}
-	#endif
 
 	// mix fog with mist
-	//mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
+	mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
 
 	v_extra.b = water;
     v_texcoord0 = a_texcoord0;
