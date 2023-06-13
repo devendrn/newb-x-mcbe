@@ -4,27 +4,26 @@
 // values
 // (toggle means - can be uncommented)
 
-// tonemapping
 #define NL_CONSTRAST 0.74
 
 // 1 - Exponential
 // 2 - Simple Reinhard
-// 3 - Extended Reinhard (Default)
+// 3 - Extended Reinhard
 // 4 - ACES
 #define NL_TONEMAP_TYPE 3
 
 // (toggle)
-//#define EXPOSURE 1.3
-//#define SATURATION 1.4
-//#define TINT vec3(1.0,0.75,0.5)
+//#define NL_EXPOSURE 1.3
+//#define NL_SATURATION 1.4
+//#define NL_TINT vec3(1.0,0.75,0.5)
 
 
 // terrain lighting
-#define sun_intensity 2.95
-#define shadow_intensity 0.7
-#define night_brightness 0.1
-#define cave_brightness 0.1
-#define torch_intensity 1.0
+#define NL_SUN_INTENSITY 2.95
+#define NL_TORCH_INTENSITY 1.0
+#define NL_NIGHT_BRIGHTNESS 0.1
+#define NL_CAVE_BRIGHTNESS 0.1
+#define NL_SHADOW_INTENSITY 0.7
 
 // fog
 #define NL_MIST_DENSITY 0.18
@@ -85,9 +84,24 @@
 #define NL_UNDERWATER_COL vec3(0.2,0.6,1.0)
 #define NL_CAUSTIC_INTENSITY 2.5
 
+// lantern swing intensity (toggle)
+#define NL_LANTERN_WAVE 0.16
+
+// clouds
+#define NL_CLOUD_START_RAIN 0.1
+#define NL_CLOUD_START_NORMAL 0.73
+#define NL_CLOUD_UV_SCALE vec2(0.0194, 0.0278)
+#define NL_CLOUD_DEPTH 1.3
+#define NL_CLOUD_SPEED 0.04
+#define NL_CLOUD_DENSITY 0.54
+#define NL_CLOUD_OPACITY 0.8
+
+//️ aurora borealis brightness (toggle)
+#define NL_AURORA 1.0
+
 
 // unsorted
-/*
+
 // Value - Rainy wind blow transparency (0-0.3)
 //#define rain_blow_opacity 0.19
 
@@ -98,35 +112,6 @@
 // Toggle - Cloud reflection on water
 //#define CLOUD_REFLECTION
 
-// Toggle - Lantern swing
-// Value - Lantern swing intensity (0-0.6)
-//#define LANTERN_WAVE 0.16
-
-// Value - Cloud size when raining (0-1)
-#define rain_cloud_size 0.9
-
-// Value - Normal cloud size (0-1)
-#define normal_cloud_size 0.27
-
-// Value - Cloud map size (0-100)
-#define cloud_noise_size 36.0
-
-// Value - Cloud depth (0-3)
-#define cloud_depth 1.3
-
-// Value - Cloud movement speed
-#define cloud_speed 0.04
-
-// Value - Cloud shadow intensity (0-1)
-#define cloud_shadow 0.54
-
-// Value - Cloud transparency (0-1)
-#define cloud_alpha 0.8
-
-//️ Toggle - Enable aurora effect for night sky
-//️ Value - Aurora borealis brightness
-#define AURORA 1.0
-*/
 
 // CONSTANTS
 #define NL_CONST_SHADOW_EDGE 0.876
@@ -374,8 +359,8 @@ vec3 tonemap(vec3 x){
 #endif
 
 vec3 colorCorrection(vec3 color){
-	#ifdef EXPOSURE
-		color *= EXPOSURE;
+	#ifdef NL_EXPOSURE
+		color *= NL_EXPOSURE;
 	#endif
 
 	color = tonemap(color);
@@ -383,22 +368,17 @@ vec3 colorCorrection(vec3 color){
 	// actually supposed to be gamma correction
 	color = pow(color, vec3_splat(NL_CONSTRAST));
 
-	#ifdef SATURATION
-		color = mix(vec3(dot(color,vec3(0.21, 0.71, 0.08))), color, SATURATION);
+	#ifdef NL_SATURATION
+		color = mix(vec3(dot(color,vec3(0.21, 0.71, 0.08))), color, NL_SATURATION);
 	#endif
 
-	#ifdef TINT
-		color *= TINT;
+	#ifdef NL_TINT
+		color *= NL_TINT;
 	#endif
 
 	return color;
 }
 
-/*
-const vec2 cloud_size = vec2(0.7,1.0)/cloud_noise_size;
-
-const float start_rain = 1.0-rain_cloud_size;
-const float start_normal = 1.0-normal_cloud_size;
 
 // clamp rand for cloud noise
 highp float rand01(highp vec2 seed,float start){
@@ -410,11 +390,11 @@ highp float rand01(highp vec2 seed,float start){
 // 2D cloud noise - used by clouds
 float cloudNoise2D(vec2 p, highp float t, float rain){
 
-	t *= cloud_speed;
+	t *= NL_CLOUD_SPEED;
 
 	// start threshold - for bigger clouds during rain
-	float start = start_normal + (normal_cloud_size)*(0.1+0.1*sin(t + p.y*0.3));
-	start = mix(start,start_rain,rain);
+	float start = NL_CLOUD_START_NORMAL + (1.0 - NL_CLOUD_START_NORMAL)*(0.1+0.1*sin(t + p.y*0.3));
+	start = mix(start,NL_CLOUD_START_RAIN,rain);
 
 	p += vec2_splat(t);
 	p.x += sin(p.y*0.4 + t);
@@ -435,6 +415,7 @@ float cloudNoise2D(vec2 p, highp float t, float rain){
 
 // simple cloud
 vec4 renderClouds(vec4 color, vec2 uv, highp float t, float rain){
+	uv *= NL_CLOUD_UV_SCALE;
 
 	float cloudAlpha = cloudNoise2D(uv,t,rain);
 	float cloudShadow = cloudNoise2D(uv,(t+0.16),rain)*0.2;
@@ -448,13 +429,15 @@ vec4 renderClouds(vec4 color, vec2 uv, highp float t, float rain){
 	color.rgb += vec3(0.6,0.6,1.0)*(0.2-cloudShadow);
 
 	// cloud shadow
-	color.rgb *= (1.0-cloudShadow*3.0*cloud_shadow);
+	color.rgb *= (1.0-cloudShadow*3.0*NL_CLOUD_DENSITY);
 
 	return vec4(color.rgb,cloudAlpha);
 }
 
 // simple northern night sky effect
 vec4 renderAurora(vec2 uv, highp float t, float rain){
+	uv *= 0.05;
+
 	float auroraCurves = sin(uv.x*0.09 + 0.07*t) + 0.3*sin(uv.x*0.5 + 0.09*t) + 0.03*sin((uv.x+uv.y)*3.0 + 0.2*t);
 	float auroraBase = uv.y*0.4 + 2.0*auroraCurves;
 	float auroraFlow = 0.5+0.5*sin(uv.x*0.3 + 0.07*t + 0.7*sin(auroraBase*0.9) );
@@ -471,7 +454,7 @@ vec4 renderAurora(vec2 uv, highp float t, float rain){
 		auroraCol*aurora,
 		aurora*aurora*(0.5-0.5*rain) );
 }
-*/
+
 // sunlight tinting
 vec3 sunLightTint(float dayFactor,float rain, vec3 FOG_COLOR){
 
@@ -575,7 +558,7 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
 		torchColor = NL_OVERWORLD_TORCH_COL;
 	}
 
-    float torch_attenuation = (torch_intensity*uv1.x)/(0.5-0.45*lit.x);
+    float torch_attenuation = (NL_TORCH_INTENSITY*uv1.x)/(0.5-0.45*lit.x);
 
 #ifdef NL_BLINKING_TORCH
 	torch_attenuation *= 1.0 - 0.19*noise1D(t*8.0);
@@ -598,10 +581,10 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
         float dayFactor = min(dot(FOG_COLOR.rgb,vec3(0.5,0.4,0.4))*(1.0 + 1.9*rainFactor),1.0);
         float nightFactor = 1.0-dayFactor*dayFactor;
         float rainDim = min(FOG_COLOR.g,0.25)*rainFactor;
-        float lightIntensity = sun_intensity*(1.0 - rainDim)*(1.0 + night_brightness*nightFactor);
+        float lightIntensity = NL_SUN_INTENSITY*(1.0 - rainDim)*(1.0 + NL_NIGHT_BRIGHTNESS*nightFactor);
 
         // min ambient in caves
-        light = vec3_splat((1.35+cave_brightness)*(1.0-uv1.x)*(1.0-uv1.y));
+        light = vec3_splat((1.35+NL_CAVE_BRIGHTNESS)*(1.0-uv1.x)*(1.0-uv1.y));
 
         // sky ambient
         light += mix(horizonCol,zenithCol,0.5+uv1.y-0.5*lit.y)*(lit.y*(3.0-2.0*uv1.y)*(1.3 + (4.0*nightFactor) - rainDim));
@@ -612,7 +595,7 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
         // make shadow a bit softer and more softer when raining
         shadow += uv1.y > 0.85 ? (0.2+0.3*rainFactor)*(1.0-shadow) : 0.0;
 
-        shadow = max(shadow,(1.0 - shadow_intensity + (0.6*shadow_intensity*nightFactor))*lit.y);
+        shadow = max(shadow,(1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightFactor))*lit.y);
         shadow *= shade>0.8 ? 1.0 : 0.8;
 
         // direct light from top
@@ -669,7 +652,7 @@ vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, float fractCpo
 		if(uv1.y < 0.93 && !end){waterRefl *= 0.7*uv1.y;}
 
 		// ambient,torch light reflection
-		waterRefl += vec3_splat(0.02-(0.02*uv1.y)) + torchColor*torch_intensity*((uv1.x>0.83 ? 0.6 : 0.0) + uv1.x*uv1.x*bump*10.0);
+		waterRefl += vec3_splat(0.02-(0.02*uv1.y)) + torchColor*NL_TORCH_INTENSITY*((uv1.x>0.83 ? 0.6 : 0.0) + uv1.x*uv1.x*bump*10.0);
 
 		// flat plane
 		if( is(fractCposY,0.8,0.9) ){ waterRefl *= 1.0 - 0.66*clamp(wPos.y,0.0,1.0); }
@@ -713,7 +696,7 @@ void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1){
 	}
 }
 
-void nl_foliage_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 lit,
+void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, vec2 lit,
 					 vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, float t,
 					 bool isColored, float camDist, bool underWater ) {
 
@@ -744,9 +727,12 @@ void nl_foliage_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, ve
 	//	light *= isTop ? 1.2 : 1.2 - (bPos.y>0.0 ? 1.5-bPos.y : 0.5);
 	//}
 
+	float windStrength = lit.y*(noise1D(t*0.36) + (rainFactor*0.4));
+
+#ifdef NL_PLANTS_WAVE
 	if (shouldWave) {
 
-		float wave = NL_PLANTS_WAVE*lit.y*(noise1D(t*0.36) + (rainFactor*0.4));
+		float wave = NL_PLANTS_WAVE*windStrength;
 
 		wave *= isTreeLeaves ? 0.5 : 1.0;
 		wave = isVines ? min(0.024,wave*fract(0.01+tiledCpos.y*0.5)) : wave;
@@ -767,6 +753,40 @@ void nl_foliage_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, ve
 		//worldPos.y -= 1.0-sqrt(1.0-wave*wave);
 		worldPos.xyz -= vec3(wave, wave*wave*0.5, wave);
 	}
+#endif
+
+#ifdef NL_LANTERN_WAVE
+	bool y6875 = bPos.y==0.6875;
+	bool y5625 = bPos.y==0.5625;
+
+	bool isLantern = ( (y6875 || y5625) && bPosC.x==0.125 ) || ( (y5625 || bPos.y==0.125) && (bPosC.x==0.1875) );
+	bool isChain = bPosC.x==0.0625 && y6875;
+
+	// fix for non-hanging lanterns waving top part (works only if texPosY is correct)
+	if( texPosY < 0.3 || is(texPosY, 0.67, 0.69) || is(texPosY, 0.55, 0.6) ){
+		isLantern = isLantern && !y5625;
+	}
+
+	// X,Z axis rotation
+	if((isChain||isLantern) && uv1.x > 0.6){
+		// wave phase diff for individual lanterns
+		float offset = dot(floor(cPos), vec3_splat(0.3927));
+
+		// simple random wave for angle
+		highp vec2 theta = vec2(t + offset, t*1.4 + offset);
+		theta = sin(vec2(theta.x,theta.x+0.7)) + rainFactor*sin(vec2(theta.y,theta.y+0.7));
+		theta *= NL_LANTERN_WAVE*windStrength;
+
+		vec2 sinA = sin(theta);
+		vec2 cosA = cos(theta);
+
+		vec3 pivotPos = vec3(0.5,1.0,0.5) - bPos;
+
+		worldPos.x += dot(pivotPos.xy, vec2(1.0-cosA.x, -sinA.x));
+		worldPos.y += dot(pivotPos, vec3(sinA.x*cosA.y, 1.0-cosA.x*cosA.y, sinA.y));
+		worldPos.z += dot(pivotPos, vec3(sinA.x*sinA.y, -cosA.x*sinA.y, 1.0-cosA.y));
+	}
+#endif
 }
 
 void nl_underwater_lighting(inout vec3 light, inout vec4 mistColor, vec2 lit, vec2 uv1,
@@ -786,7 +806,8 @@ void nl_underwater_lighting(inout vec3 light, inout vec4 mistColor, vec2 lit, ve
 		light += caustics*underWaterColor*(0.1 + lit.y + lit.x*0.7)*NL_CAUSTIC_INTENSITY;
 
 		// use mist to make water foggy around lights
-		mistColor.rgb = (1.0+lit.y*0.6)*mix(mistColor.rgb, torchColor*torch_intensity*NL_UNDERWATER_COL, lit.x);
+		mistColor.rgb = (1.0+lit.y*0.6)*mix(mistColor.rgb, torchColor*NL_TORCH_INTENSITY*NL_UNDERWATER_COL, lit.x);
 		mistColor.a += (1.0-mistColor.a)*dot(lit, vec2(0.2, 0.2));
 	}
 }
+

@@ -100,7 +100,6 @@ void main() {
 // convert color space to linear-space
 #ifdef SEASONS
 	// season tree leaves are colored in fragment
-	color.w *= color.w;
 	color = vec4(color.www, 1.0);
 
 	// tree leaves shadow fix
@@ -125,15 +124,15 @@ void main() {
                  horizonCol, zenithCol, shade, end, nether, underWater);
 
 	mistColor.rgb *= max(0.75, uv1.y);
-	mistColor.rgb += 0.3*torchColor*torch_intensity*lit.x;
+	mistColor.rgb += 0.3*torchColor*NL_TORCH_INTENSITY*lit.x;
 
 	if (underWater) {
 		nl_underwater_lighting(light, mistColor, lit, uv1, tiledCpos, cPos, torchColor, t);
 	}
 
 #ifdef ALPHA_TEST
-#ifdef NL_PLANTS_WAVE
-	nl_foliage_wave(worldPos, light, rainFactor, lit,
+#if defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE)
+	nl_wave(worldPos, light, rainFactor, uv1, lit,
 					 uv0, bPos, COLOR, cPos, tiledCpos, t,
 					 isColored, camDis, underWater );
 #endif
@@ -151,6 +150,8 @@ void main() {
 	// loading chunks
 	relativeDist += RenderChunkFogAlpha.x;
 
+	// slide in (will be disabled next commit)
+	worldPos.y -= 100.0*pow(RenderChunkFogAlpha.x,3.0);
 	vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
 
 	if (nether) {
