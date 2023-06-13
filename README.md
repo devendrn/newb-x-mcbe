@@ -10,15 +10,14 @@ Also, there is no guarantee of continued development.
 
 ![Screenshot1](docs/screenshot1.jpg "Newb X on MCBE 1.19.83")
 
-## Compiled files
+## Downloads
 
-Nightly builds for Android (ESSL) can be found at [Discord server](https://discord.gg/Cc4qsgHcYm).
+Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord server](https://discord.gg/z9TBnq33HC).
 For other platforms, you have to manually build from source.
 
 ## Installation
 
-There are various ways to load custom material.bin files depending on your platform.
-Please look elsewhere.
+There are various ways to load custom material.bin files depending on your platform. See at discord. 
 
 If you are using [minecraft-manifest](https://github.com/minecraft-linux/mcpelauncher-ui-manifest),
 you can directly replace material.bin files inside data root (backup recommended).
@@ -34,7 +33,7 @@ This shader exists because of [MaterialBinTool](https://github.com/ddf8196/Mater
 
 MBT uses a modified bgfx shaderc to work with MCBE.
 You can find this precompiled shaderc binary among MBT releases.
-For linux x86_64, you can find one at [Discord server](https://discord.gg/Cc4qsgHcYm).
+For linux x86_64, you can find one at [Discord server](https://discord.gg/z9TBnq33HC).
 
 You should set up the directory structure as follows:
 
