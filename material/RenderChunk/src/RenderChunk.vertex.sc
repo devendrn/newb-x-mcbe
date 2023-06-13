@@ -2,7 +2,8 @@ $input a_color0, a_position, a_texcoord0, a_texcoord1
 #ifdef INSTANCING
     $input i_data0, i_data1, i_data2, i_data3
 #endif
-$output v_color0, v_fog, v_texcoord0, v_lightmapUV, v_light, v_extra
+
+$output v_color0, v_color1, v_fog, v_texcoord0, v_lightmapUV, v_extra
 
 #include <bgfx_shader.sh>
 #include <newb_legacy.sh>
@@ -13,6 +14,7 @@ uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
 
 void main() {
+
     mat4 model;
 #ifdef INSTANCING
     model = mtxFromCols(i_data0, i_data1, i_data2, i_data3);
@@ -56,82 +58,89 @@ void main() {
 	vec3 bPos = fract(cPos);
 	vec3 tiledCpos = cPos*vec3(cPos.x<15.99,cPos.y<15.99,cPos.z<15.99);
 
-
     vec4 COLOR = a_color0;
     vec2 uv0 = a_texcoord0;
     vec2 uv1 = a_texcoord1;
 	vec2 lit = uv1*uv1;
-	bool isColored = (color.g > min(color.r,color.b)) || !(color.r==color.g && color.r==color.b);
+
+	bool isColored = (color.g > min(color.r, color.b)) || !(color.r == color.g && color.r == color.b);
 	float shade = isColored ? color.g*1.5 : color.g;
 
 	// tree leaves detection
-	#ifdef ALPHA_TEST
-		bool isTree = isColored;
-	#else
-		bool isTree = isColored && (uv0.x<0.1 || uv0.x>0.9) && uv0.y<0.3;
-	#endif
-	isTree = (isTree && (bPos.x+bPos.y+bPos.z<0.001)) || (color.a < 0.005 && max(COLOR.g,COLOR.r)>0.37);
+	bool isTree = (isColored && (bPos.x+bPos.y+bPos.z < 0.001)) || (color.a < 0.005 && max(COLOR.g,COLOR.r) > 0.37);
+#ifndef ALPHA_TEST
+	// detect tree leaves that are not transparent (use texture map)
+	isTree = isTree && (uv0.x < 0.1 || uv0.x > 0.9) && uv0.y < 0.3;
+#endif
 
 	// environment detections
 	bool end = detectEnd(FogColor.rgb);
 	bool nether = detectNether(FogColor.rgb, FogAndDistanceControl.xy);
-
-	bool underWater = detectUnderwater(FogColor.rgb,FogAndDistanceControl.xy);
-	float rainFactor = detectRain(FogAndDistanceControl.z,FogAndDistanceControl.xy);
-
-	bool isWater = COLOR.b<0.02;
-	float water = float(isWater);
+	bool underWater = detectUnderwater(FogColor.rgb, FogAndDistanceControl.xy);
+	float rainFactor = detectRain(FogAndDistanceControl.xyz);
 
 	// sky colors
-	vec3 zenithCol = getZenithCol(rainFactor,FogColor.rgb);
-	vec3 horizonCol = getHorizonCol(rainFactor,FogColor.rgb);
-	vec3 horizonEdgeCol = getHorizonEdgeCol(horizonCol,rainFactor,FogColor.rgb);
-	if(underWater){
+	vec3 zenithCol = getZenithCol(rainFactor, FogColor.rgb);
+	vec3 horizonCol = getHorizonCol(rainFactor, FogColor.rgb);
+	vec3 horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, FogColor.rgb);
+	if (underWater) {
 		vec3 fogcol = getUnderwaterCol(FogColor.rgb);
 		zenithCol = fogcol;
 		horizonCol = fogcol;
 		horizonEdgeCol = fogcol;
 	}
 
+	// uses modified biomes_client colors
+	bool isWater = COLOR.b == 0.0;
+	float water = float(isWater);
 
-// time
-highp float t = ViewPositionAndTime.w;
+	// time
+	highp float t = ViewPositionAndTime.w;
 
-// convert color space to linear-space for color correction (not entirely accurate)
-// and tree leaves, slab lighting fix
+// convert color space to linear-space
 #ifdef SEASONS
-	// season tree leaves are colored in fragment using sCol values
-	vec3 sCol = COLOR.rgb;
-	color.rgb = vec3_splat(1.0);
+	// season tree leaves are colored in fragment
+	color.w *= color.w;
+	color = vec4(color.www, 1.0);
 
+	// tree leaves shadow fix
 	uv1.y *= 1.00151;
 #else
-	if(isColored){color.rgb *= color.rgb*1.2;}
-	if(isTree || (fract(cPos.y)==0.5 && fract(cPos.x)==0.0) ){uv1.y *= 1.00151;}
+	if (isColored) {
+		color.rgb *= color.rgb*1.2;
+	}
+
+	// tree and slab shadow fix
+	if (isTree || (bPos.y == 0.5 && bPos.x == 0.0)) {
+		uv1.y *= 1.00151;
+	}
 #endif
 
-	vec3 torchColor = vec3(1.0,1.0,1.0);
-    vec3 light = nl_lighting(a_color0.rgb, FogColor.rgb, rainFactor,uv1, isTree,
-                 horizonCol, zenithCol, shade, end, nether);
+	vec3 torchColor; // modified by nl_lighting
 
-	// mist (also used in underwater to decrease visibility)
+	// mist (also used underwater to decrease visibility)
 	vec4 mistColor = renderMist(horizonEdgeCol, relativeDist, lit.x, rainFactor, nether,underWater,end,FogColor.rgb);
-	mistColor.rgb *= max(0.75,uv1.y);
-	mistColor.rgb += torchColor*torch_intensity*lit.x*0.3;
 
-	if(underWater){
+    vec3 light = nl_lighting(torchColor, a_color0.rgb, FogColor.rgb, rainFactor,uv1, lit, isTree,
+                 horizonCol, zenithCol, shade, end, nether, underWater);
+
+	mistColor.rgb *= max(0.75, uv1.y);
+	mistColor.rgb += 0.3*torchColor*torch_intensity*lit.x;
+
+	if (underWater) {
 		nl_underwater_lighting(light, mistColor, lit, uv1, tiledCpos, cPos, torchColor, t);
 	}
 
-
 #ifdef ALPHA_TEST
+#ifdef NL_PLANTS_WAVE
 	nl_foliage_wave(worldPos, light, rainFactor, lit,
 					 uv0, bPos, COLOR, cPos, tiledCpos, t,
 					 isColored, camDis, underWater );
 #endif
+#endif
 
 	if (isWater) {
-		color = nl_water(worldPos, color, light,cPos, COLOR, FogColor.rgb, horizonCol,
+		color = nl_water(worldPos, color, light, cPos, bPos.y, COLOR, FogColor.rgb, horizonCol,
 			  horizonEdgeCol, zenithCol, uv1, t, camDis,
 			  rainFactor, tiledCpos, end, torchColor);
 	}
@@ -144,11 +153,14 @@ highp float t = ViewPositionAndTime.w;
 
 	vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
 
-	if(nether){
-		fogColor.rgb = mix(fogColor.rgb,vec3(0.8,0.2,0.12)*1.5,lit.x*(1.67-fogColor.a*1.67));
-	}
-	else if(!underWater){
-		if(end){fogColor.rgb = vec3(0.16,0.06,0.2);}
+	if (nether) {
+		fogColor.rgb = mix(fogColor.rgb, vec3(0.8,0.2,0.12)*1.5,
+			lit.x*(1.67-fogColor.a*1.67));
+	} else if (!underWater) {
+
+		if (end) {
+			fogColor.rgb = vec3(0.16,0.06,0.2);
+		}
 
 		// to remove fog in heights
 		float fogGradient = 1.0-max(-viewDir.y+0.1,0.0);
@@ -163,6 +175,7 @@ highp float t = ViewPositionAndTime.w;
     v_texcoord0 = a_texcoord0;
     v_lightmapUV = a_texcoord1;
     v_color0 = color;
+	v_color1 = a_color0;
     v_fog = fogColor;
     gl_Position = mul(u_viewProj, vec4(worldPos, 1.0));
 }

@@ -63,7 +63,7 @@ Now unpack the material.bin files by running:
 ```
  To compile the material src files, run:
 ```
-./build.sh
+./build.sh android
 ```
 material.bin files will be now generated inside `build/<platform>/`
 

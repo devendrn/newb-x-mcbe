@@ -3,7 +3,7 @@
 MBT_JAR=env/jar/MaterialBinTool-*.jar
 SHADERC=env/bin/shaderc
 
-MBT_THREADS=0
+MBT_THREADS=2
 MBT_ARGS="--compile --shaderc $SHADERC --include include/ --threads $MBT_THREADS"
 
 DATA_DIR=data

@@ -9,8 +9,8 @@ vec4 i_data2      : TEXCOORD6;
 vec4 i_data3      : TEXCOORD5;
 
 vec4 v_color0     : COLOR0;
+vec4 v_color1     : COLOR1;
 vec4 v_fog        : COLOR2;
-vec4 v_light      : COLOR1;
 vec2 v_texcoord0  : TEXCOORD0;
 vec2 v_lightmapUV : TEXCOORD1;
 vec3 v_position   : TEXCOORD2;

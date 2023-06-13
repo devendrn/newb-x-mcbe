@@ -1,6 +1,139 @@
 //// Legacy code ported from newb-shader-mcbe
 //// !! depreciated !!
 
+// values
+// (toggle means - can be uncommented)
+
+// tonemapping
+#define NL_CONSTRAST 0.74
+
+// 1 - Exponential
+// 2 - Simple Reinhard
+// 3 - Extended Reinhard (Default)
+// 4 - ACES
+#define NL_TONEMAP_TYPE 3
+
+// (toggle)
+//#define EXPOSURE 1.3
+//#define SATURATION 1.4
+//#define TINT vec3(1.0,0.75,0.5)
+
+
+// terrain lighting
+#define sun_intensity 2.95
+#define shadow_intensity 0.7
+#define night_brightness 0.1
+#define cave_brightness 0.1
+#define torch_intensity 1.0
+
+// fog
+#define NL_MIST_DENSITY 0.18
+
+// 0 - Off
+// 1 - Vanilla fog
+// 2 - Smoother vanilla fog
+#define NL_FOG_TYPE 2
+
+
+// top light color (sunlight/moonlight)
+#define NL_MORNING_SUN_COL vec3(1.0,0.45,0.14)
+#define NL_NOON_SUN_COL vec3(1.0,0.75,0.57)
+#define NL_NIGHT_SUN_COL vec3(0.5,0.64,1.0)
+
+//#define NL_BLINKING_TORCH
+
+// torch colors
+#define NL_OVERWORLD_TORCH_COL vec3(1.0,0.52,0.18)
+#define NL_UNDERWATER_TORCH_COL vec3(1.0,0.52,0.18)
+#define NL_NETHER_TORCH_COL vec3(1.0,0.52,0.18)
+#define NL_END_TORCH_COL vec3(1.0,0.52,0.18)
+
+// sky/fog colors
+#define NL_NIGHT_SKY_COL vec3(0.01,0.06,0.1)
+#define NL_BASE_SKY_COL vec3(0.15,0.45,1.0)
+#define NL_DAY_SKY_CLARITY 0.3
+#define NL_BASE_HORIZON_COL vec3(1.0,0.4,0.3)
+#define NL_EDGE_HORIZON_COL vec3(1.0,0.4,0.2)
+#define NL_BASE_UNDERWATER_COL vec3(0.0,0.6,1.0)
+
+// ore glow intensity
+#define NL_GLOW_TEX 1.7
+
+// plants wave intensity (toggle)
+#define NL_PLANTS_WAVE 0.04
+
+#define NL_WAVE_SPEED 2.8
+
+// water
+#define NL_WATER_TRANSPARENCY 0.47
+#define NL_WATER_BUMP 0.07
+#define NL_SEA_WATER_COL vec3(0.13,0.65,0.87)
+#define NL_FRESH_WATER_COL vec3(0.07,0.55,0.55)
+#define NL_MARSHY_WATER_COL vec3(0.27,0.4,0.1)
+
+// water wave (toggle)
+#define NL_WATER_WAVE
+
+// use only surface angle for water transparency (gives more transparency)
+//#define NL_WATER_ANGLE_BLEND
+
+// water texture overlay
+#define NL_WATER_TEX_OPACITY 0.0
+
+// underwater lighting
+#define NL_UNDERWATER_BRIGHTNESS 0.8
+#define NL_UNDERWATER_COL vec3(0.2,0.6,1.0)
+#define NL_CAUSTIC_INTENSITY 2.5
+
+
+// unsorted
+/*
+// Value - Rainy wind blow transparency (0-0.3)
+//#define rain_blow_opacity 0.19
+
+// Toggle - Underwater Wave
+// Value - Wave intensity
+//#define UNDERWATER_WAVE 0.06
+
+// Toggle - Cloud reflection on water
+//#define CLOUD_REFLECTION
+
+// Toggle - Lantern swing
+// Value - Lantern swing intensity (0-0.6)
+//#define LANTERN_WAVE 0.16
+
+// Value - Cloud size when raining (0-1)
+#define rain_cloud_size 0.9
+
+// Value - Normal cloud size (0-1)
+#define normal_cloud_size 0.27
+
+// Value - Cloud map size (0-100)
+#define cloud_noise_size 36.0
+
+// Value - Cloud depth (0-3)
+#define cloud_depth 1.3
+
+// Value - Cloud movement speed
+#define cloud_speed 0.04
+
+// Value - Cloud shadow intensity (0-1)
+#define cloud_shadow 0.54
+
+// Value - Cloud transparency (0-1)
+#define cloud_alpha 0.8
+
+//️ Toggle - Enable aurora effect for night sky
+//️ Value - Aurora borealis brightness
+#define AURORA 1.0
+*/
+
+// CONSTANTS
+#define NL_CONST_SHADOW_EDGE 0.876
+#define NL_CONST_PI_HALF 1.5708
+#define NL_CONST_PI_QUART 0.7854
+
+
 bool detectEnd(vec3 FOG_COLOR){
 	// end is given a custom fog color in biomes_client.json to help in detection
 	// dark color (issue- rain transition when entering end)
@@ -28,15 +161,16 @@ bool detectUnderwater(vec3 FOG_COLOR, vec2 FOG_CONTROL){
 	return FOG_CONTROL.x<0.001 && max(FOG_COLOR.b,FOG_COLOR.g)>FOG_COLOR.r;
 }
 
-float detectRain(float RENDER_DISTANCE, vec2 FOG_CONTROL){
-	// FOG_CONTROL values when clear/rain
-	// clear FOG_CONTROL.x varies with RENDER_DISTANCE
+float detectRain(vec3 fog_and_distance_ctrl){
+	// FOG_CONTROL (x,y) values when clear/rain
+	// clear x varies with RENDER_DISTANCE (z)
 	// reverse plotted (low accuracy) as 0.5 + 1.09/(k-0.8) where k is renderdistance in chunks
 	// remaining values are equal to those specified in json file
-	vec2 start = vec2(0.5 + (1.09/((RENDER_DISTANCE*0.0625)-0.8)),0.99);
-	const vec2 end = vec2(0.2305,0.7005);
 
-	vec2 factor = clamp((start-FOG_CONTROL)/(start-end),vec2(0,0),vec2(1,1));
+	vec2 start = vec2(0.5 + 1.09/(fog_and_distance_ctrl.z*0.0625 - 0.8), 0.99);
+	vec2 end = vec2(0.2305, 0.7005);
+
+	vec2 factor = clamp((start-fog_and_distance_ctrl.xy)/(start-end),vec2(0,0),vec2(1,1));
 
 	// ease in ease out for Y
 	factor.y = factor.y*factor.y*(3.0 - 2.0*factor.y);
@@ -76,25 +210,10 @@ float noise2D(vec2 p){
 	return min(n*n,1.0);
 }
 
-// Toggle - Flip time after 1800 seconds
-// Disable this if you have static wave bug
-#define TIME_FLIPPING
-
-// Value - Sunlight brightness
-#define sun_intensity 2.95
-
-// Type - Fog type
-// 0 - Off
-// 1 - Vanilla fog
-// 2 - Smoother vanilla fog (Default)
-#define FOG_TYPE 2
-
-// Value - Density of mist
-#define mist_density 0.18
 
 vec4 renderMist(vec3 fog, float dist, float lit, float rain, bool nether, bool underwater, bool end, vec3 FOG_COLOR){
 
-	float density = mist_density;
+	float density = NL_MIST_DENSITY;
 	if(!(nether||end)){
 		// increase density based on darkness
 		density += density*(0.99-FOG_COLOR.g)*18.0;
@@ -122,7 +241,7 @@ vec4 renderMist(vec3 fog, float dist, float lit, float rain, bool nether, bool u
 
 vec4 renderFog(vec3 fogColor, float len, bool nether, vec3 FOG_COLOR, vec2 FOG_CONTROL){
 
-#if FOG_TYPE > 0
+#if NL_FOG_TYPE > 0
 
 	vec4 fog;
 	if(nether){
@@ -136,7 +255,7 @@ vec4 renderFog(vec3 fogColor, float len, bool nether, vec3 FOG_COLOR, vec2 FOG_C
 
 	fog.a = clamp( (len -  FOG_CONTROL.x)/(FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
 
-	#if FOG_TYPE > 1
+	#if NL_FOG_TYPE > 1
 		fog.a = (fog.a*fog.a)*(3.0-2.0*fog.a);
 	#endif
 
@@ -147,13 +266,6 @@ vec4 renderFog(vec3 fogColor, float len, bool nether, vec3 FOG_COLOR, vec2 FOG_C
 #endif
 
 }
-
-#define NL_NIGHT_SKY_COL vec3(0.01,0.06,0.1)
-#define NL_BASE_SKY_COL vec3(0.15,0.45,1.0)
-#define NL_DAY_SKY_CLARITY 0.3
-#define NL_BASE_HORIZON_COL vec3(1.0,0.4,0.3)
-#define NL_EDGE_HORIZON_COL vec3(1.0,0.4,0.2)
-#define NL_BASE_UNDERWATER_COL vec3(0.0,0.6,1.0)
 
 vec3 getUnderwaterCol(vec3 FOG_COLOR){
 	return NL_BASE_UNDERWATER_COL*FOG_COLOR.b;
@@ -228,28 +340,8 @@ vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h){
 	return mix(zenithColor,horizonColor, gradient2 );
 }
 
-// Type - Tone mapping type
-// 1 - Exponential
-// 2 - Simple Reinhard
-// 3 - Extended Reinhard (Default)
-// 4 - ACES
-#define TONEMAPPING_TYPE 3
-
-// Toggle + Value - Exposure
-//#define EXPOSURE 1.3
-
-// Value - Contrast
-#define CONTRAST 0.74
-
-// Toggle + Value - Saturation
-//#define SATURATION 1.4
-
-// Toggle + Color - Tinting
-//#define TINT vec3(1.0,0.75,0.5)
-
 // see https://64.github.io/tonemapping/
-
-#if TONEMAPPING_TYPE==3
+#if NL_TONEMAP_TYPE==3
 // extended reinhard tonemapping
 vec3 tonemap(vec3 x){
 	//float white = 4.0;
@@ -258,7 +350,7 @@ vec3 tonemap(vec3 x){
 	x = (x*(1.0+(x*white_scale)))/(1.0+x);
 	return x;
 }
-#elif TONEMAPPING_TYPE==4
+#elif NL_TONEMAP_TYPE==4
 // aces tone mapping
 vec3 tonemap(vec3 x){
 	x *= 0.85;
@@ -269,12 +361,12 @@ vec3 tonemap(vec3 x){
 	const float e = 0.14;
 	return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
 }
-#elif TONEMAPPING_TYPE==2
+#elif NL_TONEMAP_TYPE==2
 // simple reinhard tonemapping
 vec3 tonemap(vec3 x){
 	return x/(1.0 + x);
 }
-#elif TONEMAPPING_TYPE==1
+#elif NL_TONEMAP_TYPE==1
 // exponential tonemapping
 vec3 tonemap(vec3 x){
 	return 1.0-exp(-x*0.8);
@@ -289,7 +381,7 @@ vec3 colorCorrection(vec3 color){
 	color = tonemap(color);
 
 	// actually supposed to be gamma correction
-	color = pow(color, vec3_splat(CONTRAST));
+	color = pow(color, vec3_splat(NL_CONSTRAST));
 
 	#ifdef SATURATION
 		color = mix(vec3(dot(color,vec3(0.21, 0.71, 0.08))), color, SATURATION);
@@ -302,31 +394,7 @@ vec3 colorCorrection(vec3 color){
 	return color;
 }
 
-// Value - Cloud size when raining (0-1)
-#define rain_cloud_size 0.9
-
-// Value - Normal cloud size (0-1)
-#define normal_cloud_size 0.27
-
-// Value - Cloud map size (0-100)
-#define cloud_noise_size 36.0
-
-// Value - Cloud depth (0-3)
-#define cloud_depth 1.3
-
-// Value - Cloud movement speed
-#define cloud_speed 0.04
-
-// Value - Cloud shadow intensity (0-1)
-#define cloud_shadow 0.54
-
-// Value - Cloud transparency (0-1)
-#define cloud_alpha 0.8
-
-//️ Toggle - Enable aurora effect for night sky
-//️ Value - Aurora borealis brightness
-#define AURORA 1.0
-
+/*
 const vec2 cloud_size = vec2(0.7,1.0)/cloud_noise_size;
 
 const float start_rain = 1.0-rain_cloud_size;
@@ -403,27 +471,7 @@ vec4 renderAurora(vec2 uv, highp float t, float rain){
 		auroraCol*aurora,
 		aurora*aurora*(0.5-0.5*rain) );
 }
-
-//#define BLINKING_TORCH
-
-#define shadow_edge 0.876
-
-// Value - Intensity of soft shadow (0-1)
-#define shadow_intensity 0.7
-#define night_brightness 0.1
-#define cave_brightness 0.1
-#define torch_intensity 1.0
-
-// Color - Top light color (Sunlight color)
-#define NL_MORNING_SUN_COL vec3(1.0,0.45,0.14)
-#define NL_NOON_SUN_COL vec3(1.0,0.75,0.57)
-#define NL_NIGHT_SUN_COL vec3(0.5,0.64,1.0)
-
-#define NL_OVERWORLD_TORCH_COL vec3(1.0,0.52,0.18)
-#define NL_UNDERWATER_TORCH_COL vec3(1.0,0.52,0.18)
-#define NL_NETHER_TORCH_COL vec3(1.0,0.52,0.18)
-#define NL_END_TORCH_COL vec3(1.0,0.52,0.18)
-
+*/
 // sunlight tinting
 vec3 sunLightTint(float dayFactor,float rain, vec3 FOG_COLOR){
 
@@ -440,66 +488,6 @@ vec3 sunLightTint(float dayFactor,float rain, vec3 FOG_COLOR){
 		dayFactor),r*r);
 }
 
-// Toggle - Plants Wave (leaves/plants)
-// Value - Wave animation intensity (Plants)
-#define PLANTS_WAVE 0.04
-
-// Toggle - Lantern swing
-// Value - Lantern swing intensity (0-0.6)
-#define LANTERN_WAVE 0.16
-
-// Toggle - Non-transparent leaves wave (might cause white lines at edges)
-//#define ALL_LEAVES_WAVE
-
-// Toggle - Extra plants Wave for 1.18 (won't work with add-ons which add new blocks)
-//#define EXTRA_PLANTS_WAVE
-
-// Value - Wave animation speed (Plants,leaves)
-#define wave_speed 2.8
-
-// Value - Rainy wind blow transparency (0-0.3)
-#define rain_blow_opacity 0.19
-
-// Toggle - Water wave
-// Value - Wave intensity of water surface
-#define WATER_WAVE 0.02
-
-// Toggle - Cloud reflection on water
-#define CLOUD_REFLECTION
-
-// Toggle - Use only surface angle for water transparency fade (gives more transparency)
-//#define USE_ANGLE_BLEND_FADE
-
-// Value - Water transparency (0-1)
-#define water_transparency 0.47
-
-// Value - Water noise bump height (0-0.2)
-#define water_bump 0.07
-
-// Color - Water color
-#define NL_SEA_WATER_COL vec3(0.13,0.65,0.87)
-#define NL_FRESH_WATER_COL vec3(0.07,0.55,0.55)
-#define NL_MARSHY_WATER_COL vec3(0.27,0.4,0.1)
-
-// Value - Water texture overlay
-#define WATER_TEX_OPACITY 0.0
-
-// Toggle - Underwater Wave
-// Value - Wave intensity
-#define UNDERWATER_WAVE 0.06
-
-// Value - Underwater brightness
-#define underwater_brightness 0.8
-
-// Value - Underwater soft caustic intensity
-#define caustic_intensity 2.5
-
-// Color - Underwater lighting color
-#define NL_UNDERWATER_COL vec3(0.2,0.6,1.0)
-
-// pi by 2
-#define NL_CONST_PI_HALF 1.57079
-
 // bool between function
 bool is(float val,float val1,float val2){
 	return (val>val1 && val<val2);
@@ -508,22 +496,22 @@ bool is(float val,float val1,float val2){
 // water transparency
 float getWaterAlpha(vec3 col){
 	// tint - col.r,
-	vec2 val = vec2(0.9,water_transparency); // swamp, fresh
+	vec2 val = vec2(0.9,NL_WATER_TRANSPARENCY); // swamp, fresh
 
 	return col.r<0.5 ? mix(val.x,val.y,col.r*2.0) : val.y;
 }
 
 // simpler rand for disp,wetmap
 float fastRand(vec2 n){
-	float a = cos( dot(n,vec2(4.2683,1.367)) );
-	float b = dot( n,vec2(1.367,4.683) );
+	float a = cos(dot(n, vec2(4.2683, 1.367)));
+	float b = dot(n, vec2(1.367, 4.683));
 	return fract(a+b);
 }
 
 // water displacement map (also used by caustic)
 float disp(vec3 pos, highp float t){
-	float val = 0.5 + 0.5*sin(t*1.7+((pos.x+pos.y)*NL_CONST_PI_HALF));
-	return mix(fastRand(pos.xz),fastRand(pos.xz+vec2_splat(1.0)),val);
+	float val = 0.5 + 0.5*sin(t*1.7 + (pos.x+pos.y)*NL_CONST_PI_HALF);
+	return mix(fastRand(pos.xz), fastRand(pos.xz+vec2_splat(1.0)), val);
 }
 
 // sky reflection on plane - used by water, wet reflection
@@ -566,28 +554,33 @@ float calculateFresnel(float cosR, float r0){
 	//return r0 + (1.0-r0)*exp(-6.0*cosR);
 }
 
-// ore glow intensity
-#define GLOW_TEX 1.7
-
 
 //// Implementation
 // functions are used while porting to wrap previous code easily
 // parameters will be simplified later
 
-vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool isTree,
-                 vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether) {
-    // Lighting
+vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
+                 vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether, bool underwater) {
     // all of these will be multiplied by tex uv1 in frag so functions should be divided by uv1 here
+
     vec3 light;
-    vec2 lit = uv1*uv1;
-#ifdef UNDERWATER
-	torchColor = NL_UNDERWATER_TORCH_COL;
-#endif
+
+	if (underwater) {
+		torchColor = NL_UNDERWATER_TORCH_COL;
+	} else if (end) {
+		torchColor = NL_END_TORCH_COL;
+	} else if (nether) {
+		torchColor = NL_NETHER_TORCH_COL;
+	} else {
+		torchColor = NL_OVERWORLD_TORCH_COL;
+	}
+
     float torch_attenuation = (torch_intensity*uv1.x)/(0.5-0.45*lit.x);
-#ifdef BLINKING_TORCH
+
+#ifdef NL_BLINKING_TORCH
 	torch_attenuation *= 1.0 - 0.19*noise1D(t*8.0);
 #endif
-    vec3 torchColor = end ? NL_END_TORCH_COL : (nether ? NL_NETHER_TORCH_COL : NL_OVERWORLD_TORCH_COL);
+
     vec3 torchLight = torchColor*torch_attenuation;
 
     if(nether || end){
@@ -614,7 +607,7 @@ vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool is
         light += mix(horizonCol,zenithCol,0.5+uv1.y-0.5*lit.y)*(lit.y*(3.0-2.0*uv1.y)*(1.3 + (4.0*nightFactor) - rainDim));
 
         // shadow cast by top light
-        float shadow = float(uv1.y > shadow_edge);
+        float shadow = float(uv1.y > NL_CONST_SHADOW_EDGE);
 
         // make shadow a bit softer and more softer when raining
         shadow += uv1.y > 0.85 ? (0.2+0.3*rainFactor)*(1.0-shadow) : 0.0;
@@ -642,12 +635,11 @@ vec3 nl_lighting(vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, bool is
     return light;
 }
 
-vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,
+vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, float fractCposY, vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,
 			  vec3 horizonEdgeCol, vec3 zenithCol, vec2 uv1, float t, float camDist,
 			  float rainFactor, vec3 tiledCpos, bool end, vec3 torchColor) {
 	vec3 viewDir = -wPos/camDist;
 	// this is used for finding the type of plane
-	float fractCposY = fract(cPos.y);
 
 	// get water color (r-tint,g-lightness)
 	vec3 waterCol = NL_FRESH_WATER_COL;
@@ -658,7 +650,7 @@ vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, vec4 COLOR, ve
 	waterCol *= light*max(max(FOG_COLOR.b,0.2+uv1.x*uv1.x),FOG_COLOR.r*1.2)*max(0.3+0.7*uv1.y,uv1.x);
 
 	float cosR;
-	float bump = water_bump;
+	float bump = NL_WATER_BUMP;
 	vec3 waterRefl;
 
 	// reflection for top plane
@@ -697,24 +689,26 @@ vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, vec4 COLOR, ve
 	float fresnel = calculateFresnel(cosR,0.03);
 	float opacity = 1.0-cosR;
 
-	#ifdef USE_ANGLE_BLEND_FADE
-		color.a = getWaterAlpha(COLOR.rgb) + opacity*(1.0-color.a);
-	#else
-		color.a = color.a + (1.0-color.a)*opacity*opacity;
-	#endif
+#ifdef NL_WATER_ANGLE_BLEND
+	color.a = getWaterAlpha(COLOR.rgb) + opacity*(1.0-color.a);
+#else
+	color.a = color.a + (1.0-color.a)*opacity*opacity;
+#endif
 
 	color.rgb = waterCol*(1.0-0.4*fresnel) + waterRefl*fresnel;
 
+#ifdef NL_WATER_WAVE
 	if(camDist<10.0) {
 		wPos.y += bump;
 	}
+#endif
 
 	return color;
 }
 
 void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1){
 	if(diffuse.a>0.9875 && diffuse.a<0.9925 && abs(diffuse.r-diffuse.b)+abs(diffuse.b-diffuse.g)>0.02){
-		color.rgb = max(color.rgb,(vec3_splat(GLOW_TEX*(diffuse.a>0.989 ? 0.4 : 1.0)) + 0.6*diffuse.rgb)*(1.0-uv1.y));
+		color.rgb = max(color.rgb,(vec3_splat(NL_GLOW_TEX*(diffuse.a>0.989 ? 0.4 : 1.0)) + 0.6*diffuse.rgb)*(1.0-uv1.y));
 		light_tint = vec3_splat(0.2) + 0.8*light_tint;
 	}
 }
@@ -722,8 +716,13 @@ void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1){
 void nl_foliage_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 lit,
 					 vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, float t,
 					 bool isColored, float camDist, bool underWater ) {
-	// texture space - (64x64) textures in uv0.xy
-	vec2 texMap = uv0*vec2(64.0,64.0);
+
+	if (camDist > 13.0) {	// only wave nearby
+		return;
+	}
+
+	// texture space - (32x64) textures in uv0.xy
+	vec2 texMap = uv0*vec2(32.0, 64.0);
 	float texPosY = fract(texMap.y);
 
 	int texNoX = int(texMap.x);
@@ -731,8 +730,6 @@ void nl_foliage_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, ve
 
 	// x and z distance from block center
 	vec2 bPosC = abs(bPos.xz-0.5);
-
-	float windStrength = lit.y*(noise1D(t*0.36) + (rainFactor*0.4));
 
 	bool isTop = texPosY<0.5;
 	bool isTreeLeaves = (COLOR.a==0.0) && max(COLOR.g,COLOR.r)>0.37 && bPos.x+bPos.y+bPos.z<0.01;
@@ -742,52 +739,54 @@ void nl_foliage_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, ve
 	bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop && !underWater);
 
 	// darken plants bottom - better to not move it elsewhere
-	light *= isFarmPlant && !isTop ? 0.65 : 1.0;
-	if(isColored && !isTreeLeaves && texNoY==12){
-		light *= isTop ? 1.2 : 1.2 - (bPos.y>0.0 ? 1.5-bPos.y : 0.5);
-	}
+	//light *= isFarmPlant && !isTop ? 0.65 : 1.0;
+	//if(isColored && !isTreeLeaves && texNoY==12){
+	//	light *= isTop ? 1.2 : 1.2 - (bPos.y>0.0 ? 1.5-bPos.y : 0.5);
+	//}
 
-	if(shouldWave && camDist<20.0){
+	if (shouldWave) {
 
-		// values must be a multiple of pi/4
-		float phaseDiff = dot(cPos,vec3(0.7854)) + fastRand(tiledCpos.xz + tiledCpos.y);
+		float wave = NL_PLANTS_WAVE*lit.y*(noise1D(t*0.36) + (rainFactor*0.4));
 
-		float amplitude = PLANTS_WAVE*windStrength;
-
-		amplitude *= isTreeLeaves ? 0.5 : 1.0;
-		amplitude = isVines ? min(0.024,amplitude*fract(0.01+tiledCpos.y*0.5)) : amplitude;
+		wave *= isTreeLeaves ? 0.5 : 1.0;
+		wave = isVines ? min(0.024,wave*fract(0.01+tiledCpos.y*0.5)) : wave;
 
 		// wave the bottom of plants in opposite direction to make it look fixed
-		if(isPlants && isColored && !(isVines || isTreeLeaves || isTop)){amplitude *= bPos.y>0.0 ? bPos.y-1.0 : 0.0 ;}
+		if (isPlants && isColored && !(isVines || isTreeLeaves || isTop)) {
+			wave *= bPos.y>0.0 ? bPos.y-1.0 : 0.0 ;
+		}
 
-		float wave = 1.0+mix(
-			sin(t*wave_speed + phaseDiff),
-			sin(t*wave_speed*1.5 + phaseDiff),
+		// values must be a multiple of pi/4
+		float phaseDiff = dot(cPos,vec3_splat(NL_CONST_PI_QUART)) + fastRand(tiledCpos.xz + tiledCpos.y);
+
+		wave *= 1.0 + mix(
+			sin(t*NL_WAVE_SPEED + phaseDiff),
+			sin(t*NL_WAVE_SPEED*1.5 + phaseDiff),
 			rainFactor);
-		wave *= amplitude;
 
 		//worldPos.y -= 1.0-sqrt(1.0-wave*wave);
-		worldPos.xyz -= vec3(wave,wave*wave*0.5,wave);
+		worldPos.xyz -= vec3(wave, wave*wave*0.5, wave);
 	}
 }
 
-void nl_underwater_lighting(inout vec3 light, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, vec3 torchColor, float t){
+void nl_underwater_lighting(inout vec3 light, inout vec4 mistColor, vec2 lit, vec2 uv1,
+							vec3 tiledCpos, vec3 cPos, vec3 torchColor, float t){
 	// soft caustic effect
 	if(uv1.y < 0.9){
-		vec3 underWaterColor = mix(NL_UNDERWATER_COL,vec3(1.0),lit.y*0.7);
+		vec3 underWaterColor = mix(NL_UNDERWATER_COL, vec3(1.0, 1.0, 1.0), lit.y*0.7);
 
-		light = underWaterColor*(light*0.7 + vec3(underwater_brightness));
+		light = underWaterColor*(light*0.7 + vec3_splat(NL_UNDERWATER_BRIGHTNESS));
 
 		float caustics = disp(tiledCpos*vec3(1.0,0.1,1.0), t);
-		caustics += 0.25+0.25*sin(t + (cPos.x + cPos.z)*NL_CONST_PI_HALF);
+		caustics += 0.25+0.25*sin(t + (cPos.x+cPos.z)*NL_CONST_PI_HALF);
 
 		//if(is(uv1.y,0.81,0.82) || is(uv1.y,0.68,0.69) || is(uv1.y,0.56,0.57) || is(uv1.y,0.43,0.44) || is(uv1.y,0.31,0.32)){light.rgb=vec3(1.0,0.0,0.0);}
-		caustics *= ( any(lessThan(abs(uv1.yyyy-vec4(0.815,0.685,0.565,0.435)),vec4(0.05))) || is(uv1.y,0.31,0.32)) ? 3.6 : 1.8 ;
+		caustics *= ( any(lessThan(abs(uv1.yyyy-vec4(0.815,0.685,0.565,0.435)),vec4_splat(0.05))) || is(uv1.y,0.31,0.32)) ? 3.6 : 1.8 ;
 
-		light += caustics*underWaterColor*(0.1+lit.y+(lit.x*0.7))*caustic_intensity;
+		light += caustics*underWaterColor*(0.1 + lit.y + lit.x*0.7)*NL_CAUSTIC_INTENSITY;
 
 		// use mist to make water foggy around lights
-		mistColor.rgb = (1.0+lit.y*0.6)*mix(mistColor.rgb,torchColor*torch_intensity*NL_UNDERWATER_COL,lit.x);
-		mistColor.a += (1.0-mistColor.a)*dot(lit,vec2(0.2));
+		mistColor.rgb = (1.0+lit.y*0.6)*mix(mistColor.rgb, torchColor*torch_intensity*NL_UNDERWATER_COL, lit.x);
+		mistColor.a += (1.0-mistColor.a)*dot(lit, vec2(0.2, 0.2));
 	}
 }
