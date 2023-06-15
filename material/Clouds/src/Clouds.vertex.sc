@@ -10,10 +10,6 @@ uniform vec4 FogColor;
 uniform vec4 FogAndDistanceControl;
 uniform vec4 ViewPositionAndTime;
 
-const float fogNear = 0.9;
-const vec3 inverseLightDirection = vec3(0.62, 0.78, 0.0);
-const float ambient = 0.7;
-
 void main()
 {
 	// make cloud thin

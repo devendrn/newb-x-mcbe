@@ -15,7 +15,7 @@ TARGETS=""
 
 ARGS=("$@")
 for t in "${ARGS[@]}"; do
-  if [ "$t" == "android" ] || [ "$t" == "windows" ]; then
+  if [ "$t" == "android" ] || [ "$t" == "windows" ] || [ "$t" == "ios" ] ; then
     TARGETS+="$t "
   fi
   shift

@@ -6,8 +6,8 @@ $input v_color0, v_color1, v_fog, v_texcoord0, v_lightmapUV, v_extra
 uniform vec4 FogColor;
 
 SAMPLER2D(s_MatTexture, 0);
-SAMPLER2D(s_SeasonsTexture, 1);
-SAMPLER2D(s_LightMapTexture, 2);
+SAMPLER2D(s_LightMapTexture, 1);
+SAMPLER2D(s_SeasonsTexture, 2);
 
 void main() {
     vec4 diffuse;
@@ -28,11 +28,9 @@ void main() {
     diffuse.rgb *= mix(vec3(1.0, 1.0, 1.0),
                        texture2D(s_SeasonsTexture, v_color1.xy).rgb * 2.0,
                        v_color1.z);
-    color.rgb = v_color1.aaa;
-#else
-    color = v_color0;
 #endif
 
+    color = v_color0;
 #endif
 
     diffuse.rgb *= diffuse.rgb;

@@ -2,7 +2,7 @@
 //// !! depreciated !!
 
 // values
-// (toggle means - can be uncommented)
+// (toggle options can be commented to disable)
 
 #define NL_CONSTRAST 0.74
 
@@ -39,6 +39,7 @@
 #define NL_NOON_SUN_COL vec3(1.0,0.75,0.57)
 #define NL_NIGHT_SUN_COL vec3(0.5,0.64,1.0)
 
+// blinking torch light (toggle)
 //#define NL_BLINKING_TORCH
 
 // torch colors
@@ -698,7 +699,7 @@ void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1){
 
 void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, vec2 lit,
 					 vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, float t,
-					 bool isColored, float camDist, bool underWater ) {
+					 bool isColored, float camDist, bool underWater, bool isTreeLeaves) {
 
 	if (camDist > 13.0) {	// only wave nearby
 		return;
@@ -715,7 +716,6 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
 	vec2 bPosC = abs(bPos.xz-0.5);
 
 	bool isTop = texPosY<0.5;
-	bool isTreeLeaves = (COLOR.a==0.0) && max(COLOR.g,COLOR.r)>0.37 && bPos.x+bPos.y+bPos.z<0.01;
 	bool isPlants = (COLOR.r/COLOR.g<1.9);
 	bool isVines = (bPos.y + bPos.x*bPos.z)<0.00005 && is(bPosC.x+bPosC.y,0.94921,0.94922);
 	bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25);

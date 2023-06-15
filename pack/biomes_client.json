@@ -18,7 +18,7 @@
       "inherit_from_prior_fog": false
     },
     "desert": {
-      "water_surface_color": "#AAFB00",
+      "water_surface_color": "#AAF900",
       "fog_identifier": "minecraft:fog_desert",
       "inherit_from_prior_fog": false
     },
@@ -49,13 +49,13 @@
     },
     "swampland": {
       "water_surface_color": "#00BF00",
-      "water_surface_transparency": 1.0,
+      "water_surface_transparency": 0.94,
       "fog_identifier": "minecraft:fog_swampland",
       "inherit_from_prior_fog": false
     },
     "swampland_mutated": {
       "water_surface_color": "#00BF00",
-      "water_surface_transparency": 1.0,
+      "water_surface_transparency": 0.94,
       "fog_identifier": "minecraft:fog_swampland_mutated",
       "inherit_from_prior_fog": false
     },

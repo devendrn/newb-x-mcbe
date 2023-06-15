@@ -91,7 +91,7 @@ void main() {
 	}
 
 	// uses modified biomes_client colors
-	bool isWater = COLOR.b == 0.0;
+	bool isWater = COLOR.b == 0.0 && COLOR.a < 0.95;
 	float water = float(isWater);
 
 	// time
@@ -99,7 +99,10 @@ void main() {
 
 // convert color space to linear-space
 #ifdef SEASONS
+	isTree = true;
+
 	// season tree leaves are colored in fragment
+	color.w *= color.w;
 	color = vec4(color.www, 1.0);
 
 	// tree leaves shadow fix
@@ -134,7 +137,7 @@ void main() {
 #if defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE)
 	nl_wave(worldPos, light, rainFactor, uv1, lit,
 					 uv0, bPos, COLOR, cPos, tiledCpos, t,
-					 isColored, camDis, underWater );
+					 isColored, camDis, underWater, isTree);
 #endif
 #endif
 
