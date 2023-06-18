@@ -3,7 +3,7 @@ $input a_color0, a_position, a_texcoord0, a_texcoord1
     $input i_data0, i_data1, i_data2, i_data3
 #endif
 
-$output v_color0, v_color1, v_fog, v_texcoord0, v_lightmapUV, v_extra
+$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra
 
 #include <bgfx_shader.sh>
 #include <newb_legacy.sh>
@@ -141,14 +141,6 @@ void main() {
 #endif
 #endif
 
-	if (isWater) {
-		color = nl_water(worldPos, color, light, cPos, bPos.y, COLOR, FogColor.rgb, horizonCol,
-			  horizonEdgeCol, zenithCol, uv1, t, camDis,
-			  rainFactor, tiledCpos, end, torchColor);
-	}
-	else {
-		color.rgb *= light;
-	}
 
 	// loading chunks
 	relativeDist += RenderChunkFogAlpha.x;
@@ -172,14 +164,33 @@ void main() {
 		fogColor.a *= fogGradient;
 	}
 
+	vec4 pos = mul(u_viewProj, vec4(worldPos, 1.0));
+
+	vec4 refl;
+	if (isWater) {
+		refl = nl_water(worldPos, color, light, cPos, bPos.y, COLOR, FogColor.rgb, horizonCol,
+			  horizonEdgeCol, zenithCol, uv1, t, camDis,
+			  rainFactor, tiledCpos, end, torchColor);
+	}
+	else {
+		refl = nl_refl(color, mistColor, lit, uv1, tiledCpos,
+			camDis, wPos, viewDir, torchColor, horizonCol,
+			zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
+	}
+
+	color.rgb *= light;
+
 	// mix fog with mist
 	mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
 
+	v_extra.r = shade;
+	v_extra.g = worldPos.y;
 	v_extra.b = water;
+	v_refl = refl;
     v_texcoord0 = a_texcoord0;
     v_lightmapUV = a_texcoord1;
     v_color0 = color;
 	v_color1 = a_color0;
-    v_fog = fogColor;
-    gl_Position = mul(u_viewProj, vec4(worldPos, 1.0));
+    v_fog = mistColor;
+    gl_Position = pos;
 }

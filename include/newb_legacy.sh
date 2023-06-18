@@ -100,11 +100,11 @@
 //️ aurora borealis brightness (toggle)
 #define NL_AURORA 1.0
 
+// rainy wind blow transparency (0-0.3)
+#define NL_RAIN_MIST_OPACITY 0.12
+
 
 // unsorted
-
-// Value - Rainy wind blow transparency (0-0.3)
-//#define rain_blow_opacity 0.19
 
 // Toggle - Underwater Wave
 // Value - Wave intensity
@@ -619,7 +619,7 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
     return light;
 }
 
-vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, float fractCposY, vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,
+vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 light, vec3 cPos, float fractCposY, vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,
 			  vec3 horizonEdgeCol, vec3 zenithCol, vec2 uv1, float t, float camDist,
 			  float rainFactor, vec3 tiledCpos, bool end, vec3 torchColor) {
 	vec3 viewDir = -wPos/camDist;
@@ -629,9 +629,7 @@ vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, float fractCpo
 	vec3 waterCol = NL_FRESH_WATER_COL;
 	waterCol = COLOR.r < 0.5 ? mix(NL_MARSHY_WATER_COL,waterCol,COLOR.r*2.0) : mix(waterCol,NL_SEA_WATER_COL,(COLOR.r*2.0)-1.0);
 	waterCol *= COLOR.g;
-
-	waterCol *= 0.3 + (FOG_COLOR.g*(2.0-2.0*FOG_COLOR.g)*rainFactor);
-	waterCol *= light*max(max(FOG_COLOR.b,0.2+uv1.x*uv1.x),FOG_COLOR.r*1.2)*max(0.3+0.7*uv1.y,uv1.x);
+	waterCol *= waterCol*0.5;
 
 	float cosR;
 	float bump = NL_WATER_BUMP;
@@ -679,7 +677,7 @@ vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, float fractCpo
 	color.a = color.a + (1.0-color.a)*opacity*opacity;
 #endif
 
-	color.rgb = waterCol*(1.0-0.4*fresnel) + waterRefl*fresnel;
+	color.rgb = waterCol*(1.0-0.4*fresnel);
 
 #ifdef NL_WATER_WAVE
 	if(camDist<10.0) {
@@ -687,7 +685,7 @@ vec4 nl_water(inout vec3 wPos, vec4 color, vec3 light, vec3 cPos, float fractCpo
 	}
 #endif
 
-	return color;
+	return vec4(waterRefl, fresnel);
 }
 
 void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1){
@@ -811,3 +809,48 @@ void nl_underwater_lighting(inout vec3 light, inout vec4 mistColor, vec2 lit, ve
 	}
 }
 
+vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos,
+			 float camDist, vec3 wPos, vec3 viewDir, vec3 torchLight, vec3 horizonCol,
+			 vec3 zenithCol, float rainFactor, float render_dist, float t, vec3 pos) {
+	vec4 wetRefl = vec4_splat(0.0);
+	if(rainFactor > 0.0){
+		float lit2 = lit.y*lit.y;
+		// humid air blow
+		float humidAir = max(noise2D( (pos.xy*vec2(1.5,1.0)/(1.0+pos.z)) + (t*vec2(1.4,0.7)) ),0.0);
+		humidAir *= rainFactor*lit2;
+		mistColor.a = min(mistColor.a + humidAir*NL_RAIN_MIST_OPACITY, 1.0);
+
+		// wet effect
+		float endDist = render_dist*0.6;
+
+		if(camDist < endDist){
+
+			// puddles map
+			float wetness = lit2*min(0.4+0.6*fastRand(tiledCpos.xz*1.4),1.0);
+
+			// cosine of incidence angle
+			float cosR = max(viewDir.y,float(wPos.y > 0.0));
+
+			wetRefl.rgb = getRainSkyRefl(horizonCol,zenithCol,cosR);
+			wetRefl.a = calculateFresnel(cosR,0.03)*rainFactor*wetness;
+
+			// extra
+			float streaks = viewDir.x/length(viewDir.xz);
+			streaks = sin(streaks*7.0);
+			streaks *= streaks;
+
+			wetRefl.rgb *= 1.0+(0.7*streaks*float(uv1.y<0.88));
+			wetRefl.rgb += 0.9*torchLight*streaks*lit.x*NL_TORCH_INTENSITY;
+
+			// hide effect far from player
+			wetRefl.a *= clamp(2.0-(2.0*camDist/endDist),0.0,0.9);
+
+			// darken wet parts
+			color.rgb *= 1.0-0.5*wetness*rainFactor;
+		}
+		else{
+			color.rgb *= 1.0-0.4*lit2*rainFactor;
+		}
+	}
+	return wetRefl;
+}
