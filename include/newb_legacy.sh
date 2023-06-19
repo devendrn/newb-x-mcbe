@@ -629,7 +629,7 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 light, vec3 cPos, float fr
 	vec3 waterCol = NL_FRESH_WATER_COL;
 	waterCol = COLOR.r < 0.5 ? mix(NL_MARSHY_WATER_COL,waterCol,COLOR.r*2.0) : mix(waterCol,NL_SEA_WATER_COL,(COLOR.r*2.0)-1.0);
 	waterCol *= COLOR.g;
-	waterCol *= waterCol*0.5;
+	waterCol *= waterCol*0.3;
 
 	float cosR;
 	float bump = NL_WATER_BUMP;
