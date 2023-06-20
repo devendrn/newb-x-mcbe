@@ -103,6 +103,8 @@
 // rainy wind blow transparency (0-0.3)
 #define NL_RAIN_MIST_OPACITY 0.12
 
+// chunk loading slide in animation (toggle)
+//#define NL_CHUNK_LOAD_ANIM 100.0
 
 // unsorted
 
@@ -200,7 +202,7 @@ float noise2D(vec2 p){
 vec4 renderMist(vec3 fog, float dist, float lit, float rain, bool nether, bool underwater, bool end, vec3 FOG_COLOR){
 
 	float density = NL_MIST_DENSITY;
-	if(!(nether||end)){
+	if(!nether){
 		// increase density based on darkness
 		density += density*(0.99-FOG_COLOR.g)*18.0;
 	}
@@ -257,6 +259,10 @@ vec3 getUnderwaterCol(vec3 FOG_COLOR){
 	return NL_BASE_UNDERWATER_COL*FOG_COLOR.b;
 }
 
+vec3 getEndSkyCol() {
+	return vec3(0.57,0.063,0.66)*0.5;
+}
+
 vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR){
 
 	// value needs tweaking
@@ -277,7 +283,6 @@ vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR){
 }
 
 vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR){
-
 	// value needs tweaking
 	float val = max(FOG_COLOR.r*0.65,max(FOG_COLOR.g*1.1,FOG_COLOR.b));
 
@@ -573,8 +578,10 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
         // ambient - end and nether
         light = end ? vec3(1.98,1.25,2.3) : vec3(1.98,1.44,1.26);
 
+		light += horizonCol*0.7;
+
         // torch light
-        light += torchLight;
+        light += torchLight*0.5;
     }
     else{
         // overworld lighting

@@ -80,14 +80,23 @@ void main() {
 	float rainFactor = detectRain(FogAndDistanceControl.xyz);
 
 	// sky colors
-	vec3 zenithCol = getZenithCol(rainFactor, FogColor.rgb);
-	vec3 horizonCol = getHorizonCol(rainFactor, FogColor.rgb);
-	vec3 horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, FogColor.rgb);
+	vec3 zenithCol;
+	vec3 horizonCol;
+	vec3 horizonEdgeCol;
 	if (underWater) {
 		vec3 fogcol = getUnderwaterCol(FogColor.rgb);
 		zenithCol = fogcol;
 		horizonCol = fogcol;
 		horizonEdgeCol = fogcol;
+	} else if (end) {
+		vec3 fogcol = getEndSkyCol();
+		zenithCol = 0.3*fogcol;
+		horizonCol = fogcol;
+		horizonEdgeCol = fogcol;
+	} else {
+		zenithCol = getZenithCol(rainFactor, FogColor.rgb);
+		horizonCol = getHorizonCol(rainFactor, FogColor.rgb);
+		horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, FogColor.rgb);
 	}
 
 	// uses modified biomes_client colors
@@ -145,19 +154,17 @@ void main() {
 	// loading chunks
 	relativeDist += RenderChunkFogAlpha.x;
 
+#ifdef NL_CHUNK_LOAD_ANIM
 	// slide in (will be disabled next commit)
-	worldPos.y -= 100.0*pow(RenderChunkFogAlpha.x,3.0);
+	worldPos.y -= NL_CHUNK_LOAD_ANIM*pow(RenderChunkFogAlpha.x,3.0);
+#endif
+
 	vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
 
 	if (nether) {
 		fogColor.rgb = mix(fogColor.rgb, vec3(0.8,0.2,0.12)*1.5,
 			lit.x*(1.67-fogColor.a*1.67));
 	} else if (!underWater) {
-
-		if (end) {
-			fogColor.rgb = vec3(0.16,0.06,0.2);
-		}
-
 		// to remove fog in heights
 		float fogGradient = 1.0-max(-viewDir.y+0.1,0.0);
 		fogGradient *= fogGradient*fogGradient;

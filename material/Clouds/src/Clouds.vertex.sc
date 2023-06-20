@@ -29,7 +29,7 @@ void main()
 
 	vec4 color = vec4(CloudColor.rgb,1.0);
 	color = renderClouds(color, worldPos.xz, t, rain);
-	color.rgb = mix(color.rgb,vec3(color.g*FogColor.g*3.5),rain*0.8);
+	color.rgb = mix(color.rgb,vec3_splat(color.g*FogColor.g*3.5),rain*0.8);
 
 	// cloud depth
 	worldPos.y += NL_CLOUD_DEPTH*color.a*(10.0-7.0*rain);
