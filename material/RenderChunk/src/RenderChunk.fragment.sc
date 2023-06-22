@@ -50,13 +50,13 @@ void main() {
     if ( v_extra.b > 0.5 ) {
         diffuse.rgb += v_refl.rgb*v_refl.a;
 	} else {
-        if(v_refl.a > 0.0){
+        if (v_refl.a > 0.0 && v_extra.g < 0.0) {
             // wet effect - only on xz plane
             float dy = abs(dFdy(v_extra.g));
-            if(v_extra.g  < 0.0 && dy < 0.001){
+            if (dy < 0.001) {
                 float mask = v_refl.a*(clamp(v_extra.r*10.0,8.2,8.8)-7.8);
                 mask *= 1.0 - dy*1000.0;
-                diffuse.rgb = diffuse.rgb*(1.0 - 0.5*mask) + v_refl.rgb*mask;
+                diffuse.rgb += v_refl.rgb*mask;
             }
         }
 	}

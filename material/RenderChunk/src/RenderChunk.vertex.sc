@@ -129,7 +129,6 @@ void main() {
 
 	vec3 torchColor; // modified by nl_lighting
 
-	// mist (also used underwater to decrease visibility)
 	vec4 mistColor = renderMist(horizonEdgeCol, relativeDist, lit.x, rainFactor, nether,underWater,end,FogColor.rgb);
 
     vec3 light = nl_lighting(torchColor, a_color0.rgb, FogColor.rgb, rainFactor,uv1, lit, isTree,
@@ -139,7 +138,7 @@ void main() {
 	mistColor.rgb += 0.3*torchColor*NL_TORCH_INTENSITY*lit.x;
 
 	if (underWater) {
-		nl_underwater_lighting(light, mistColor, lit, uv1, tiledCpos, cPos, torchColor, t);
+		nl_underwater_lighting(light, lit, uv1, tiledCpos, cPos, t);
 	}
 
 #ifdef ALPHA_TEST
@@ -150,12 +149,11 @@ void main() {
 #endif
 #endif
 
-
 	// loading chunks
 	relativeDist += RenderChunkFogAlpha.x;
 
 #ifdef NL_CHUNK_LOAD_ANIM
-	// slide in (will be disabled next commit)
+	// slide in
 	worldPos.y -= NL_CHUNK_LOAD_ANIM*pow(RenderChunkFogAlpha.x,3.0);
 #endif
 
@@ -175,11 +173,10 @@ void main() {
 
 	vec4 refl;
 	if (isWater) {
-		refl = nl_water(worldPos, color, light, cPos, bPos.y, COLOR, FogColor.rgb, horizonCol,
+		refl = nl_water(worldPos, color, viewDir, light, cPos, bPos.y, COLOR, FogColor.rgb, horizonCol,
 			  horizonEdgeCol, zenithCol, uv1, t, camDis,
 			  rainFactor, tiledCpos, end, torchColor);
-	}
-	else {
+	} else {
 		refl = nl_refl(color, mistColor, lit, uv1, tiledCpos,
 			camDis, wPos, viewDir, torchColor, horizonCol,
 			zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
@@ -188,11 +185,9 @@ void main() {
 	color.rgb *= light;
 
 	// mix fog with mist
-	mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
+	mistColor = mix(mistColor, vec4(fogColor.rgb,1.0), fogColor.a);
 
-	v_extra.r = shade;
-	v_extra.g = worldPos.y;
-	v_extra.b = water;
+	v_extra.rgb = vec3(shade, worldPos.y, water);
 	v_refl = refl;
     v_texcoord0 = a_texcoord0;
     v_lightmapUV = a_texcoord1;
