@@ -1,18 +1,16 @@
 //// Legacy code ported from newb-shader-mcbe
 //// !! depreciated !!
 
-//precision lowp float;
-
-// values
 // (toggle options can be commented to disable)
 
-#define NL_CONSTRAST 0.74
 
 // 1 - Exponential
 // 2 - Simple Reinhard
 // 3 - Extended Reinhard
 // 4 - ACES
 #define NL_TONEMAP_TYPE 3
+
+#define NL_CONSTRAST 0.74
 
 // (toggle)
 //#define NL_EXPOSURE 1.3
@@ -27,14 +25,13 @@
 #define NL_CAVE_BRIGHTNESS 0.1
 #define NL_SHADOW_INTENSITY 0.7
 
-// fog
+// mist density
 #define NL_MIST_DENSITY 0.18
 
 // 0 - Off
 // 1 - Vanilla fog
 // 2 - Smoother vanilla fog
 #define NL_FOG_TYPE 2
-
 
 // top light color (sunlight/moonlight)
 #define NL_MORNING_SUN_COL vec3(1.0,0.45,0.14)
@@ -64,6 +61,7 @@
 // plants wave intensity (toggle)
 #define NL_PLANTS_WAVE 0.04
 
+// waving speed
 #define NL_WAVE_SPEED 2.8
 
 // water
@@ -76,16 +74,19 @@
 // water wave (toggle)
 #define NL_WATER_WAVE
 
-// use only surface angle for water transparency (gives more transparency)
+// fade water based on angle (toggle)
 //#define NL_WATER_ANGLE_BLEND
 
-// water texture overlay
+// vanilla water texture overlay
 #define NL_WATER_TEX_OPACITY 0.0
 
 // underwater lighting
 #define NL_UNDERWATER_BRIGHTNESS 0.8
 #define NL_UNDERWATER_COL vec3(0.2,0.6,1.0)
 #define NL_CAUSTIC_INTENSITY 1.9
+
+// underwater wave intensity (toggle)
+#define NL_UNDERWATER_WAVE 0.1
 
 // lantern swing intensity (toggle)
 #define NL_LANTERN_WAVE 0.16
@@ -763,7 +764,7 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
 	}
 }
 
-void nl_underwater_lighting(inout vec3 light, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, vec3 pos, float t) {
+void nl_underwater_lighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, highp float t) {
 	// soft caustic effect
 	if (uv1.y < 0.9) {
 		float caustics = disp(tiledCpos*vec3(1.0,0.1,1.0), t);
@@ -773,6 +774,9 @@ void nl_underwater_lighting(inout vec3 light, vec2 lit, vec2 uv1, vec3 tiledCpos
 
 		light *= mix(NL_UNDERWATER_COL, vec3(1.0,1.0,1.0), lit.y*0.7);
 	}
+#ifdef NL_UNDERWATER_WAVE
+	pos.xy += NL_UNDERWATER_WAVE*min(0.05*pos.z,0.6)*sin(t*1.2 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
+#endif
 }
 
 vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos,

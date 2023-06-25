@@ -161,7 +161,7 @@ void main() {
 	vec4 pos = mul(u_viewProj, vec4(worldPos, 1.0));
 
 	if (underWater) {
-		nl_underwater_lighting(light, lit, uv1, tiledCpos, cPos, pos.xyz, t);
+		nl_underwater_lighting(light, pos.xyz, lit, uv1, tiledCpos, cPos, t);
 	}
 
 	vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
