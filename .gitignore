@@ -1,5 +1,8 @@
-
+# ingnore dirs
 build/
 data/
 env/
 .bak/
+
+# eol
+* text=auto
