@@ -9,8 +9,7 @@ uniform vec4 FogColor;
 uniform vec4 FogAndDistanceControl;
 uniform vec4 ViewPositionAndTime;
 
-void main()
-{
+void main() {
 	vec3 pos = a_position;
 
 	// pi/1800 (one complete rotation per hour)
@@ -19,7 +18,7 @@ void main()
 	// rotate skybox
 	float sinA = sin(t);
 	float cosA = cos(t);
-	pos.xz = mul(mat2(cosA,-sinA,sinA,cosA), pos.xz);
+	pos.xz = mul(mtxFromRows(vec2(cosA,-sinA),vec2(sinA,cosA)), pos.xz);
 
 	v_color0 = colorCorrection(getEndSkyCol());
 	v_texcoord0 = (2.5 - abs(pos.y))*a_texcoord0;

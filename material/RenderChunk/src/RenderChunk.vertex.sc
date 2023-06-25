@@ -99,9 +99,14 @@ void main() {
 		horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, FogColor.rgb);
 	}
 
+#ifdef TRANSPARENT
 	// uses modified biomes_client colors
 	bool isWater = COLOR.b == 0.0 && COLOR.a < 0.95;
 	float water = float(isWater);
+#else
+	bool isWater = false;
+	float water = 0.0;
+#endif
 
 	// time
 	highp float t = ViewPositionAndTime.w;
@@ -137,10 +142,6 @@ void main() {
 	mistColor.rgb *= max(0.75, uv1.y);
 	mistColor.rgb += 0.3*torchColor*NL_TORCH_INTENSITY*lit.x;
 
-	if (underWater) {
-		nl_underwater_lighting(light, lit, uv1, tiledCpos, cPos, t);
-	}
-
 #ifdef ALPHA_TEST
 #if defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE)
 	nl_wave(worldPos, light, rainFactor, uv1, lit,
@@ -149,13 +150,19 @@ void main() {
 #endif
 #endif
 
+#ifdef NL_CHUNK_LOAD_ANIM
+	// slide in anim
+	worldPos.y -= NL_CHUNK_LOAD_ANIM*pow(RenderChunkFogAlpha.x,3.0);
+#endif
+
 	// loading chunks
 	relativeDist += RenderChunkFogAlpha.x;
 
-#ifdef NL_CHUNK_LOAD_ANIM
-	// slide in
-	worldPos.y -= NL_CHUNK_LOAD_ANIM*pow(RenderChunkFogAlpha.x,3.0);
-#endif
+	vec4 pos = mul(u_viewProj, vec4(worldPos, 1.0));
+
+	if (underWater) {
+		nl_underwater_lighting(light, lit, uv1, tiledCpos, cPos, pos.xyz, t);
+	}
 
 	vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
 
@@ -169,9 +176,9 @@ void main() {
 		fogColor.a *= fogGradient;
 	}
 
-	vec4 pos = mul(u_viewProj, vec4(worldPos, 1.0));
 
 	vec4 refl;
+#ifdef TRANSPARENT
 	if (isWater) {
 		refl = nl_water(worldPos, color, viewDir, light, cPos, bPos.y, COLOR, FogColor.rgb, horizonCol,
 			  horizonEdgeCol, zenithCol, uv1, t, camDis,
@@ -181,6 +188,11 @@ void main() {
 			camDis, wPos, viewDir, torchColor, horizonCol,
 			zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
 	}
+#else
+	refl = nl_refl(color, mistColor, lit, uv1, tiledCpos,
+		camDis, wPos, viewDir, torchColor, horizonCol,
+		zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
+#endif
 
 	color.rgb *= light;
 

@@ -18,8 +18,8 @@ void main() {
 #else
     diffuse = texture2D(s_MatTexture, v_texcoord0);
 
-#if defined(ALPHA_TEST)
-    if (diffuse.a < 0.5) {
+#ifdef ALPHA_TEST
+    if (diffuse.a < 0.65) {
         discard;
     }
 #endif
@@ -38,12 +38,16 @@ void main() {
     vec3 light_tint = texture2D(s_LightMapTexture, v_lightmapUV).rgb;
     light_tint = mix(light_tint.bbb, light_tint*light_tint, 0.35 + 0.65*v_lightmapUV.y*v_lightmapUV.y*v_lightmapUV.y);
 
+#ifndef TRANSPARENT
     nl_glow(diffuse, color, light_tint, v_lightmapUV);
+#endif
 
+#ifdef TRANSPARENT
     if ( v_extra.b > 0.5 ) {
 		diffuse.rgb = vec3_splat(mix(1.0, diffuse.b*1.8, NL_WATER_TEX_OPACITY));
         diffuse.a = color.a;
     }
+#endif
 
     diffuse.rgb *= color.rgb * light_tint;
 

@@ -108,15 +108,6 @@
 // chunk loading slide in animation (toggle)
 //#define NL_CHUNK_LOAD_ANIM 100.0
 
-// unsorted
-
-// Toggle - Underwater Wave
-// Value - Wave intensity
-//#define UNDERWATER_WAVE 0.06
-
-// Toggle - Cloud reflection on water
-//#define CLOUD_REFLECTION
-
 
 // CONSTANTS
 #define NL_CONST_SHADOW_EDGE 0.876
@@ -148,7 +139,7 @@ bool detectNether(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
 }
 
 bool detectUnderwater(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
-	return FOG_CONTROL.x < 0.001 && max(FOG_COLOR.b, FOG_COLOR.g) > FOG_COLOR.r;
+	return FOG_CONTROL.x < 0.001 && (FOG_COLOR.b>FOG_COLOR.r || FOG_COLOR.g>FOG_COLOR.r);
 }
 
 float detectRain(vec3 FOG_CONTROL) {
@@ -162,7 +153,7 @@ float detectRain(vec3 FOG_CONTROL) {
 
 	vec2 factor = clamp((start-FOG_CONTROL.xy)/(start-end), vec2(0.0, 0.0),vec2(1.0, 1.0));
 
-	// ease in ease out for Y
+	// smooth out Y
 	factor.y = factor.y*factor.y*(3.0 - 2.0*factor.y);
 
 	return factor.x*factor.y;
@@ -203,26 +194,18 @@ float noise2D(vec2 p) {
 
 vec4 renderMist(vec3 fog, float dist, float lit, float rain, bool nether, bool underwater, bool end, vec3 FOG_COLOR) {
 
-	float density = NL_MIST_DENSITY;
+	// increase density based on darkness
+	float density = NL_MIST_DENSITY*(1.0 + (0.99-FOG_COLOR.g)*18.0);
+
 	vec4 mist;
-
 	if (nether) {
-		mist.rgb = FOG_COLOR.rgb;
-		mist.rgb = mix(2.6*mist.rgb*mist.rgb,vec3(2.1,0.7,0.2),lit*0.7);
+		mist.rgb = 2.6*mix(FOG_COLOR*FOG_COLOR,NL_NETHER_TORCH_COL*NL_NETHER_TORCH_COL,lit*0.7);
 	} else {
-		mist.rgb = fog*vec3(1.0,1.1-0.1*rain,1.4-0.4*rain);
-
-		// increase density based on darkness
-		density += density*(0.99-FOG_COLOR.g)*18.0;
+		mist.rgb = fog;
 	}
 
 	// exponential mist
-	mist.a = 0.31-0.3*exp(-dist*dist*density);
-
-	if (underwater) {
-		mist.rgb = fog;
-		mist.a = 0.2+0.5*min(dist*dist,1.0);
-	}
+	mist.a = 0.3-0.3*exp(-dist*dist*density);
 
 	return mist;
 }
@@ -233,9 +216,9 @@ vec4 renderFog(vec3 fogColor, float len, bool nether, vec3 FOG_COLOR, vec2 FOG_C
 	vec4 fog;
 	if (nether) {
 		// inverse color correction
+		float w = 0.7966;
 		fog.rgb = pow(FOG_COLOR, vec3_splat(1.37));
-		vec3 w = vec3_splat(0.7966);
-		fog.rgb = fog.rgb*(w + fog.rgb)/(w + fog.rgb*(vec3_splat(1.0) - w));
+		fog.rgb = fog.rgb*(w + fog.rgb)/(w + fog.rgb*(1.0 - w));
 	} else {
 		fog.rgb = fogColor;
 	}
@@ -334,7 +317,7 @@ vec3 tonemap(vec3 x) {
 	//float white = 4.0;
 	//float white_scale = 1.0/(white*white);
 	float white_scale = 0.063;
-	x = (x*(1.0+(x*white_scale)))/(1.0+x);
+	x = (x*(1.0+x*white_scale))/(1.0+x);
 	return x;
 }
 #elif NL_TONEMAP_TYPE==4
@@ -563,18 +546,14 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
 
     vec3 torchLight = torchColor*torch_attenuation;
 
-    if(nether || end){
+    if (nether || end) {
         // nether & end lighting
 
         // ambient - end and nether
-        light = end ? vec3(1.98,1.25,2.3) : vec3(2.0,1.44,1.26);
+        light = end ? vec3(1.98,1.25,2.3) : 3.0*vec3(1.0,0.72,0.63);
 
-		light += horizonCol*0.7;
-
-        // torch light
-        light += torchLight*0.5;
-    }
-    else{
+		light += horizonCol + torchLight*0.5;
+    } else {
         // overworld lighting
 
         float dayFactor = min(dot(FOG_COLOR.rgb, vec3(0.5,0.4,0.4))*(1.0 + 1.9*rainFactor), 1.0);
@@ -708,40 +687,32 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
 	if (camDist < 13.0) {	// only wave nearby
 
 	// texture space - (32x64) textures in uv0.xy
-	vec2 texMap = uv0*vec2(32.0, 64.0);
-	float texPosY = fract(texMap.y);
-
-	int texNoX = int(texMap.x);
-	int texNoY = int(texMap.y);
+	float texMapY = uv0.y*64.0;
+	float texPosY = fract(texMapY);
 
 	// x and z distance from block center
 	vec2 bPosC = abs(bPos.xz-0.5);
 
 	bool isTop = texPosY < 0.5;
 	bool isPlants = (COLOR.r/COLOR.g<1.9);
-	bool isVines = (bPos.y + bPos.x*bPos.z)<0.00005 && is(bPosC.x+bPosC.y,0.94921,0.94922);
+	bool isVines = bPosC.x==0.453125 || (bPosC.y<0.451 && bPosC.y>0.4492 && bPos.x==0.0);
 	bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25);
-	bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop && !underWater);
+	bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop);
 
-	// darken plants bottom - better to not move it elsewhere
-	//light *= isFarmPlant && !isTop ? 0.65 : 1.0;
-	//if(isColored && !isTreeLeaves && texNoY==12){
-	//	light *= isTop ? 1.2 : 1.2 - (bPos.y>0.0 ? 1.5-bPos.y : 0.5);
-	//}
-
-	float windStrength = lit.y*(noise1D(t*0.36) + (rainFactor*0.4));
+	float windStrength = lit.y*(noise1D(t*0.36) + rainFactor*0.4);
 
 #ifdef NL_PLANTS_WAVE
 	if (shouldWave) {
 
 		float wave = NL_PLANTS_WAVE*windStrength;
 
-		wave *= isTreeLeaves ? 0.5 : 1.0;
-		wave = isVines ? min(0.024,wave*fract(0.01+tiledCpos.y*0.5)) : wave;
-
-		// wave the bottom of plants in opposite direction to make it look fixed
-		if (isPlants && isColored && !(isVines || isTreeLeaves || isTop)) {
-			wave *= bPos.y > 0.0 ? bPos.y-1.0 : 0.0 ;
+		if (isTreeLeaves) {
+			wave *= 0.5;
+		} else if (isVines) {
+			wave *= fract(0.01+tiledCpos.y*0.5);
+		} else if (isPlants && isColored && !isTop) {
+			// wave the bottom of plants in opposite direction to make it look fixed
+			wave *= bPos.y > 0.0 ? bPos.y-1.0 : 0.0;
 		}
 
 		// values must be a multiple of pi/4
@@ -792,7 +763,7 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
 	}
 }
 
-void nl_underwater_lighting(inout vec3 light, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, float t) {
+void nl_underwater_lighting(inout vec3 light, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, vec3 pos, float t) {
 	// soft caustic effect
 	if (uv1.y < 0.9) {
 		float caustics = disp(tiledCpos*vec3(1.0,0.1,1.0), t);
