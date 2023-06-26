@@ -78,7 +78,7 @@
 //#define NL_WATER_ANGLE_BLEND
 
 // vanilla water texture overlay
-#define NL_WATER_TEX_OPACITY 0.0
+#define NL_WATER_TEX_OPACITY 0.2
 
 // underwater lighting
 #define NL_UNDERWATER_BRIGHTNESS 0.8
@@ -524,7 +524,7 @@ float calculateFresnel(float cosR, float r0) {
 // parameters will be simplified later
 
 vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
-                 vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether, bool underwater) {
+                 vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether, bool underwater, highp float t) {
     // all of these will be multiplied by tex uv1 in frag so functions should be divided by uv1 here
 
     vec3 light;
@@ -600,7 +600,7 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
 }
 
 vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 cPos, float fractCposY, vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,
-			  vec3 horizonEdgeCol, vec3 zenithCol, vec2 uv1, float t, float camDist,
+			  vec3 horizonEdgeCol, vec3 zenithCol, vec2 uv1, highp float t, float camDist,
 			  float rainFactor, vec3 tiledCpos, bool end, vec3 torchColor) {
 
 	float cosR;
@@ -675,27 +675,26 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
 }
 
 void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1) {
-	if(diffuse.a>0.9875 && diffuse.a<0.9925 && abs(diffuse.r-diffuse.b)+abs(diffuse.b-diffuse.g)>0.02){
+	if (diffuse.a>0.9875 && diffuse.a<0.9925 && abs(diffuse.r-diffuse.b)+abs(diffuse.b-diffuse.g)>0.02) {
 		color.rgb = max(color.rgb, (vec3_splat(NL_GLOW_TEX*(diffuse.a>0.989 ? 0.4 : 1.0)) + 0.6*diffuse.rgb)*(1.0-uv1.y));
 		light_tint = vec3_splat(0.2) + 0.8*light_tint;
 	}
 }
 
 void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, vec2 lit,
-					 vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, float t,
+					 vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, highp float t,
 					 bool isColored, float camDist, bool underWater, bool isTreeLeaves) {
 
 	if (camDist < 13.0) {	// only wave nearby
 
 	// texture space - (32x64) textures in uv0.xy
-	float texMapY = uv0.y*64.0;
-	float texPosY = fract(texMapY);
+	float texPosY = fract(uv0.y*64.0);
 
 	// x and z distance from block center
 	vec2 bPosC = abs(bPos.xz-0.5);
 
 	bool isTop = texPosY < 0.5;
-	bool isPlants = (COLOR.r/COLOR.g<1.9);
+	bool isPlants = COLOR.r/COLOR.g<1.9;
 	bool isVines = bPosC.x==0.453125 || (bPosC.y<0.451 && bPosC.y>0.4492 && bPos.x==0.0);
 	bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25);
 	bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop);
@@ -781,7 +780,7 @@ void nl_underwater_lighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1
 
 vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos,
 			 float camDist, vec3 wPos, vec3 viewDir, vec3 torchColor, vec3 horizonCol,
-			 vec3 zenithCol, float rainFactor, float render_dist, float t, vec3 pos) {
+			 vec3 zenithCol, float rainFactor, float render_dist, highp float t, vec3 pos) {
 	vec4 wetRefl = vec4_splat(0.0);
 	if (rainFactor > 0.0) {
 		float wetness = lit.y*lit.y*rainFactor;

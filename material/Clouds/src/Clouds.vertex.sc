@@ -1,5 +1,4 @@
 $input a_color0, a_position
-
 $output v_color0
 
 #include <bgfx_shader.sh>

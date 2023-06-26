@@ -13,10 +13,9 @@ void main() {
 
 	skyColor = colorCorrection(skyColor);
 
-	gl_FragColor = vec4(skyColor,1.0);
+	gl_FragColor = vec4(skyColor, 1.0);
 
 #else
-    //Fallback
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+    gl_FragColor = vec4(0.0,0.0,0.0,0.0);
 #endif
 }

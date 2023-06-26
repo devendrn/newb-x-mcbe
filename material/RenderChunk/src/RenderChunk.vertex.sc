@@ -1,8 +1,7 @@
 $input a_color0, a_position, a_texcoord0, a_texcoord1
 #ifdef INSTANCING
-    $input i_data0, i_data1, i_data2, i_data3
+	$input i_data0, i_data1, i_data2, i_data3
 #endif
-
 $output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra
 
 #include <bgfx_shader.sh>
@@ -27,14 +26,14 @@ void main() {
 	vec3 viewDir;
 
 #ifdef RENDER_AS_BILLBOARDS
-    worldPos += vec3(0.5, 0.5, 0.5);
+    worldPos += vec3(0.5,0.5,0.5);
     viewDir = normalize(worldPos - ViewPositionAndTime.xyz);
     vec3 boardPlane = normalize(vec3(viewDir.z, 0.0, -viewDir.x));
     worldPos = (worldPos -
         ((((viewDir.yzx * boardPlane.zxy) - (viewDir.zxy * boardPlane.yzx)) *
         (a_color0.z - 0.5)) +
         (boardPlane * (a_color0.x - 0.5))));
-    color = vec4(1.0, 1.0, 1.0, 1.0);
+    color = vec4(1.0,1.0,1.0,1.0);
 #else
     color = a_color0;
 #endif
@@ -46,8 +45,8 @@ void main() {
 
 
 #ifdef TRANSPARENT
-    if(a_color0.a < 0.95) {
-		float alphaFadeOut = clamp((camDis / FogAndDistanceControl.w),0.0,1.0);
+    if (a_color0.a < 0.95) {
+		float alphaFadeOut = clamp((camDis/FogAndDistanceControl.w),0.0,1.0);
 		color.a = getWaterAlpha(a_color0.rgb);
 		color.a = color.a + (0.5-0.5*color.a)*alphaFadeOut;
     };
@@ -56,9 +55,8 @@ void main() {
 	vec3 wPos = worldPos.xyz;
 	vec3 cPos = a_position.xyz;
 	vec3 bPos = fract(cPos);
-	vec3 tiledCpos = cPos*vec3(cPos.x<15.99,cPos.y<15.99,cPos.z<15.99);
+	vec3 tiledCpos = fract(cPos*0.0625);
 
-    vec4 COLOR = a_color0;
     vec2 uv0 = a_texcoord0;
     vec2 uv1 = a_texcoord1;
 	vec2 lit = uv1*uv1;
@@ -67,10 +65,10 @@ void main() {
 	float shade = isColored ? color.g*1.5 : color.g;
 
 	// tree leaves detection
-	bool isTree = (isColored && (bPos.x+bPos.y+bPos.z < 0.001)) || (color.a < 0.005 && max(COLOR.g,COLOR.r) > 0.37);
+	bool isTree = (isColored && (bPos.x+bPos.y+bPos.z < 0.001)) || (color.a == 0.0 && max(color.g,color.r) > 0.37);
 #ifndef ALPHA_TEST
-	// detect tree leaves that are not transparent (use texture map)
-	isTree = isTree && (uv0.x < 0.1 || uv0.x > 0.9) && uv0.y < 0.3;
+	// detect tree leaves that are not transparent (use tex map)
+	isTree = isTree && uv0.x > 0.15 && uv0.y > 0.23 && uv0.y < 0.26;
 #endif
 
 	// environment detections
@@ -90,7 +88,7 @@ void main() {
 		horizonEdgeCol = fogcol;
 	} else if (end) {
 		vec3 fogcol = getEndSkyCol();
-		zenithCol = 0.3*fogcol;
+		zenithCol = fogcol;
 		horizonCol = fogcol;
 		horizonEdgeCol = fogcol;
 	} else {
@@ -101,7 +99,7 @@ void main() {
 
 #ifdef TRANSPARENT
 	// uses modified biomes_client colors
-	bool isWater = COLOR.b == 0.0 && COLOR.a < 0.95;
+	bool isWater = a_color0.b == 0.0 && a_color0.a < 0.95;
 	float water = float(isWater);
 #else
 	bool isWater = false;
@@ -137,7 +135,7 @@ void main() {
 	vec4 mistColor = renderMist(horizonEdgeCol, relativeDist, lit.x, rainFactor, nether,underWater,end,FogColor.rgb);
 
     vec3 light = nl_lighting(torchColor, a_color0.rgb, FogColor.rgb, rainFactor,uv1, lit, isTree,
-                 horizonCol, zenithCol, shade, end, nether, underWater);
+                 horizonCol, zenithCol, shade, end, nether, underWater, t);
 
 	mistColor.rgb *= max(0.75, uv1.y);
 	mistColor.rgb += 0.3*torchColor*NL_TORCH_INTENSITY*lit.x;
@@ -145,7 +143,7 @@ void main() {
 #ifdef ALPHA_TEST
 #if defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE)
 	nl_wave(worldPos, light, rainFactor, uv1, lit,
-					 uv0, bPos, COLOR, cPos, tiledCpos, t,
+					 uv0, bPos, a_color0, cPos, tiledCpos, t,
 					 isColored, camDis, underWater, isTree);
 #endif
 #endif
@@ -172,15 +170,13 @@ void main() {
 	} else if (!underWater) {
 		// to remove fog in heights
 		float fogGradient = 1.0-max(-viewDir.y+0.1,0.0);
-		fogGradient *= fogGradient*fogGradient;
-		fogColor.a *= fogGradient;
+		fogColor.a *= fogGradient*fogGradient*fogGradient;
 	}
-
 
 	vec4 refl;
 #ifdef TRANSPARENT
 	if (isWater) {
-		refl = nl_water(worldPos, color, viewDir, light, cPos, bPos.y, COLOR, FogColor.rgb, horizonCol,
+		refl = nl_water(worldPos, color, viewDir, light, cPos, bPos.y, a_color0, FogColor.rgb, horizonCol,
 			  horizonEdgeCol, zenithCol, uv1, t, camDis,
 			  rainFactor, tiledCpos, end, torchColor);
 	} else {
