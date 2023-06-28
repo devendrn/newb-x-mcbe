@@ -8,7 +8,7 @@ MBT_ARGS="--compile --shaderc $SHADERC --include include/ --threads $MBT_THREADS
 
 DATA_DIR=data
 BUILD_DIR=build
-MATERIAL_DIR=material
+MATERIAL_DIR=materials
 
 #TARGETS="android windows ios"
 TARGETS=""

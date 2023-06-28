@@ -65,10 +65,10 @@ void main() {
 	float shade = isColored ? color.g*1.5 : color.g;
 
 	// tree leaves detection
+#ifdef ALPHA_TEST
 	bool isTree = (isColored && (bPos.x+bPos.y+bPos.z < 0.001)) || (color.a == 0.0 && max(color.g,color.r) > 0.37);
-#ifndef ALPHA_TEST
-	// detect tree leaves that are not transparent (use tex map)
-	isTree = isTree && uv0.x > 0.15 && uv0.y > 0.23 && uv0.y < 0.26;
+#else
+	bool isTree = false;
 #endif
 
 	// environment detections

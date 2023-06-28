@@ -8,7 +8,7 @@ set MBT_ARGS=--compile --shaderc %SHADERC% --include include/ --threads %MBT_THR
 
 set DATA_DIR=data
 set BUILD_DIR=build
-set MATERIAL_DIR=material
+set MATERIAL_DIR=materials
 
 set TARGETS=%*
 

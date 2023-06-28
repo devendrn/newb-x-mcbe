@@ -1,39 +1,45 @@
+#ifndef NEWB_LEGACY_H
+#define NEWB_LEGACY_H
+
 //// Legacy code ported from newb-shader-mcbe
-//// !! depreciated !!
 
-// (toggle options can be commented to disable)
+/* CONFIG
 
+  (toggle) - options can be commented to disable (by adding/removing '//')
 
-// 1 - Exponential
-// 2 - Simple Reinhard
-// 3 - Extended Reinhard
-// 4 - ACES
+  (min - max) - specifies range for value
+
+  vec3(<red>,<green>,<blue>) - color values
+*/
+
+// Tonemap type
+// 1:Exponential, 2:Reinhard, 3:Extended Reinhard, 4:ACES
 #define NL_TONEMAP_TYPE 3
-
-#define NL_CONSTRAST 0.74
 
 // (toggle)
 //#define NL_EXPOSURE 1.3
 //#define NL_SATURATION 1.4
 //#define NL_TINT vec3(1.0,0.75,0.5)
 
+#define NL_CONSTRAST 0.75
 
 // terrain lighting
 #define NL_SUN_INTENSITY 2.95
 #define NL_TORCH_INTENSITY 1.0
 #define NL_NIGHT_BRIGHTNESS 0.1
 #define NL_CAVE_BRIGHTNESS 0.1
+
+// shadow darkness (0.0 - 1.0) - 0.0 means no shadow
 #define NL_SHADOW_INTENSITY 0.7
 
 // mist density
 #define NL_MIST_DENSITY 0.18
 
-// 0 - Off
-// 1 - Vanilla fog
-// 2 - Smoother vanilla fog
+// Fog fade
+// 0:No fog, 1:Vanilla fog, 2:Smoother vanilla fog
 #define NL_FOG_TYPE 2
 
-// top light color (sunlight/moonlight)
+// sunlight/moonlight color on terrain
 #define NL_MORNING_SUN_COL vec3(1.0,0.45,0.14)
 #define NL_NOON_SUN_COL vec3(1.0,0.75,0.57)
 #define NL_NIGHT_SUN_COL vec3(0.5,0.64,1.0)
@@ -78,7 +84,7 @@
 //#define NL_WATER_ANGLE_BLEND
 
 // vanilla water texture overlay
-#define NL_WATER_TEX_OPACITY 0.2
+#define NL_WATER_TEX_OPACITY 0.3
 
 // underwater lighting
 #define NL_UNDERWATER_BRIGHTNESS 0.8
@@ -109,12 +115,13 @@
 // chunk loading slide in animation (toggle)
 //#define NL_CHUNK_LOAD_ANIM 100.0
 
+/* CONFIG end */
+
 
 // CONSTANTS
 #define NL_CONST_SHADOW_EDGE 0.876
 #define NL_CONST_PI_HALF 1.5708
 #define NL_CONST_PI_QUART 0.7854
-
 
 bool detectEnd(vec3 FOG_COLOR) {
 	// end is given a custom fog color in biomes_client.json to help in detection
@@ -150,7 +157,7 @@ float detectRain(vec3 FOG_CONTROL) {
 	// remaining values are equal to those specified in json file
 
 	vec2 start = vec2(0.5 + 1.09/(FOG_CONTROL.z*0.0625 - 0.8), 0.99);
-	vec2 end = vec2(0.2305, 0.7005);
+	vec2 end = vec2(0.2301, 0.7001);
 
 	vec2 factor = clamp((start-FOG_CONTROL.xy)/(start-end), vec2(0.0, 0.0),vec2(1.0, 1.0));
 
@@ -175,6 +182,7 @@ highp float rand(highp vec2 n) {
 
 // interpolation of noise - used by rainy air blow
 // see https://thebookofshaders.com/11/
+
 float noise2D(vec2 p) {
 	vec2 p0 = floor(p);
 	vec2 u = p-p0;
@@ -191,7 +199,6 @@ float noise2D(vec2 p) {
 
 	return min(n*n, 1.0);
 }
-
 
 vec4 renderMist(vec3 fog, float dist, float lit, float rain, bool nether, bool underwater, bool end, vec3 FOG_COLOR) {
 
@@ -211,9 +218,12 @@ vec4 renderMist(vec3 fog, float dist, float lit, float rain, bool nether, bool u
 	return mist;
 }
 
-vec4 renderFog(vec3 fogColor, float len, bool nether, vec3 FOG_COLOR, vec2 FOG_CONTROL) {
+vec4 renderFog(vec3 fogColor, float relativeDist, bool nether, vec3 FOG_COLOR, vec2 FOG_CONTROL) {
 
-#if NL_FOG_TYPE > 0
+#if NL_FOG_TYPE == 0
+	return vec4(0.0,0.0,0.0,0.0);
+#endif
+
 	vec4 fog;
 	if (nether) {
 		// inverse color correction
@@ -224,16 +234,13 @@ vec4 renderFog(vec3 fogColor, float len, bool nether, vec3 FOG_COLOR, vec2 FOG_C
 		fog.rgb = fogColor;
 	}
 
-	fog.a = clamp((len-FOG_CONTROL.x)/(FOG_CONTROL.y-FOG_CONTROL.x), 0.0, 1.0);
+	fog.a = clamp((relativeDist-FOG_CONTROL.x)/(FOG_CONTROL.y-FOG_CONTROL.x), 0.0, 1.0);
 
-#if NL_FOG_TYPE > 1
-		fog.a = (fog.a*fog.a)*(3.0-2.0*fog.a);
+#if NL_FOG_TYPE == 2
+	fog.a = (fog.a*fog.a)*(3.0-2.0*fog.a);
 #endif
 
 	return fog;
-#else
-	return vec4(0.0,0.0,0.0,0.0);
-#endif
 }
 
 vec3 getUnderwaterCol(vec3 FOG_COLOR) {
@@ -396,7 +403,7 @@ float cloudNoise2D(vec2 p, highp float t, float rain) {
 	float c3 = rand01(p0+vec2(0.0,1.0), start);
 	float c4 = rand01(p0+vec2(1.0,1.0), start);
 
-	return v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x);
+	return clamp(v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x), 0.0, 1.0);
 }
 
 // simple cloud
@@ -818,3 +825,5 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
 	}
 	return wetRefl;
 }
+
+#endif
