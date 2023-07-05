@@ -62,7 +62,7 @@
 #define NL_BASE_UNDERWATER_COL vec3(0.0,0.6,1.0)
 
 // ore glow intensity
-#define NL_GLOW_TEX 1.7
+#define NL_GLOW_TEX 1.5
 
 // plants wave intensity (toggle)
 #define NL_PLANTS_WAVE 0.04
@@ -679,13 +679,6 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
 #endif
 
 	return vec4(waterRefl, fresnel);
-}
-
-void nl_glow(vec4 diffuse, inout vec4 color, inout vec3 light_tint, vec2 uv1) {
-	if (diffuse.a>0.9875 && diffuse.a<0.9925 && abs(diffuse.r-diffuse.b)+abs(diffuse.b-diffuse.g)>0.02) {
-		color.rgb = max(color.rgb, (vec3_splat(NL_GLOW_TEX*(diffuse.a>0.989 ? 0.4 : 1.0)) + 0.6*diffuse.rgb)*(1.0-uv1.y));
-		light_tint = vec3_splat(0.2) + 0.8*light_tint;
-	}
 }
 
 void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, vec2 lit,
