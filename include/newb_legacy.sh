@@ -71,17 +71,15 @@
 #define NL_WAVE_SPEED 2.8
 
 // water
-#define NL_WATER_TRANSPARENCY 0.47
+#define NL_WATER_TRANSPARENCY 0.9
 #define NL_WATER_BUMP 0.07
-#define NL_SEA_WATER_COL vec3(0.13,0.65,0.87)
-#define NL_FRESH_WATER_COL vec3(0.07,0.55,0.55)
-#define NL_MARSHY_WATER_COL vec3(0.27,0.4,0.1)
+#define NL_WATER_TINT vec3(0.52,0.9,0.45)
 
 // water wave (toggle)
 #define NL_WATER_WAVE
 
-// fade water based on angle (toggle)
-//#define NL_WATER_ANGLE_BLEND
+// fade water opacity with fog (toggle)
+#define NL_WATER_FOG_FADE
 
 // vanilla water texture overlay
 #define NL_WATER_TEX_OPACITY 0.3
@@ -465,16 +463,6 @@ bool is(float val, float val1, float val2) {
 	return (val > val1 && val < val2);
 }
 
-// water transparency
-float getWaterAlpha(vec3 col) {
-	// tint - col.r,
-	if (col.r < 0.5) {
-		return mix(0.9, NL_WATER_TRANSPARENCY, col.r*2.0);
-	} else {
-		return NL_WATER_TRANSPARENCY;
-	}
-}
-
 // simpler rand for disp,wetmap
 float fastRand(vec2 n) {
 	float a = cos(dot(n, vec2(4.2683, 1.367)));
@@ -525,9 +513,8 @@ float calculateFresnel(float cosR, float r0) {
 	return r0 + (1.0-r0)*a5;
 }
 
-
 //// Implementation
-// functions are used while porting to wrap previous code easily
+// functions are used to wrap old legacy code easily
 // parameters will be simplified later
 
 vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
@@ -607,7 +594,7 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
 }
 
 vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 cPos, float fractCposY, vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,
-			  vec3 horizonEdgeCol, vec3 zenithCol, vec2 uv1, highp float t, float camDist,
+			  vec3 horizonEdgeCol, vec3 zenithCol, vec2 uv1, vec2 lit, highp float t, float camDist,
 			  float rainFactor, vec3 tiledCpos, bool end, vec3 torchColor) {
 
 	float cosR;
@@ -627,14 +614,13 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
 		waterRefl = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, cosR, -wPos.y);
 		waterRefl += getSunRefl(viewDir.x,horizonEdgeCol.r, FOG_COLOR);
 
-		// sky,cloud reflection mask
-		if (uv1.y < 0.93 && !end) {
-			waterRefl *= 0.7*uv1.y;
+		// mask sky reflection
+		if (!end) {
+			waterRefl *= 0.05 + lit.y*1.14;
 		}
 
-		// ambient,torch light reflection
-		waterRefl += vec3_splat(0.02-0.02*uv1.y);
-		waterRefl += torchColor*NL_TORCH_INTENSITY*((uv1.x > 0.83 ? 0.6 : 0.0) + uv1.x*uv1.x*bump*10.0);
+		// torch light reflection
+		waterRefl += torchColor*NL_TORCH_INTENSITY*(lit.x*lit.x + lit.x)*bump*10.0;
 
 		if (is(fractCposY, 0.8, 0.9)) {
 			// flat plane
@@ -656,25 +642,19 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
 	float fresnel = calculateFresnel(cosR, 0.03);
 	float opacity = 1.0-cosR;
 
-#ifdef NL_WATER_ANGLE_BLEND
-	color.a = getWaterAlpha(COLOR.rgb) + opacity*(1.0-color.a);
+#ifdef NL_WATER_FOG_FADE
+	color.a *= NL_WATER_TRANSPARENCY;
 #else
-	color.a = color.a + (1.0-color.a)*opacity*opacity;
+	color.a = COLOR.a*NL_WATER_TRANSPARENCY;
 #endif
 
-	// get water color (r-tint,g-lightness)
-	color.rgb = NL_FRESH_WATER_COL;
-	if (COLOR.r < 0.5) {
-		color.rgb = mix(NL_MARSHY_WATER_COL, color.rgb, COLOR.r*2.0);
-	} else {
-		color.rgb = mix(color.rgb, NL_SEA_WATER_COL, 2.0*COLOR.r -1.0);
-	}
-	color.rgb *= COLOR.g;
-	color.rgb *= color.rgb*0.3*(1.0-0.4*fresnel);
+	color.a = color.a + (1.0-color.a)*opacity*opacity;
+
+	color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.4*fresnel);
 
 #ifdef NL_WATER_WAVE
-	if(camDist < 10.0) {
-		wPos.y += bump;
+	if(camDist < 14.0) {
+		wPos.y -= bump;
 	}
 #endif
 

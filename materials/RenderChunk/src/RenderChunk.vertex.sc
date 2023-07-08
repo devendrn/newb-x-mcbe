@@ -44,14 +44,6 @@ void main() {
 	viewDir = modelCamPos / camDis;
 
 
-#ifdef TRANSPARENT
-    if (a_color0.a < 0.95) {
-		float alphaFadeOut = clamp((camDis/FogAndDistanceControl.w),0.0,1.0);
-		color.a = getWaterAlpha(a_color0.rgb);
-		color.a = color.a + (0.5-0.5*color.a)*alphaFadeOut;
-    };
-#endif
-
 	vec3 wPos = worldPos.xyz;
 	vec3 cPos = a_position.xyz;
 	vec3 bPos = fract(cPos);
@@ -96,15 +88,6 @@ void main() {
 		horizonCol = getHorizonCol(rainFactor, FogColor.rgb);
 		horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, FogColor.rgb);
 	}
-
-#ifdef TRANSPARENT
-	// uses modified biomes_client colors
-	bool isWater = a_color0.b == 0.0 && a_color0.a < 0.95;
-	float water = float(isWater);
-#else
-	bool isWater = false;
-	float water = 0.0;
-#endif
 
 	// time
 	highp float t = ViewPositionAndTime.w;
@@ -156,12 +139,6 @@ void main() {
 	// loading chunks
 	relativeDist += RenderChunkFogAlpha.x;
 
-	vec4 pos = mul(u_viewProj, vec4(worldPos, 1.0));
-
-	if (underWater) {
-		nl_underwater_lighting(light, pos.xyz, lit, uv1, tiledCpos, cPos, t);
-	}
-
 	vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
 
 	if (nether) {
@@ -174,21 +151,37 @@ void main() {
 	}
 
 	vec4 refl;
+	vec4 pos;
 #ifdef TRANSPARENT
+
+    if (a_color0.a < 0.95) {
+		color.a += (0.5-0.5*color.a)*clamp((camDis/FogAndDistanceControl.w),0.0,1.0);
+    };
+
+	bool isWater = a_color0.b > 0.3 && a_color0.a < 0.95;
+	float water = float(isWater);
 	if (isWater) {
 		refl = nl_water(worldPos, color, viewDir, light, cPos, bPos.y, a_color0, FogColor.rgb, horizonCol,
-			  horizonEdgeCol, zenithCol, uv1, t, camDis,
+			  horizonEdgeCol, zenithCol, uv1, lit, t, camDis,
 			  rainFactor, tiledCpos, end, torchColor);
+		pos = mul(u_viewProj, vec4(worldPos, 1.0));
 	} else {
+		pos = mul(u_viewProj, vec4(worldPos, 1.0));
 		refl = nl_refl(color, mistColor, lit, uv1, tiledCpos,
 			camDis, wPos, viewDir, torchColor, horizonCol,
 			zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
 	}
 #else
+	float water = 0.0;
+	pos = mul(u_viewProj, vec4(worldPos, 1.0));
 	refl = nl_refl(color, mistColor, lit, uv1, tiledCpos,
 		camDis, wPos, viewDir, torchColor, horizonCol,
 		zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
 #endif
+
+	if (underWater) {
+		nl_underwater_lighting(light, pos.xyz, lit, uv1, tiledCpos, cPos, t);
+	}
 
 	color.rgb *= light;
 
