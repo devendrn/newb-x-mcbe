@@ -10,8 +10,7 @@ fi
 
 echo "Unpacking:"
 
-for i in $MB_DIRS
-do
+for i in $MB_DIRS; do
   echo 
   echo "> $i"
   java -jar $MBT_JAR --unpack --data-only $i/*.material.bin

@@ -1,45 +1,58 @@
 #!/bin/bash
 
-MBT_JAR=env/jar/MaterialBinTool-0.8.*.jar
+MBT_JAR_FILES=(env/jar/MaterialBinTool-0.*.jar)
+MBT_JAR="${MBT_JAR_FILES[0]}"
+
 SHADERC=env/bin/shaderc
 
-MBT_ARGS="--compile --shaderc $SHADERC --include include/ --threads 2"
+MBT_ARGS="--compile --shaderc $SHADERC --include include/"
 
 DATA_DIR=data
 BUILD_DIR=build
 MATERIAL_DIR=materials
 
-# android windows ios"
 TARGETS=""
 
 MATERIALS=""
 
+ARG_MODE=""
 ARGS=("$@")
 for t in "${ARGS[@]}"; do
-  if [ "$t" == "android" ] || [ "$t" == "windows" ] || [ "$t" == "ios" ] ; then
+  if [ "$t" == "-p" ] || [ "$t" == "-m" ] || [ "$t" == "-t" ]; then
+    # mode
+    ARG_MODE="$t"
+  elif [ "$ARG_MODE" == "-p" ]; then
+    # target platform
     TARGETS+="$t "
-  else
+  elif [ "$ARG_MODE" == "-m" ]; then
+    # material files
     MATERIALS+="$MATERIAL_DIR/$t "
+  elif [ "$ARG_MODE" == "-t" ]; then
+    # mbt threads
+    THREADS="$t"
   fi
   shift
 done
 
-for p in $TARGETS
-do
+if [ -z "$MATERIALS" ]; then
+  # all materials
+  MATERIALS="$MATERIAL_DIR/*"
+fi
+
+if [ -n "$THREADS" ]; then
+  MBT_ARGS+=" --threads $THREADS"
+fi
+
+echo "${MBT_JAR##*/}"
+for p in $TARGETS; do
   echo "----------------------------------------------"
   if [ -d "$DATA_DIR/$p" ]; then
     echo "Building materials: target=$p"
 
-    if [ -z $MATERIALS ]; then
-      # all materials
-      MATERIALS=$MATERIAL_DIR/*
-    fi
-
-    for s in $MATERIALS
-    do
+    for s in $MATERIALS; do
       echo
       echo " - $s"
-      java -jar $MBT_JAR $MBT_ARGS --output $BUILD_DIR/$p --data $DATA_DIR/$p/${s##*/} $s
+      java -jar $MBT_JAR $MBT_ARGS --output $BUILD_DIR/$p --data $DATA_DIR/$p/${s##*/} $s -m
     done
 
   else

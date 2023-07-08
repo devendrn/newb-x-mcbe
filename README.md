@@ -1,6 +1,6 @@
 # newb-x-mcbe
 
-Newb X is a legacy port (incomplete) of [newb-shader-mcbe](https://github.com/devendrn/newb-shader-mcbe) for MCBE Renderdragon platforms. It is based on the theme "lightweight and soft aesthetics".
+Newb X Legacy is a ported version of [newb-shader-mcbe](https://github.com/devendrn/newb-shader-mcbe) for MCBE 1.20. It is a vanilla shader based on the theme "lightweight and soft aesthetics".
 
 > Note:
 This is an experimental repository, breaking changes are made often.
@@ -13,32 +13,29 @@ Also, there is no guarantee of continued development.
 ## Downloads
 
 Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord server](https://discord.gg/z9TBnq33HC).
-For other platforms, you have to manually build from source.
 
 ## Installation
 
-There are various ways to load custom material.bin files depending on your platform. See at discord. 
+Linux: ([minecraft-manifest](https://github.com/minecraft-linux/mcpelauncher-ui-manifest))
+- Replace material.bin files inside data root (backup original files first).
+- Import resource pack and activate it in global resources.
 
-If you are using [minecraft-manifest](https://github.com/minecraft-linux/mcpelauncher-ui-manifest),
-you can directly replace material.bin files inside data root (backup recommended).
+Windows:
+- Use [BetterRenderDragon](https://github.com/ddf8196/BetterRenderDragon) to load material.bin files via resource pack.
+
 
 ## Building
 
-This shader exists because of [MaterialBinTool](https://github.com/ddf8196/MaterialBinTool).
+### Linux
 
 **Prerequisites:**
+- [MaterialBinTool-0.8.x-all.jar](https://github.com/ddf8196/MaterialBinTool)
+- shaderc (from bgfx-mcbe)
 
- - MaterialBinTool-0.8.x-all.jar
- - shaderc (modified)
+You can find a precompiled binary (x86_64) for bgfx-mcbe shaderc at [Discord server](https://discord.gg/z9TBnq33HC).
 
-MBT uses a modified bgfx shaderc to work with MCBE.
-You can find this precompiled shaderc binary among MBT releases.
-For linux x86_64, you can find one at [Discord server](https://discord.gg/z9TBnq33HC).
-
-You should set up the directory structure as follows:
-
+Set up the directory structure as follows:
 ```
-├── build/
 ├── data/
 │   └── android/            <platform>
 │       └── *.material.bin  <vanilla mb files>
@@ -48,26 +45,29 @@ You should set up the directory structure as follows:
 │   └── jar/
 │       └── MaterialBinTool-0.8.x-all.jar
 ├── include/
-├── material/
+├── materials/
 ├── README.md
 ├── build.sh
 └── setup.sh
 ```
 
-#### Linux
-
-Place the vanilla material.bin files (required ones only) inside `data/<platform>/`.
-Now unpack the material.bin files by running:
+1. Place the vanilla material.bin files (required ones only) inside `data/<platform>/`.
+2. Unpack the vanilla material.bin files:
 ```
 ./setup.sh
 ```
- To compile the material src files, run:
+3. Compile the material src files:
 ```
-./build.sh android
+./build.sh -p android
 ```
-material.bin files will be now generated inside `build/<platform>/`
+Available parameters for `build.sh` are:
+```
+-p    Target platforms (android,ios)
+-m    Materials to compile (if unspecified, builds all material files)
+-t    Number of threads to use for compilation (default is 1)
+```
+Compiled material.bin files will be at `build/<platform>/`
 
 ## Note
 
 **Shaders are not officially supported on MCBE**.
-Do not blame me if this shader doesn't work for you.
