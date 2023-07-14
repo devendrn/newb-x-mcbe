@@ -59,7 +59,6 @@
 #define NL_DAY_SKY_CLARITY 0.3
 #define NL_BASE_HORIZON_COL vec3(1.0,0.4,0.3)
 #define NL_EDGE_HORIZON_COL vec3(1.0,0.4,0.2)
-#define NL_BASE_UNDERWATER_COL vec3(0.0,0.6,1.0)
 
 // ore glow intensity
 #define NL_GLOW_TEX 1.5
@@ -86,8 +85,8 @@
 
 // underwater lighting
 #define NL_UNDERWATER_BRIGHTNESS 0.8
-#define NL_UNDERWATER_COL vec3(0.2,0.6,1.0)
 #define NL_CAUSTIC_INTENSITY 1.9
+#define NL_UNDERWATER_TINT vec3(0.9,1.0,0.9)
 
 // underwater wave intensity (toggle)
 #define NL_UNDERWATER_WAVE 0.1
@@ -145,7 +144,7 @@ bool detectNether(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
 }
 
 bool detectUnderwater(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
-	return FOG_CONTROL.x < 0.001 && (FOG_COLOR.b>FOG_COLOR.r || FOG_COLOR.g>FOG_COLOR.r);
+	return FOG_CONTROL.x == 0.0 && (FOG_COLOR.b>FOG_COLOR.r || FOG_COLOR.g>FOG_COLOR.r);
 }
 
 float detectRain(vec3 FOG_CONTROL) {
@@ -155,9 +154,9 @@ float detectRain(vec3 FOG_CONTROL) {
 	// remaining values are equal to those specified in json file
 
 	vec2 start = vec2(0.5 + 1.09/(FOG_CONTROL.z*0.0625 - 0.8), 0.99);
-	vec2 end = vec2(0.2301, 0.7001);
+	vec2 end = vec2(0.23, 0.70);
 
-	vec2 factor = clamp((start-FOG_CONTROL.xy)/(start-end), vec2(0.0, 0.0),vec2(1.0, 1.0));
+	vec2 factor = clamp((start-FOG_CONTROL.xy)/(start-end), vec2(0.0,0.0),vec2(1.0,1.0));
 
 	// smooth out Y
 	factor.y = factor.y*factor.y*(3.0 - 2.0*factor.y);
@@ -195,7 +194,7 @@ float noise2D(vec2 p) {
 
 	float n = v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x);
 
-	return min(n*n, 1.0);
+	return n*n;
 }
 
 vec4 renderMist(vec3 fog, float dist, float lit, float rain, bool nether, bool underwater, bool end, vec3 FOG_COLOR) {
@@ -242,7 +241,7 @@ vec4 renderFog(vec3 fogColor, float relativeDist, bool nether, vec3 FOG_COLOR, v
 }
 
 vec3 getUnderwaterCol(vec3 FOG_COLOR) {
-	return NL_BASE_UNDERWATER_COL*FOG_COLOR.b;
+	return 2.0*NL_UNDERWATER_TINT*FOG_COLOR*FOG_COLOR;
 }
 
 vec3 getEndSkyCol() {
@@ -743,16 +742,14 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
 	}
 }
 
-void nl_underwater_lighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, highp float t) {
+void nl_underwater_lighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, highp float t, vec3 horizon_col) {
 	// soft caustic effect
 	if (uv1.y < 0.9) {
 		float caustics = disp(tiledCpos*vec3(1.0,0.1,1.0), t);
 		caustics += (1.0 + sin(t + (cPos.x+cPos.z)*NL_CONST_PI_HALF));
-
 		light += NL_UNDERWATER_BRIGHTNESS + NL_CAUSTIC_INTENSITY*caustics*(0.1 + lit.y + lit.x*0.7);
-
-		light *= mix(NL_UNDERWATER_COL, vec3(1.0,1.0,1.0), lit.y*0.7);
 	}
+	light *= mix(normalize(horizon_col), vec3(1.0,1.0,1.0), lit.y*0.6);
 #ifdef NL_UNDERWATER_WAVE
 	pos.xy += NL_UNDERWATER_WAVE*min(0.05*pos.z,0.6)*sin(t*1.2 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
 #endif
@@ -761,7 +758,7 @@ void nl_underwater_lighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1
 vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos,
 			 float camDist, vec3 wPos, vec3 viewDir, vec3 torchColor, vec3 horizonCol,
 			 vec3 zenithCol, float rainFactor, float render_dist, highp float t, vec3 pos) {
-	vec4 wetRefl = vec4_splat(0.0);
+	vec4 wetRefl = vec4(0.0,0.0,0.0,0.0);
 	if (rainFactor > 0.0) {
 		float wetness = lit.y*lit.y*rainFactor;
 
@@ -780,9 +777,7 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
 			// puddles map
 			wetness *= 1.25*min(0.4+0.6*fastRand(tiledCpos.xz*1.4), 1.0);
 
-			// incidence angle
 			float cosR = max(viewDir.y,float(wPos.y > 0.0));
-
 			wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
 			wetRefl.a = calculateFresnel(cosR, 0.03)*wetness;
 

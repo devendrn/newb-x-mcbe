@@ -8,7 +8,7 @@ SAMPLER2D(s_MatTexture, 0);
 void main() {
     vec4 diffuse = texture2D(s_MatTexture, v_texcoord0);
 
-	float sphereY = -v_pos.y/sqrt(dot(v_pos,v_pos));
+	float sphereY = v_pos.y/sqrt(dot(v_pos,v_pos));
 	float grad = 1.0 - max(sphereY,0.0);
 	grad *= grad;
 

@@ -14,51 +14,49 @@ uniform vec4 FogColor;
 
 void main() {
 
-    mat4 model;
 #ifdef INSTANCING
-    model = mtxFromCols(i_data0, i_data1, i_data2, i_data3);
+    mat4 model = mtxFromCols(i_data0, i_data1, i_data2, i_data3);
 #else
-    model = u_model[0];
+    mat4 model = u_model[0];
 #endif
 
     vec3 worldPos = mul(model, vec4(a_position, 1.0)).xyz;
-    vec4 color;
-	vec3 viewDir;
 
 #ifdef RENDER_AS_BILLBOARDS
     worldPos += vec3(0.5,0.5,0.5);
-    viewDir = normalize(worldPos - ViewPositionAndTime.xyz);
-    vec3 boardPlane = normalize(vec3(viewDir.z, 0.0, -viewDir.x));
-    worldPos = (worldPos -
-        ((((viewDir.yzx * boardPlane.zxy) - (viewDir.zxy * boardPlane.yzx)) *
-        (a_color0.z - 0.5)) +
-        (boardPlane * (a_color0.x - 0.5))));
-    color = vec4(1.0,1.0,1.0,1.0);
-#else
-    color = a_color0;
-#endif
 
     vec3 modelCamPos = (ViewPositionAndTime.xyz - worldPos);
     float camDis = length(modelCamPos);
+	vec3 viewDir = modelCamPos / camDis;
+
+    vec3 boardPlane = normalize(vec3(viewDir.z, 0.0, -viewDir.x));
+    worldPos -= (((viewDir.yzx * boardPlane.zxy) - (viewDir.zxy * boardPlane.yzx)) *
+		(a_color0.z - 0.5)) +
+        (boardPlane * (a_color0.x - 0.5));
+    vec4 color = vec4(1.0,1.0,1.0,1.0);
+#else
+    vec3 modelCamPos = (ViewPositionAndTime.xyz - worldPos);
+    float camDis = length(modelCamPos);
+	vec3 viewDir = modelCamPos / camDis;
+
+    vec4 color = a_color0;
+#endif
+
 	float relativeDist = camDis / FogAndDistanceControl.z;
-	viewDir = modelCamPos / camDis;
 
-
-	vec3 wPos = worldPos.xyz;
 	vec3 cPos = a_position.xyz;
 	vec3 bPos = fract(cPos);
 	vec3 tiledCpos = fract(cPos*0.0625);
 
-    vec2 uv0 = a_texcoord0;
     vec2 uv1 = a_texcoord1;
 	vec2 lit = uv1*uv1;
 
-	bool isColored = (color.g > min(color.r, color.b)) || !(color.r == color.g && color.r == color.b);
+	bool isColored = color.r != color.g || color.r != color.b;
 	float shade = isColored ? color.g*1.5 : color.g;
 
 	// tree leaves detection
 #ifdef ALPHA_TEST
-	bool isTree = (isColored && (bPos.x+bPos.y+bPos.z < 0.001)) || (color.a == 0.0 && max(color.g,color.r) > 0.37);
+	bool isTree = (isColored && (bPos.x+bPos.y+bPos.z < 0.001)) || color.a == 0.0;
 #else
 	bool isTree = false;
 #endif
@@ -120,13 +118,10 @@ void main() {
     vec3 light = nl_lighting(torchColor, a_color0.rgb, FogColor.rgb, rainFactor,uv1, lit, isTree,
                  horizonCol, zenithCol, shade, end, nether, underWater, t);
 
-	mistColor.rgb *= max(0.75, uv1.y);
-	mistColor.rgb += 0.3*torchColor*NL_TORCH_INTENSITY*lit.x;
-
 #ifdef ALPHA_TEST
 #if defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE)
 	nl_wave(worldPos, light, rainFactor, uv1, lit,
-					 uv0, bPos, a_color0, cPos, tiledCpos, t,
+					 a_texcoord0, bPos, a_color0, cPos, tiledCpos, t,
 					 isColored, camDis, underWater, isTree);
 #endif
 #endif
@@ -152,36 +147,42 @@ void main() {
 
 	vec4 refl;
 	vec4 pos;
-#ifdef TRANSPARENT
 
+#if !defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY)
+#ifdef TRANSPARENT
     if (a_color0.a < 0.95) {
 		color.a += (0.5-0.5*color.a)*clamp((camDis/FogAndDistanceControl.w),0.0,1.0);
     };
 
-	bool isWater = a_color0.b > 0.3 && a_color0.a < 0.95;
-	float water = float(isWater);
-	if (isWater) {
+	float water;
+	if (a_color0.b > 0.3 && a_color0.a < 0.95) {
+		water = 1.0;
 		refl = nl_water(worldPos, color, viewDir, light, cPos, bPos.y, a_color0, FogColor.rgb, horizonCol,
 			  horizonEdgeCol, zenithCol, uv1, lit, t, camDis,
 			  rainFactor, tiledCpos, end, torchColor);
 		pos = mul(u_viewProj, vec4(worldPos, 1.0));
 	} else {
+		water = 0.0;
 		pos = mul(u_viewProj, vec4(worldPos, 1.0));
 		refl = nl_refl(color, mistColor, lit, uv1, tiledCpos,
-			camDis, wPos, viewDir, torchColor, horizonCol,
+			camDis, worldPos, viewDir, torchColor, horizonCol,
 			zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
 	}
 #else
 	float water = 0.0;
 	pos = mul(u_viewProj, vec4(worldPos, 1.0));
 	refl = nl_refl(color, mistColor, lit, uv1, tiledCpos,
-		camDis, wPos, viewDir, torchColor, horizonCol,
+		camDis, worldPos, viewDir, torchColor, horizonCol,
 		zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
 #endif
 
 	if (underWater) {
-		nl_underwater_lighting(light, pos.xyz, lit, uv1, tiledCpos, cPos, t);
+		nl_underwater_lighting(light, pos.xyz, lit, uv1, tiledCpos, cPos, t, horizonEdgeCol);
 	}
+#else
+	float water = 0.0;
+	pos = mul(u_viewProj, vec4(worldPos, 1.0));
+#endif
 
 	color.rgb *= light;
 

@@ -8,9 +8,9 @@ SAMPLER2D(s_SeasonsTexture, 1);
 SAMPLER2D(s_LightMapTexture, 2);
 
 #ifdef ALPHA_TEST
-    #define GLOW_PIXEL(C) C.a>0.9875 && C.a<0.9925 && abs(C.r-C.b)+abs(C.b-C.g)>0.02
+    #define GLOW_PIXEL(C) C.a>0.9875 && C.a<0.99
 #else
-    #define GLOW_PIXEL(C) C.a>0.9875 && C.a<0.9925
+    #define GLOW_PIXEL(C) C.a>0.9875 && C.a<0.995
 #endif
 
 void main() {
@@ -24,7 +24,7 @@ void main() {
     diffuse = texture2D(s_MatTexture, v_texcoord0);
 
 #ifdef ALPHA_TEST
-    if (diffuse.a < 0.65) {
+    if (diffuse.a < 0.63) {
         discard;
     }
 #endif
@@ -43,22 +43,22 @@ void main() {
     vec3 light_tint = texture2D(s_LightMapTexture, v_lightmapUV).rgb;
     light_tint = mix(light_tint.bbb, light_tint*light_tint, 0.35 + 0.65*v_lightmapUV.y*v_lightmapUV.y*v_lightmapUV.y);
 
+    color.rgb *= light_tint;
+
     if (GLOW_PIXEL(diffuse)) {
-        vec3 min_light = vec3_splat(diffuse.a>0.989 ? 0.4*NL_GLOW_TEX : NL_GLOW_TEX);
-        color.rgb = max(color.rgb, min_light);
-        light_tint = max(light_tint, min_light);
+        color.rgb = max(color.rgb, NL_GLOW_TEX*(0.995-diffuse.a)/(0.995-0.9875));
     }
 
 #ifdef TRANSPARENT
     if (v_extra.b > 0.9) {
-		diffuse.rgb = vec3_splat(mix(1.0, diffuse.b*1.8, NL_WATER_TEX_OPACITY));
+		diffuse.rgb = vec3_splat(1.0 - NL_WATER_TEX_OPACITY*(1.0 - diffuse.b*1.8));
         diffuse.a = color.a;
     }
 #else
     diffuse.a = 1.0;
 #endif
 
-    diffuse.rgb *= color.rgb * light_tint;
+    diffuse.rgb *= color.rgb;
 
     if (v_extra.b > 0.9) {
         diffuse.rgb += v_refl.rgb*v_refl.a;
