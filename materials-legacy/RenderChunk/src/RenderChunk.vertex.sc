@@ -62,7 +62,7 @@ void main() {
 #endif
 
 	// environment detections
-	bool end = detectEnd(FogColor.rgb);
+	bool end = detectEnd(FogColor.rgb, FogAndDistanceControl.xy);
 	bool nether = detectNether(FogColor.rgb, FogAndDistanceControl.xy);
 	bool underWater = detectUnderwater(FogColor.rgb, FogAndDistanceControl.xy);
 	float rainFactor = detectRain(FogAndDistanceControl.xyz);

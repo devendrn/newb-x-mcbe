@@ -120,7 +120,7 @@
 #define NL_CONST_PI_HALF 1.5708
 #define NL_CONST_PI_QUART 0.7854
 
-bool detectEnd(vec3 FOG_COLOR) {
+bool detectEnd(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
 	// end is given a custom fog color in biomes_client.json to help in detection
 	// dark color (issue- rain transition when entering end)
 	return FOG_COLOR.r == FOG_COLOR.b && FOG_COLOR.r > 0.1  && FOG_COLOR.g < FOG_COLOR.r*0.4;

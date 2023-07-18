@@ -18,7 +18,7 @@ void main() {
     vec4 color;
 
 #if defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY)
-    diffuse.rgb = vec3(1.0,1.0,1.0);
+    diffuse = vec4(1.0,1.0,1.0,1.0);
     color = vec4(1.0,1.0,1.0,1.0);
 #else
     diffuse = texture2D(s_MatTexture, v_texcoord0);

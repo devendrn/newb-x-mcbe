@@ -5,4 +5,4 @@ env/
 .bak/
 
 # eol
-* text=auto
+* text=lf

@@ -8,7 +8,6 @@ $output v_color0, v_pos, v_texcoord0
 #include <newb_legacy.sh>
 
 //uniform vec4 FogColor;
-//uniform vec4 FogAndDistanceControl;
 uniform vec4 ViewPositionAndTime;
 
 void main() {
@@ -30,7 +29,7 @@ void main() {
 	pos.xz = mul(mtxFromRows(vec2(cosA,-sinA),vec2(sinA,cosA)), pos.xz);
 
 	v_color0 = colorCorrection(getEndSkyCol());
-	v_texcoord0 = (2.5 - abs(pos.y))*a_texcoord0;
+	v_texcoord0 = 2.0*a_texcoord0;
 	v_pos = pos;
     gl_Position = mul(u_viewProj, vec4(pos, 1.0));
 }

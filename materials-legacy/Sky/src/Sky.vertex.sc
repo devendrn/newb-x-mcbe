@@ -12,7 +12,9 @@ void main() {
 #if defined(OPAQUE)
 
 	vec3 pos = a_position;
-	pos.y -= 0.4*a_color0.r*a_color0.r;	// Displaces the sky edge
+
+	// make sky more spherical
+	pos.y -= 0.4*a_color0.r*a_color0.r;
 
 	vec3 wPos = pos.xyz;
 	wPos.y += 0.148;
