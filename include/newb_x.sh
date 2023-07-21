@@ -2,16 +2,16 @@
 #define NEWB_X_H
 
 #define N_CLOUDS_STEPS 10
-
-const float cloud_height = 14.0;
-const float cloud_scale_uv = 0.04;
-const float cloud_step_size = 1.0/N_CLOUDS_STEPS.0;
-const float cloud_density = 5.0/N_CLOUDS_STEPS.0;
+#define N_CLOUD_HEIGHT 15.0
+#define N_CLOUD_SCALE 0.04
+#define N_CLOUD_DENSITY 5.0
+#define N_CLOUD_VELOCIY 0.8
 
 float randtr(vec2 n, vec2 t) {
 	return smoothstep(t.x, t.y, rand(n));
 }
 
+// apply bevel with radius r at at corner (1.0)
 float bevel(float x, float r) {
 	float y = max(x-r,0.0)/(1.0-r);
 	return (1.0-r)*(1.0-sqrt(1.0-y*y));
@@ -19,9 +19,7 @@ float bevel(float x, float r) {
 
 float cloud_sdf(vec3 pos, float rain) {
 	vec2 p0 = floor(pos.xz);
-	vec2 u = pos.xz - p0;
-
-	u = smoothstep(0.6,1.0,u);
+	vec2 u = smoothstep(0.6,1.0,pos.xz-p0);
 	vec2 v = 1.0 - u;
 
 	// rain transition
@@ -33,46 +31,40 @@ float cloud_sdf(vec3 pos, float rain) {
 
 	// round y
 	float b = 0.5*bevel(2.0*abs(pos.y-0.5), 0.3);
-	n = smoothstep(b,0.5+b,n);
-	return n;
-}
-
-vec2 trace_cloud(vec3 v_dir, vec3 pos, float rain, float t) {
-
-	// local cloud pos
-	pos.y = 0.0;
-	pos.xz *= cloud_scale_uv;
-	pos.xz += vec2(0.01,0.02)*t;
-
-	// scaled ray offset
-	vec3 delta_p;
-	delta_p.xz = ((1.0+0.5*rain)*cloud_scale_uv*cloud_height*cloud_step_size)*v_dir.xz/abs(v_dir.y);
-	delta_p.y = cloud_step_size;
-
-	// alpha, gradient, ray depth temp
-	vec3 temp = vec3(0.0,1.0,1.0);
-
-	for (int i=0; i<N_CLOUDS_STEPS; i++) {
-		pos += delta_p;
-		float m = cloud_sdf(pos, rain);
-
-		temp.x += m*cloud_density*(1.0-temp.x);
-		temp.y = mix(temp.y, pos.y, temp.z);
-		temp.z *= 1.0 - m;
-
-		if (temp.x > 0.99) {
-			break;
-		}
-	}
-	return temp.xy;
+	return smoothstep(b,0.5+b,n);
 }
 
 vec4 render_clouds(vec3 v_dir, vec3 v_pos, float rain, float time, vec3 fog_col, vec3 sky_col) {
-	vec2 d = trace_cloud(v_dir, v_pos, rain, time);
+	// local cloud pos
+	vec3 pos = v_pos;
+	pos.y = 0.0;
+	pos.xz = N_CLOUD_SCALE*(v_pos.xz + vec2(1.0,0.5)*(time*N_CLOUD_VELOCIY));
 
-	if(v_pos.y>0.0) {
+	// scaled ray offset
+	vec3 delta_p;
+	delta_p.xz = ((1.0+0.5*rain)*N_CLOUD_SCALE*N_CLOUD_HEIGHT)*v_dir.xz/abs(v_dir.y);
+	delta_p.y = 1.0;
+	delta_p /= N_CLOUDS_STEPS.0;
+
+	// alpha, gradient, ray depth temp
+	vec3 d = vec3(0.0,1.0,1.0);
+	for (int i=0; i<N_CLOUDS_STEPS; i++) {
+		pos += delta_p;
+		float m = cloud_sdf(pos.xyz, rain);
+
+		d.x += m*N_CLOUD_DENSITY*(1.0-d.x)/N_CLOUDS_STEPS.0;
+		d.y = mix(d.y, pos.y, d.z);
+		d.z *= 1.0 - m;
+
+		if (d.x > 0.99) {
+			break;
+		}
+	}
+
+	if (v_pos.y > 0.0) {
 		d.y = 1.0 - d.y;
 	}
+
 	d.y = 1.0-0.7*d.y*d.y;
 
 	vec4 col;
@@ -80,7 +72,6 @@ vec4 render_clouds(vec3 v_dir, vec3 v_pos, float rain, float time, vec3 fog_col,
 	col.rgb += (vec3(0.05,0.08,0.08)+0.8*fog_col)*d.y;
 	col.rgb *= 1.0 - 0.5*rain;
 	col.a = d.x;
-
 	return col;
 }
 
