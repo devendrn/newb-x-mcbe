@@ -34,6 +34,8 @@ for t in "${ARGS[@]}"; do
     # build main (default build legacy)
     if [ "$t" == "main" ]; then
       MATERIAL_DIR=materials
+    elif [ "$t" == "lite" ]; then
+      MATERIAL_DIR=materials-lite
     fi
   fi
   shift

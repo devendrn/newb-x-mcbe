@@ -21,17 +21,21 @@ set ARG_MODE=
 
 	if "%ARG_MODE%" == "" (
 		if "%1" == "main" set MATERIALS_DIR=materials
+		if "%1" == "lite" set MATERIALS_DIR=materials-lite
+		goto :next_arg
 	)
 	if "%ARG_MODE%" == "-p" (
 		set TARGETS=%TARGETS% %1
+		goto :next_arg
 	)
 	if "%ARG_MODE%" == "-m" (
 		set MATERIALS=%MATERIALS% %MATERIALS_DIR%\%1
+		goto :next_arg
 	)
 	if "%ARG_MODE%" == "-t" (
 		set THREADS=%1
+		goto :next_arg
 	)
-	goto :next_arg
 :set_arg
   	set ARG_MODE=%1
 :next_arg
