@@ -357,7 +357,7 @@ vec3 colorCorrection(vec3 color) {
 	color = pow(color, vec3_splat(NL_CONSTRAST));
 
 	#ifdef NL_SATURATION
-		color = mix(vec3(dot(color,vec3(0.21, 0.71, 0.08))), color, NL_SATURATION);
+		color = mix(vec3_splat(dot(color,vec3(0.21, 0.71, 0.08))), color, NL_SATURATION);
 	#endif
 
 	#ifdef NL_TINT
@@ -366,7 +366,6 @@ vec3 colorCorrection(vec3 color) {
 
 	return color;
 }
-
 
 // rand with transition
 float randt(vec2 n, vec2 t) {
@@ -417,6 +416,7 @@ vec4 renderClouds(vec3 pos, highp float t, float rain, vec3 zenith_col, vec3 hor
 	return color;
 }
 
+#ifdef NL_AURORA
 // simple northern night sky effect
 vec4 renderAurora(vec2 uv, highp float t, float rain, vec3 FOG_COLOR) {
 	uv *= 0.1;
@@ -436,6 +436,7 @@ vec4 renderAurora(vec2 uv, highp float t, float rain, vec3 FOG_COLOR) {
 	col *= 1.0-min(4.5*max(FOG_COLOR.r, FOG_COLOR.b), 1.0);
 	return col;
 }
+#endif
 
 // sunlight tinting
 vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {

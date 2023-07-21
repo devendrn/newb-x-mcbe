@@ -5,8 +5,8 @@
 
 const float cloud_height = 14.0;
 const float cloud_scale_uv = 0.04;
-const float cloud_step_size = 1.0/float(N_CLOUDS_STEPS);
-const float cloud_density = 5.0*cloud_step_size;
+const float cloud_step_size = 1.0/N_CLOUDS_STEPS.0;
+const float cloud_density = 5.0/N_CLOUDS_STEPS.0;
 
 float randtr(vec2 n, vec2 t) {
 	return smoothstep(t.x, t.y, rand(n));
@@ -76,7 +76,7 @@ vec4 render_clouds(vec3 v_dir, vec3 v_pos, float rain, float time, vec3 fog_col,
 	d.y = 1.0-0.7*d.y*d.y;
 
 	vec4 col;
-	col.rgb += 0.6*sky_col;
+	col.rgb = 0.6*sky_col;
 	col.rgb += (vec3(0.05,0.08,0.08)+0.8*fog_col)*d.y;
 	col.rgb *= 1.0 - 0.5*rain;
 	col.a = d.x;
