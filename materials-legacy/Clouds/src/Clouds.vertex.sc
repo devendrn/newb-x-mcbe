@@ -23,38 +23,39 @@ void main() {
     mat4 model = u_model[0];
 #endif
 
-	// make cloud thin
-
+	model[3][0] = model[3][2] = 0.0;
+	model[3][1] *= 0.4;
+	pos.xz = 0.4*(pos.xz - 32.0);
+	pos.y *= 0.01;
 	vec3 worldPos = mul(model, vec4(pos, 1.0)).xyz;
 
 	// make cloud plane sperical
-	float len = length(worldPos.xz)*0.004;
+	float len = length(worldPos.xz)*0.003;
 	worldPos.y -= len*len*clamp(0.2*worldPos.y, -1.0, 1.0);
 
-	// time
 	highp float t = ViewPositionAndTime.w;
 
 	float rain = detectRain(FogAndDistanceControl.xyz);
 
-	vec4 color = vec4(CloudColor.rgb, 1.0);
-	color = renderClouds(color, worldPos.xz, t, rain);
-	color.rgb = mix(color.rgb,vec3_splat(color.g*FogColor.g*3.5), rain*0.8);
+	vec3 zenith_col = getZenithCol(rain, FogColor.rgb);
+	vec3 horizon_col = getHorizonCol(rain, FogColor.rgb);
+	vec3 fog_col = getHorizonEdgeCol(horizon_col, rain, FogColor.rgb);
+
+	vec4 color = renderClouds(worldPos.xyz, t, rain, zenith_col, horizon_col, fog_col);
 
 	// cloud depth
-	worldPos.y += NL_CLOUD_DEPTH*color.a*(10.0-7.0*rain);
+	worldPos.y -= NL_CLOUD_DEPTH*color.a*(3.0-1.0*rain);
 
 	color.a *= NL_CLOUD_OPACITY;
 
 #ifdef NL_AURORA
-	vec4 auroras = renderAurora(worldPos.xz, t, rain);
-	auroras *= max(1.0-1.7*color.a, 0.0);
-	auroras *= 1.0-min(4.5*max(FogColor.r, FogColor.b), 1.0);
-	auroras.rgb *= NL_AURORA;
-	color += auroras;
+	color += renderAurora(worldPos.xz, t, rain, FogColor.rgb)*(1.0-0.7*color.a);
 #endif
 
 	// fade out cloud layer
-	color.a *= clamp(2.0-2.0*length(worldPos.xyz)*0.002, 0.0, 1.0);
+	color.a *= clamp(2.0-2.0*length(worldPos.xyz)*0.004, 0.0, 1.0);
+
+	color.rgb = colorCorrection(color.rgb);
 
 	v_color0 = color;
     gl_Position = mul(u_viewProj, vec4(worldPos, 1.0));

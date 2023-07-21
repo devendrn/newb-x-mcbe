@@ -61,7 +61,7 @@
 #define NL_EDGE_HORIZON_COL vec3(1.0,0.4,0.2)
 
 // ore glow intensity
-#define NL_GLOW_TEX 1.5
+#define NL_GLOW_TEX 1.8
 
 // plants wave intensity (toggle)
 #define NL_PLANTS_WAVE 0.04
@@ -95,13 +95,11 @@
 #define NL_LANTERN_WAVE 0.16
 
 // clouds
-#define NL_CLOUD_START_RAIN 0.1
-#define NL_CLOUD_START_NORMAL 0.73
-#define NL_CLOUD_UV_SCALE vec2(0.0194, 0.0278)
+#define NL_CLOUD_UV_SCALE vec2(0.0194, 0.0278)*1.4
 #define NL_CLOUD_DEPTH 1.3
 #define NL_CLOUD_SPEED 0.04
 #define NL_CLOUD_DENSITY 0.54
-#define NL_CLOUD_OPACITY 0.8
+#define NL_CLOUD_OPACITY 0.9
 
 //️ aurora borealis brightness (toggle)
 #define NL_AURORA 1.0
@@ -370,11 +368,9 @@ vec3 colorCorrection(vec3 color) {
 }
 
 
-// clamp rand for cloud noise
-highp float rand01(highp vec2 seed, float start) {
-	float result = rand(seed);
-	result = clamp((result-start)*3.4, 0.0, 1.0);
-	return result*result;
+// rand with transition
+float randt(vec2 n, vec2 t) {
+	return smoothstep(t.x, t.y, rand(n));
 }
 
 // 2D cloud noise - used by clouds
@@ -382,52 +378,48 @@ float cloudNoise2D(vec2 p, highp float t, float rain) {
 
 	t *= NL_CLOUD_SPEED;
 
-	// start threshold - for bigger clouds during rain
-	float start = NL_CLOUD_START_NORMAL + (1.0 - NL_CLOUD_START_NORMAL)*(0.1+0.1*sin(t + p.y*0.3));
-	start = mix(start, NL_CLOUD_START_RAIN, rain);
-
-	p += vec2_splat(t);
+	p += t;
 	p.x += sin(p.y*0.4 + t);
 
 	vec2 p0 = floor(p);
 	vec2 u = p-p0;
 
-	u *= u*(3.0-2.0*u);
+	//u *= u*(3.0-2.0*u);
+	u = smoothstep(0.0,1.0,u);
 	vec2 v = 1.0-u;
 
-	float c1 = rand01(p0, start);
-	float c2 = rand01(p0+vec2(1.0,0.0), start);
-	float c3 = rand01(p0+vec2(0.0,1.0), start);
-	float c4 = rand01(p0+vec2(1.0,1.0), start);
+	// rain transition
+	vec2 d = vec2(0.09+0.5*rain,0.089+0.5*rain*rain);
 
-	return clamp(v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x), 0.0, 1.0);
+	float c1 = randt(p0, d);
+	float c2 = randt(p0+vec2(1.0,0.0), d);
+	float c3 = randt(p0+vec2(0.0,1.0), d);
+	float c4 = randt(p0+vec2(1.0,1.0), d);
+
+	return v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x);
 }
 
-// simple cloud
-vec4 renderClouds(vec4 color, vec2 uv, highp float t, float rain) {
-	uv *= NL_CLOUD_UV_SCALE;
+// simple clouds
+vec4 renderClouds(vec3 pos, highp float t, float rain, vec3 zenith_col, vec3 horizon_col, vec3 fog_col) {
+	pos.xz *= NL_CLOUD_UV_SCALE;
 
-	float cloudAlpha = cloudNoise2D(uv, t, rain);
-	float cloudShadow = cloudNoise2D(uv, (t+0.16), rain);
+	float cloudAlpha = cloudNoise2D(pos.xz, t, rain);
+	float cloudShadow = cloudNoise2D(pos.xz*0.91, t, rain);
 
-	color.a = max(cloudAlpha-0.2*cloudShadow, 0.0);
+	vec4 color = vec4(0.02,0.04,0.05,cloudAlpha);
 
-	// rainy clouds color
-	color.rgb = mix(color.rgb, vec3_splat(0.7), rain*0.5);
+	color.rgb += fog_col;
+	color.rgb *= (1.0-0.5*cloudShadow*float(pos.y>0.0));
 
-	// highlight at edge
-	color.rgb += vec3(0.12,0.12,0.2)*(1.0-cloudShadow);
-
-	// cloud shadow
-	color.rgb *= (1.0-0.6*cloudShadow*NL_CLOUD_DENSITY);
+	color.rgb += zenith_col*0.7;
+	color.rgb *= 1.0 - 0.4*rain;
 
 	return color;
 }
 
 // simple northern night sky effect
-vec4 renderAurora(vec2 uv, highp float t, float rain) {
-	uv *= 0.05;
-
+vec4 renderAurora(vec2 uv, highp float t, float rain, vec3 FOG_COLOR) {
+	uv *= 0.1;
 	float auroraCurves = sin(uv.x*0.09 + 0.07*t) + 0.3*sin(uv.x*0.5 + 0.09*t) + 0.03*sin((uv.x+uv.y)*3.0 + 0.2*t);
 	float auroraBase = uv.y*0.4 + 2.0*auroraCurves;
 	float auroraFlow = 0.5+0.5*sin(uv.x*0.3 + 0.07*t + 0.7*sin(auroraBase*0.9));
@@ -438,7 +430,11 @@ vec4 renderAurora(vec2 uv, highp float t, float rain) {
 	float aurora = sin(auroraBase)*sin(auroraBase*0.3);
 	aurora = abs(aurora*auroraFlow);
 
-	return vec4(0.0, (1.0-auroraCol)*aurora, auroraCol*aurora, aurora*aurora*(0.5-0.5*rain));
+	vec4 col = vec4(0.0, (1.0-auroraCol)*aurora, auroraCol*aurora, aurora*aurora);
+	col.gb *= NL_AURORA*0.6;
+	col.gba *= 1.0-rain;
+	col *= 1.0-min(4.5*max(FOG_COLOR.r, FOG_COLOR.b), 1.0);
+	return col;
 }
 
 // sunlight tinting
