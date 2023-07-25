@@ -97,17 +97,9 @@ void main() {
 	// season tree leaves are colored in fragment
 	color.w *= color.w;
 	color = vec4(color.www, 1.0);
-
-	// tree leaves shadow fix
-	uv1.y *= 1.00151;
 #else
 	if (isColored) {
 		color.rgb *= color.rgb*1.2;
-	}
-
-	// tree and slab shadow fix
-	if (isTree || (bPos.y == 0.5 && bPos.x == 0.0)) {
-		uv1.y *= 1.00151;
 	}
 #endif
 

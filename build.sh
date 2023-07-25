@@ -16,8 +16,7 @@ TARGETS=""
 MATERIALS=""
 
 ARG_MODE=""
-ARGS=("$@")
-for t in "${ARGS[@]}"; do
+for t in "$@"; do
   if [ "$t" == "-p" ] || [ "$t" == "-m" ] || [ "$t" == "-t" ]; then
     # mode
     ARG_MODE="$t"

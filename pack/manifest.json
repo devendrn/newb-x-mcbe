@@ -1,7 +1,7 @@
 {
     "format_version": 2,
     "header": {
-        "description": "§cOnly works with Patched Minecraft\n§7- all\nbuild-%v-android\n§3https://github.com/devendrn/newb-x-mcbe/",
+        "description": "§cOnly works with Patched Minecraft\n§7- all\nbuild-%v-%p\n§3https://github.com/devendrn/newb-x-mcbe/",
         "name": "Newb X Legacy",
         "uuid": "95f774cf-4afa-73e7-a21a-72146307b1d2",
         "version": [0, 1, 14],

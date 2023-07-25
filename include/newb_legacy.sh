@@ -61,7 +61,7 @@
 #define NL_EDGE_HORIZON_COL vec3(1.0,0.4,0.2)
 
 // ore glow intensity
-#define NL_GLOW_TEX 1.8
+#define NL_GLOW_TEX 2.0
 
 // plants wave intensity (toggle)
 #define NL_PLANTS_WAVE 0.04
@@ -112,16 +112,16 @@
 
 /* CONFIG end */
 
+#include <config.h>
 
 // CONSTANTS
-#define NL_CONST_SHADOW_EDGE 0.876
-#define NL_CONST_PI_HALF 1.5708
-#define NL_CONST_PI_QUART 0.7854
+#define NL_CONST_SHADOW_EDGE 0.93
+#define NL_CONST_PI_HALF 1.570796
+#define NL_CONST_PI_QUART 0.785398
 
 bool detectEnd(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
-	// end is given a custom fog color in biomes_client.json to help in detection
-	// dark color (issue- rain transition when entering end)
-	return FOG_COLOR.r == FOG_COLOR.b && FOG_COLOR.r > 0.1  && FOG_COLOR.g < FOG_COLOR.r*0.4;
+	// custom fog color in biomes_client.json to help in detection
+	return FOG_COLOR.r==FOG_COLOR.b && (FOG_COLOR.r-FOG_COLOR.g>0.24 || (FOG_COLOR.g==0.0 && FOG_COLOR.r>0.1));
 }
 
 bool detectNether(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
@@ -142,24 +142,17 @@ bool detectNether(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
 }
 
 bool detectUnderwater(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
-	return FOG_CONTROL.x == 0.0 && (FOG_COLOR.b>FOG_COLOR.r || FOG_COLOR.g>FOG_COLOR.r);
+	return FOG_CONTROL.x==0.0 && FOG_CONTROL.y<0.7 && (FOG_COLOR.b>FOG_COLOR.r || FOG_COLOR.g>FOG_COLOR.r);
 }
 
 float detectRain(vec3 FOG_CONTROL) {
-	// FOG_CONTROL (x,y) values when clear/rain
-	// clear x varies with render distance (z)
-	// reverse plotted (low accuracy) as 0.5 + 1.09/(k-0.8) where k is renderdistance in chunks
-	// remaining values are equal to those specified in json file
-
-	vec2 start = vec2(0.5 + 1.09/(FOG_CONTROL.z*0.0625 - 0.8), 0.99);
-	vec2 end = vec2(0.23, 0.70);
-
-	vec2 factor = clamp((start-FOG_CONTROL.xy)/(start-end), vec2(0.0,0.0),vec2(1.0,1.0));
-
-	// smooth out Y
-	factor.y = factor.y*factor.y*(3.0 - 2.0*factor.y);
-
-	return factor.x*factor.y;
+	// clear fogctrl.x varies with render distance (z)
+	// reverse plotted as 0.5 + 1.25/k (k is renderdistance in chunks, fogctrl.z = k*16)
+	vec2 clear = vec2(0.5 + 20.0/FOG_CONTROL.z, 1.0); // clear fogctrl value
+	vec2 rain = vec2(0.23, 0.70); // rain fogctrl value
+	vec2 factor = clamp((FOG_CONTROL.xy-clear)/(rain-clear), vec2(0.0,0.0),vec2(1.0,1.0));
+	float val = factor.x*factor.y;
+	return val*val*(3.0 - 2.0*val);
 }
 
 // 1D noise - used in plants,lantern wave
@@ -173,26 +166,6 @@ highp float noise1D(highp float x) {
 // hash function for noise (for highp only)
 highp float rand(highp vec2 n) {
 	return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
-}
-
-// interpolation of noise - used by rainy air blow
-// see https://thebookofshaders.com/11/
-
-float noise2D(vec2 p) {
-	vec2 p0 = floor(p);
-	vec2 u = p-p0;
-
-	u *= u*(3.0-2.0*u);
-	vec2 v = 1.0 - u;
-
-	float c1 = rand(p0);
-	float c2 = rand(p0+vec2(1.0,0.0));
-	float c3 = rand(p0+vec2(0.0,1.0));
-	float c4 = rand(p0+vec2(1.0,1.0));
-
-	float n = v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x);
-
-	return n*n;
 }
 
 vec4 renderMist(vec3 fog, float dist, float lit, float rain, bool nether, bool underwater, bool end, vec3 FOG_COLOR) {
@@ -560,10 +533,6 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
 
         // shadow cast by top light
         float shadow = float(uv1.y > NL_CONST_SHADOW_EDGE);
-
-        // make shadow a bit softer and more softer when raining
-        shadow += uv1.y > 0.85 ? (0.2+0.3*rainFactor)*(1.0-shadow) : 0.0;
-
         shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightFactor))*lit.y);
         shadow *= shade>0.8 ? 1.0 : 0.8;
 
@@ -752,6 +721,12 @@ void nl_underwater_lighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1
 #endif
 }
 
+float nl_windblow(vec2 p, float t){
+    float val = sin(4.0*p.x + 2.0*p.y + 2.0*t + 3.0*p.y*p.x)*sin(p.y*2.0 + 0.2*t);
+    val += sin(p.y - p.x + 0.2*t);
+    return 0.25*val*val;
+}
+
 vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos,
 			 float camDist, vec3 wPos, vec3 viewDir, vec3 torchColor, vec3 horizonCol,
 			 vec3 zenithCol, float rainFactor, float render_dist, highp float t, vec3 pos) {
@@ -761,8 +736,7 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
 
 #ifdef NL_RAIN_MIST_OPACITY
 		// humid air blow
-		float humidAir = max(noise2D((pos.xy*vec2(1.5,1.0)/(1.0+pos.z)) + (t*vec2(1.4,0.7)) ), 0.0);
-		humidAir *= wetness;
+		float humidAir = wetness*nl_windblow(pos.xy/(1.0+pos.z), t);
 		mistColor.a = min(mistColor.a + humidAir*NL_RAIN_MIST_OPACITY, 1.0);
 #endif
 
@@ -772,7 +746,7 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
 		if (camDist < endDist) {
 
 			// puddles map
-			wetness *= 1.25*min(0.4+0.6*fastRand(tiledCpos.xz*1.4), 1.0);
+			wetness *= 1.25*(0.4+0.6*fastRand(tiledCpos.xz*1.4));
 
 			float cosR = max(viewDir.y,float(wPos.y > 0.0));
 			wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
