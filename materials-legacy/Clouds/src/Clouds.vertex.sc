@@ -14,23 +14,22 @@ uniform vec4 ViewPositionAndTime;
 
 void main() {
 #ifdef TRANSPARENT
-	vec3 pos = a_position;
-	pos.y *= 0.1;
-
 #ifdef INSTANCING
     mat4 model = mtxFromCols(i_data0, i_data1, i_data2, i_data3);
 #else
     mat4 model = u_model[0];
 #endif
 
-	model[3][0] = model[3][2] = 0.0;
-	model[3][1] *= 0.4;
-	pos.xz = 0.4*(pos.xz - 32.0);
-	pos.y *= 0.01;
-	vec3 worldPos = mul(model, vec4(pos, 1.0)).xyz;
+	vec3 pos = a_position;
+	pos.xz = 0.7*(pos.xz - 32.0);
+	pos.y *= 0.1;
+	vec3 worldPos;
+	worldPos.x = pos.x*mtxElement(model, 0, 0);
+	worldPos.y = pos.y+mtxElement(model, 3, 1);
+	worldPos.z = pos.z*mtxElement(model, 2, 2);
 
 	// make cloud plane sperical
-	float len = length(worldPos.xz)*0.003;
+	float len = length(worldPos.xz)*0.01;
 	worldPos.y -= len*len*clamp(0.2*worldPos.y, -1.0, 1.0);
 
 	highp float t = ViewPositionAndTime.w;
@@ -44,7 +43,7 @@ void main() {
 	vec4 color = renderClouds(worldPos.xyz, t, rain, zenith_col, horizon_col, fog_col);
 
 	// cloud depth
-	worldPos.y -= NL_CLOUD_DEPTH*color.a*(3.0-1.0*rain);
+	worldPos.y -= NL_CLOUD_DEPTH*color.a*3.3;
 
 	color.a *= NL_CLOUD_OPACITY;
 
@@ -53,7 +52,7 @@ void main() {
 #endif
 
 	// fade out cloud layer
-	color.a *= clamp(2.0-2.0*length(worldPos.xyz)*0.004, 0.0, 1.0);
+	color.a *= clamp(2.0-2.0*length(worldPos.xyz)*0.0023, 0.0, 1.0);
 
 	color.rgb = colorCorrection(color.rgb);
 

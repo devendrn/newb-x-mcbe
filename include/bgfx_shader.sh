@@ -720,6 +720,13 @@ uniform vec4  u_alphaRef4;
 uniform vec4  u_prevWorldPosOffset;
 uniform mat4  u_prevViewProj;
 
+// **modifications from bgfx_shader.sh**
+#if BGFX_SHADER_LANGUAGE_HLSL
+	#define mtxElement(mtx, col, row) mtx[row][col]
+#else
+	#define mtxElement(mtx, col, row) mtx[col][row]
+#endif
+
 #endif // __cplusplus
 
 #endif // BGFX_SHADER_H_HEADER_GUARD

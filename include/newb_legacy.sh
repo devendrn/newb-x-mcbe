@@ -95,7 +95,7 @@
 #define NL_LANTERN_WAVE 0.16
 
 // clouds
-#define NL_CLOUD_UV_SCALE vec2(0.0194, 0.0278)*1.4
+#define NL_CLOUD_UV_SCALE vec2(0.0194, 0.0278)
 #define NL_CLOUD_DEPTH 1.3
 #define NL_CLOUD_SPEED 0.04
 #define NL_CLOUD_DENSITY 0.54

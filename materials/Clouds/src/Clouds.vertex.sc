@@ -19,9 +19,15 @@ void main() {
 #else
     mat4 model = u_model[0];
 #endif
-	vec3 worldPos = mul(model, vec4(a_position, 1.0)).xyz;
+	vec3 pos = a_position;
+	pos.xz = pos.xz - 32.0;
+	pos.y *= 0.1;
+	vec3 worldPos;
+	worldPos.x = pos.x*mtxElement(model, 0, 0);
+	worldPos.y = pos.y+mtxElement(model, 3, 1);
+	worldPos.z = pos.z*mtxElement(model, 2, 2);
 
-	float fade = clamp(2.0-2.0*length(worldPos.xyz)*0.004, 0.0, 1.0);
+	float fade = clamp(2.0-2.0*length(worldPos.xyz)*0.0026, 0.0, 1.0);
 
 	float rain = detectRain(FogAndDistanceControl.xyz);
 	vec3 zenith_col = getZenithCol(rain, FogColor.rgb);
