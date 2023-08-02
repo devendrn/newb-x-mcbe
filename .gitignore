@@ -4,5 +4,8 @@ data/
 env/
 .bak/
 
+# ignore files
+copy.sh
+
 # eol
 * text=lf

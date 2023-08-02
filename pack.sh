@@ -38,8 +38,10 @@ echo ">> UPDATE MANIFEST"
 VERSION="[0, ${VER[0]}, ${VER[1]}]"
 MANIFEST=$TEMP_PACK_DIR/manifest.json
 if [ -n "$CUSTOM" ]; then
-	sed -i "s/- all/- $CUSTOM/" $MANIFEST
+	sed -i "s/\%c/'$CUSTOM'/" $MANIFEST
     BUILD_CODE="${BUILD_CODE}c"
+else
+	sed -i "s/\%c//" $MANIFEST
 fi
 PATTERN="*\([0-9]*\), *\([0-9]*\), *\([0-9]*\)"
 sed -i "s/\"version\": \[$PATTERN\]/\"version\": $VERSION/g" $MANIFEST
@@ -61,7 +63,7 @@ sed -i "s/\"metadata/\"subpacks\": [],\"metadata/" $MANIFEST
 for ((s=0;s<$SUBPACK_COUNT;s+=1)); do
 	OPTION=${SUBPACK_OPTIONS[s]}
     echo -n "   - ${OPTION^^}: "
-    sed -i "1s/^#define.*/#define ${OPTION^^}/" include/config.h
+    sed -i "1s/^#define.*/#define ${OPTION^^}/" include/newb_config_legacy.h
 
     STAT=($($BUILD_SCRIPT -m RenderChunk | tail -n 1))
     if [ "${STAT[0]}" == "Compiling" ]; then
@@ -77,7 +79,7 @@ for ((s=0;s<$SUBPACK_COUNT;s+=1)); do
 	sed -i "s/subpacks\": \[/subpacks\": \[$CONTENT,/" $MANIFEST
 done
 
-sed -i "1s/^#define.*/#define DEFAULT/" include/config.h
+sed -i "1s/^#define.*/#define DEFAULT/" include/newb_config_legacy.h
 
 # remove extra comma
 sed -i "s/,\],\"metadata/\],\"metadata/" $MANIFEST
