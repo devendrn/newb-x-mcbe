@@ -1,6 +1,6 @@
 $input a_color0, a_position
 #ifdef INSTANCING
-	$input i_data0, i_data1, i_data2, i_data3
+  $input i_data0, i_data1, i_data2, i_data3
 #endif
 $output v_color0, v_color1, v_color2
 
@@ -15,30 +15,30 @@ uniform vec4 ViewPositionAndTime;
 void main() {
 #ifdef TRANSPARENT
 #ifdef INSTANCING
-    mat4 model = mtxFromCols(i_data0, i_data1, i_data2, i_data3);
+  mat4 model = mtxFromCols(i_data0, i_data1, i_data2, i_data3);
 #else
-    mat4 model = u_model[0];
+  mat4 model = u_model[0];
 #endif
-	vec3 pos = a_position;
-	pos.xz = pos.xz - 32.0;
-	pos.y *= 0.1;
-	vec3 worldPos;
-	worldPos.x = pos.x*mtxElement(model, 0, 0);
-	worldPos.y = pos.y+mtxElement(model, 3, 1);
-	worldPos.z = pos.z*mtxElement(model, 2, 2);
+  vec3 pos = a_position;
+  pos.xz = pos.xz - 32.0;
+  pos.y *= 0.01;
+  vec3 worldPos;
+  worldPos.x = pos.x*mtxElement(model, 0, 0);
+  worldPos.y = pos.y+mtxElement(model, 3, 1);
+  worldPos.z = pos.z*mtxElement(model, 2, 2);
 
-	float fade = clamp(2.0-2.0*length(worldPos.xyz)*0.0026, 0.0, 1.0);
+  float fade = clamp(2.0-2.0*length(worldPos.xyz)*0.002, 0.0, 1.0);
 
-	float rain = detectRain(FogAndDistanceControl.xyz);
-	vec3 zenith_col = getZenithCol(rain, FogColor.rgb);
-	vec3 fog_col = getHorizonCol(rain, FogColor.rgb);
-	fog_col = getHorizonEdgeCol(fog_col, rain, FogColor.rgb);
+  float rain = detectRain(FogAndDistanceControl.xyz);
+  vec3 zenith_col = getZenithCol(rain, FogColor.rgb);
+  vec3 fog_col = getHorizonCol(rain, FogColor.rgb);
+  fog_col = getHorizonEdgeCol(fog_col, rain, FogColor.rgb);
 
-	v_color0 = vec4(worldPos, fade);
-	v_color1 = vec4(zenith_col,rain);
-	v_color2 = vec4(fog_col,ViewPositionAndTime.w);
-    gl_Position = mul(u_viewProj, vec4(worldPos, 1.0));
+  v_color0 = vec4(worldPos, fade);
+  v_color1 = vec4(zenith_col,rain);
+  v_color2 = vec4(fog_col,ViewPositionAndTime.w);
+  gl_Position = mul(u_viewProj, vec4(worldPos, 1.0));
 #else
-	gl_Position = vec4(0.0,0.0,0.0,0.0);
+  gl_Position = vec4(0.0,0.0,0.0,0.0);
 #endif
 }

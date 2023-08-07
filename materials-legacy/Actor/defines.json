@@ -1,0 +1,14 @@
+{
+    "flag": {
+        "Change_Color": {
+            "On": ["CHANGE_COLOR"],
+            "Multi": ["CHANGE_COLOR_MULTI"],
+            "Off": []
+        },
+        "Emissive": {
+            "Emissive": ["EMISSIVE"],
+            "EmissiveOnly": ["EMISSIVE_ONLY"],
+            "Off": []
+        }
+    }
+}
