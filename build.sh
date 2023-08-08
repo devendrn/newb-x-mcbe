@@ -12,7 +12,6 @@ BUILD_DIR=build
 MATERIAL_DIR=materials-legacy
 
 TARGETS=""
-
 MATERIALS=""
 
 ARG_MODE=""
@@ -40,14 +39,21 @@ for t in "$@"; do
   shift
 done
 
+if [ -z "$TARGETS" ]; then
+  TARGETS="android"
+fi
+
 if [ -z "$MATERIALS" ]; then
   # all materials
   MATERIALS="$MATERIAL_DIR/*"
 fi
 
-if [ -n "$THREADS" ]; then
-  MBT_ARGS+=" --threads $THREADS"
+if [ -z "$THREADS" ]; then
+  # 1 thread per core
+  THREADS=$(nproc --all)
 fi
+
+MBT_ARGS+=" --threads $THREADS"
 
 echo "${MBT_JAR##*/}"
 for p in $TARGETS; do
@@ -56,11 +62,9 @@ for p in $TARGETS; do
     echo "Building materials: target=$p"
 
     for s in $MATERIALS; do
-      echo
-      echo " - $s"
+      echo -e "\n - $s"
       java -jar $MBT_JAR $MBT_ARGS --output $BUILD_DIR/$p --data $DATA_DIR/$p/${s##*/} $s -m
     done
-
   else
     echo "Build aborted for $p: $DATA_DIR/$p not found"
   fi

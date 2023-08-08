@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BUILD_DIR="./build/android"
-BUILD_SCRIPT="./build.sh -p android -t 4"
+BUILD_SCRIPT="./build.sh -p android"
 PACK_DIR="./pack"
 TEMP_PACK_DIR="$BUILD_DIR/temp"
 

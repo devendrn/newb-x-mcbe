@@ -33,7 +33,7 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord serv
 ```
 2. Compile material src files:
 ```
-.\build.bat -p windows -t 4
+.\build.bat
 ```
 
 #### Linux:
@@ -43,7 +43,7 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord serv
 ```
 2. Compile material source files:
 ```
-./build.sh -p android -t 4
+./build.sh
 ```
 
 ---
@@ -51,11 +51,11 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord serv
 ```
 -p    Target platforms (android, windows, ios, merged)
 -m    Materials to compile (if unspecified, builds all material files)
--t    Number of threads to use for compilation (default is 1)
+-t    Number of threads to use for compilation (default is cpu cores count)
 ```
 eg: To build only terrain for Android and Windows, use
 ```
--p windows android -m RenderChunk -t 4
+.\build.bat -p windows android -m RenderChunk
 ```
 Compiled material.bin files will be at `build/<platform>/`
 

@@ -6,7 +6,7 @@ SHADERC=env/bin/shaderc
 DATA_DIR=data
 
 MBT_JAR_URL="https://github.com/ddf8196/MaterialBinTool/releases/download/v$MBT_VERSION/MaterialBinTool-$MBT_VERSION-all.jar"
-M_DATA_URL="https://cdn.discordapp.com/attachments/1131575028329222154/1136034200949104801/materials-data-1.20-few.zip"
+M_DATA_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1137072623617069217/materials-data-1.20.10-few.zip"
 
 SHADERC_URL=
 CPU_ARCH=$(uname -m)
@@ -29,8 +29,8 @@ fi
 
 if [ ! -f "$SHADERC" ]; then
   mkdir -p env/bin/
-  echo "Downloading shaderc x86_64"
-  curl -Lo $SHADERC $SHADERC_x86_64_URL
+  echo "Downloading shaderc $CPU_ARCH"
+  curl -Lo $SHADERC $SHADERC_URL
   chmod +x $SHADERC
 fi
 
@@ -47,10 +47,8 @@ if [ "$1" == "-u" ]; then
   echo "Unpacking:"
   MB_DIRS=$DATA_DIR/*
   for i in $MB_DIRS; do
-    echo
-    echo "> $i"
-    #java -jar $MBT_JAR --unpack --data-only $i/*.material.bin
-    java -jar $MBT_JAR --unpack $i/*.material.bin
+    echo -e "\n> $i"
+    java -jar $MBT_JAR --unpack --data-only $i/*.material.bin
   done
   exit
 fi

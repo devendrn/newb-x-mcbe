@@ -3,7 +3,6 @@
 set MBT=env\bin\MaterialBinTool-0.8.1-native-image.exe
 set SHADERC=env\bin\shaderc.exe
 
-set MBT_THREADS=
 set MBT_ARGS=--compile --shaderc %SHADERC% --include include/
 
 set DATA_DIR=data
@@ -43,13 +42,19 @@ set ARG_MODE=
     goto :loop_args
 :end_args
 
+if "%TARGETS%" == "" (
+  set TARGETS=windows
+)
+
 if "%MATERIALS%" == "" (
   set MATERIALS=%MATERIALS_DIR%\*
 )
 
-if NOT "%THREADS%" == "" (
-  set MBT_ARGS=%MBT_ARGS% --threads %THREADS%
+if "%THREADS%" == "" (
+  set THREADS=%NUMBER_OF_PROCESSORS%
 )
+
+set MBT_ARGS=%MBT_ARGS% --threads %THREADS%
 
 for %%f in (%MBT%) do echo %%~nxf 
 for %%p in (%TARGETS%) do (
