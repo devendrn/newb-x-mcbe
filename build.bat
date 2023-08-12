@@ -7,7 +7,7 @@ set MBT_ARGS=--compile --shaderc %SHADERC% --include include/
 
 set DATA_DIR=data
 set BUILD_DIR=build
-set MATERIALS_DIR=materials-legacy
+set MATERIALS_DIR=materials
 
 set MATERIALS=
 set TARGETS=
@@ -19,8 +19,7 @@ set ARG_MODE=
   if "%1" == "-m" goto :set_arg
 
   if "%ARG_MODE%" == "" (
-    if "%1" == "main" set MATERIALS_DIR=materials
-    if "%1" == "lite" set MATERIALS_DIR=materials-lite
+    if "%1" == "deferred" set MATERIALS_DIR=materials-deferred
     goto :next_arg
   )
   if "%ARG_MODE%" == "-p" (

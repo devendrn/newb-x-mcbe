@@ -1,4 +1,6 @@
+#ifndef NL_CONFIG_H
 #define DEFAULT
+#define NL_CONFIG_H
 
 /*
   EDITING CONFIG:
@@ -110,12 +112,28 @@
 /* Lantern swing intensity (toggle) */
 #define NL_LANTERN_WAVE 0.16
 
-/* Clouds */
-#define NL_CLOUD_UV_SCALE vec2(0.0194, 0.0278)
-#define NL_CLOUD_DEPTH    1.3
-#define NL_CLOUD_SPEED    0.04
-#define NL_CLOUD_DENSITY  0.54
-#define NL_CLOUD_OPACITY  0.9
+/* Cloud type 
+   0:Vanilla, 1:Soft (with aurora), 2:Rounded (Heavy) */
+#define NL_CLOUD_TYPE 1
+
+/* Vanilla cloud settings - make sure to remove clouds.png when using this */
+#define NL_CLOUD0_THICKNESS 2.0
+#define NL_CLOUD0_RAIN_THICKNESS 4.0
+
+/* Soft cloud settings */
+#define NL_CLOUD1_SCALE vec2(0.016, 0.022)
+#define NL_CLOUD1_DEPTH    1.3
+#define NL_CLOUD1_SPEED    0.04
+#define NL_CLOUD1_DENSITY  0.54
+#define NL_CLOUD1_OPACITY  0.9
+
+/* Rounded cloud Settings */
+#define NL_CLOUD2_THICKNESS 3.0
+#define NL_CLOUD2_RAIN_THICKNESS 3.5
+#define NL_CLOUD2_STEPS 10
+#define NL_CLOUD2_SCALE 0.03
+#define NL_CLOUD2_DENSITY 6.0
+#define NL_CLOUD2_VELOCIY 0.8
 
 /*️ Aurora brightness (toggle) */
 #define NL_AURORA 1.0
@@ -153,3 +171,4 @@
   #define NL_CHUNK_LOAD_ANIM 100.0
 #endif
 
+#endif

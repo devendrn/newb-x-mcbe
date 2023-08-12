@@ -9,7 +9,7 @@ MBT_ARGS="--compile --shaderc $SHADERC --include include/"
 
 DATA_DIR=data
 BUILD_DIR=build
-MATERIAL_DIR=materials-legacy
+MATERIAL_DIR=materials
 
 TARGETS=""
 MATERIALS=""
@@ -30,10 +30,8 @@ for t in "$@"; do
     THREADS="$t"
   elif [ -z "$ARG_MODE" ]; then
     # build main (default build legacy)
-    if [ "$t" == "main" ]; then
-      MATERIAL_DIR=materials
-    elif [ "$t" == "lite" ]; then
-      MATERIAL_DIR=materials-lite
+    if [ "$t" == "deferred" ]; then
+      MATERIAL_DIR=materials-deferred
     fi
   fi
   shift

@@ -11,11 +11,11 @@ M_DATA_URL="https://cdn.discordapp.com/attachments/1137039470441550004/113707262
 SHADERC_URL=
 CPU_ARCH=$(uname -m)
 if [ $CPU_ARCH == "x86_64" ]; then
-  SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1137070225838317639/shaderc.x86_64"
+  SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1139817534498021396/shaderc.x86_64"
 elif [ $CPU_ARCH == "aarch64" ]; then
-  SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1137070225502765086/shaderc.arm64"
+  SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1139817534149902356/shaderc.arm64"
 elif [ $CPU_ARCH == "armv7l" ]; then
-  SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1137070225095925931/shaderc.arm32"
+  SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1139817533805953145/shaderc.arm32"
 else
   echo "Cannot setup build environment for $CPU_ARCH"
   exit 0;
