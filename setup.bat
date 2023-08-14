@@ -6,7 +6,7 @@ set SHADERC=env\bin\shaderc.exe
 set DATA_DIR=data
 
 set MBT_RELEASE_URL=https://github.com/ddf8196/MaterialBinTool/releases/download/v%MBT_VERSION%
-set M_DATA_HTTP=https://cdn.discordapp.com/attachments/1131575028329222154/1136034200949104801/materials-data-1.20-few.zip
+set M_DATA_HTTP=https://cdn.discordapp.com/attachments/1137039470441550004/1137072623617069217/materials-data-1.20.10-few.zip
 
 if not exist %MBT% (
   mkdir env\bin\
