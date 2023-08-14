@@ -1,6 +1,6 @@
 #ifndef NL_CONFIG_H
-#define DEFAULT
 #define NL_CONFIG_H
+// line 3 reserved
 
 /*
   EDITING CONFIG:
@@ -148,6 +148,7 @@
 
 
 /* these are config of different subpacks. dont change! */
+/* names in pack.sh */
 
 #ifdef NO_WAVE_NO_FOG
   #define NO_WAVE
