@@ -129,7 +129,7 @@ void main() {
     light += NL_UNDERWATER_BRIGHTNESS;
     light *= mix(normalize(fogColor.rgb),vec3(1.0,1.0,1.0),TileLightColor.x*0.5);
     highp float t = ViewPositionAndTime.w;
-    light += NL_CAUSTIC_INTENSITY*max(TileLightColor.x-0.46,0.0)*(0.5+0.5*sin(t + dot(a_position.xyz,vec3(1.5)) ));
+    light += NL_CAUSTIC_INTENSITY*max(TileLightColor.x-0.46,0.0)*(0.5+0.5*sin(t + dot(a_position.xyz,vec3_splat(1.5)) ));
   }
 
   v_fog = fogColor;

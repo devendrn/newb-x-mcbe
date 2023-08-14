@@ -367,16 +367,16 @@ float cloud_sdf(vec3 pos, float rain) {
   return smoothstep(b,0.5+b,n);
 }
 
-vec4 render_clouds(vec3 v_dir, vec3 v_pos, float rain, float time, vec3 fog_col, vec3 sky_col) {
+vec4 render_clouds(vec3 vDir, vec3 vPos, float rain, float time, vec3 fog_col, vec3 sky_col) {
   // local cloud pos
-  vec3 pos = v_pos;
+  vec3 pos = vPos;
   pos.y = 0.0;
-  pos.xz = NL_CLOUD2_SCALE*(v_pos.xz + vec2(1.0,0.5)*(time*NL_CLOUD2_VELOCIY));
+  pos.xz = NL_CLOUD2_SCALE*(vPos.xz + vec2(1.0,0.5)*(time*NL_CLOUD2_VELOCIY));
 
   // scaled ray offset
   float height = 12.0*(NL_CLOUD0_THICKNESS + rain*(NL_CLOUD0_RAIN_THICKNESS - NL_CLOUD0_THICKNESS));
   vec3 delta_p;
-  delta_p.xyz = (NL_CLOUD2_SCALE*height/NL_CLOUD2_STEPS.0)*v_dir.xyz/(0.02+0.98*abs(v_dir.y));
+  delta_p.xyz = (NL_CLOUD2_SCALE*height/NL_CLOUD2_STEPS.0)*vDir.xyz/(0.02+0.98*abs(vDir.y));
   delta_p.y = abs(delta_p.y);
 
   // alpha, gradient, ray depth temp
@@ -394,7 +394,7 @@ vec4 render_clouds(vec3 v_dir, vec3 v_pos, float rain, float time, vec3 fog_col,
     }
   }
 
-  if (v_pos.y > 0.0) {
+  if (vPos.y > 0.0) {
     d.y = 1.0 - d.y;
   }
 
