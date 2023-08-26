@@ -14,7 +14,7 @@ if [ $CPU_ARCH == "x86_64" ]; then
   SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1139817534498021396/shaderc.x86_64"
 elif [ $CPU_ARCH == "aarch64" ]; then
   SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1139817534149902356/shaderc.arm64"
-elif [ $CPU_ARCH == "armv7l" ]; then
+elif [ $CPU_ARCH == "armv7l" ] || [ $CPU_ARCH == "armv8l" ]; then
   SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1139817533805953145/shaderc.arm32"
 else
   echo "Cannot setup build environment for $CPU_ARCH"

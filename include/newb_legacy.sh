@@ -87,11 +87,11 @@ bool detectEnd(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
 }
 
 bool detectNether(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
-  // FOG_CONTROL x and y varies with renderdistance
+  // fogctrl.xy varies with renderdistance
   // x range (0.03,0.14)
 
   // reverse plotted relation (5,6,7,8,9,11,12,20,96 chunks data) with an accuracy of 0.02
-  float expectedFogX = 0.029 + (0.09*FOG_CONTROL.y*FOG_CONTROL.y);  // accuracy of 0.015
+  float expectedFogX = 0.029 + (0.09*FOG_CONTROL.y*FOG_CONTROL.y);
 
   // nether wastes, basalt delta, crimson forest, wrapped forest, soul sand valley
   bool netherFogCtrl = (FOG_CONTROL.x<0.14  && abs(FOG_CONTROL.x-expectedFogX) < 0.02);
@@ -189,11 +189,10 @@ vec3 getUnderwaterCol(vec3 FOG_COLOR) {
 }
 
 vec3 getEndSkyCol() {
-  return vec3(0.57,0.063,0.66)*0.5;
+  return vec3(0.28,0.031,0.33);
 }
 
 vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR) {
-
   // value needs tweaking
   float val = max(FOG_COLOR.r*0.6, max(FOG_COLOR.g, FOG_COLOR.b));
 
@@ -204,16 +203,12 @@ vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR) {
   // rain sky
   float brightness = min(FOG_COLOR.g, 0.26);
   brightness *= brightness*13.2;
-
-  zenithCol = mix(zenithCol*(1.0+0.5*rainFactor), vec3(0.85,0.9,1.0)*brightness, rainFactor);
-
-  return zenithCol;
+  return mix(zenithCol*(1.0+0.5*rainFactor), vec3(0.85,0.9,1.0)*brightness, rainFactor);
 }
 
 vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR) {
   // value needs tweaking
   float val = max(FOG_COLOR.r*0.65, max(FOG_COLOR.g*1.1, FOG_COLOR.b));
-
   float sun = max(FOG_COLOR.r-FOG_COLOR.b, 0.0);
 
   // horizon color
@@ -227,17 +222,13 @@ vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR) {
   // rain horizon
   float brightness = min(FOG_COLOR.g, 0.26);
   brightness *= brightness*19.6;
-  horizonCol = mix(horizonCol, vec3_splat(brightness), rainFactor);
-
-  return horizonCol;
+  return mix(horizonCol, vec3_splat(brightness), rainFactor);
 }
 
+// tinting on horizon col
 vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR) {
-  float val = (1.1-FOG_COLOR.b)*FOG_COLOR.g*2.1;
-  val *= 1.0-rainFactor;
-
-  // tinting
-    horizonCol *= vec3_splat(1.0)-val*(vec3_splat(1.0)-NL_EDGE_HORIZON_COL);
+  float val = 2.1*(1.1-FOG_COLOR.b)*FOG_COLOR.g*(1.0-rainFactor);
+  horizonCol *= vec3_splat(1.0-val) + NL_EDGE_HORIZON_COL*val;
   return horizonCol;
 }
 
@@ -245,7 +236,6 @@ vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR) {
 // A copy of this is in sky.fragment, make changes there aswell
 vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h) {
   h = 1.0-h*h;
-
   float hsq = h*h;
 
   // gradient 1  h^16
@@ -271,8 +261,7 @@ vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, float y, f
 // simpler sky reflection for rain
 vec3 getRainSkyRefl(vec3 horizonCol, vec3 zenithCol, float h) {
   h = 1.0-h*h;
-  h *= h; // hsq
-
+  h *= h;
   return mix(zenithCol, horizonCol, h*h);
 }
 
@@ -283,16 +272,14 @@ vec3 getSunRefl(float viewDirX, float fog_brightness, vec3 FOG_COLOR) {
   factor *= factor;
   sunRefl *= sunRefl*sunRefl*factor*factor;
   sunRefl *= sunRefl;
-  return (fog_brightness*sunRefl)*vec3(2.5,1.6,0.8);
+  return fog_brightness*sunRefl*vec3(2.5,1.6,0.8);
 }
 
 // fresnel - Schlick's approximation
 float calculateFresnel(float cosR, float r0) {
   float a = 1.0-cosR;
-  float a5 = a*a;
-  a5 *= a5*a;
-
-  return r0 + (1.0-r0)*a5;
+  float a2 = a*a;
+  return r0 + (1.0-r0)*a2*a2*a;
 }
 
 
@@ -300,28 +287,20 @@ float calculateFresnel(float cosR, float r0) {
 
 // 2D cloud noise - used by clouds
 float cloudNoise2D(vec2 p, highp float t, float rain) {
-
   t *= NL_CLOUD1_SPEED;
-
   p += t;
   p.x += sin(p.y*0.4 + t);
 
   vec2 p0 = floor(p);
   vec2 u = p-p0;
-
-  //u *= u*(3.0-2.0*u);
-  u = smoothstep(0.0,1.0,u);
+  u *= u*(3.0-2.0*u);
   vec2 v = 1.0-u;
 
   // rain transition
   vec2 d = vec2(0.09+0.5*rain,0.089+0.5*rain*rain);
 
-  float c1 = randt(p0, d);
-  float c2 = randt(p0+vec2(1.0,0.0), d);
-  float c3 = randt(p0+vec2(0.0,1.0), d);
-  float c4 = randt(p0+vec2(1.0,1.0), d);
-
-  return v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x);
+  return v.y*(randt(p0,d)*v.x + randt(p0+vec2(1.0,0.0),d)*u.x) +
+         u.y*(randt(p0+vec2(0.0,1.0),d)*v.x + randt(p0+vec2(1.0,1.0),d)*u.x);
 }
 
 // simple clouds
@@ -334,7 +313,7 @@ vec4 renderClouds(vec3 pos, highp float t, float rain, vec3 zenith_col, vec3 hor
   vec4 color = vec4(0.02,0.04,0.05,cloudAlpha);
 
   color.rgb += fog_col;
-  color.rgb *= (1.0-0.5*cloudShadow*float(pos.y>0.0));
+  color.rgb *= 1.0-0.5*cloudShadow*float(pos.y>0.0);
 
   color.rgb += zenith_col*0.7;
   color.rgb *= 1.0 - 0.4*rain;
@@ -342,74 +321,21 @@ vec4 renderClouds(vec3 pos, highp float t, float rain, vec3 zenith_col, vec3 hor
   return color;
 }
 
-// rounded clouds
-
-// apply bevel with radius r at at corner (1.0)
-float bevel(float x, float r) {
-  float y = max(x-r,0.0)/(1.0-r);
-  return (1.0-r)*(1.0-sqrt(1.0-y*y));
-}
-
-float cloud_sdf(vec3 pos, float rain) {
-  vec2 p0 = floor(pos.xz);
-  vec2 u = smoothstep(0.6,1.0,pos.xz-p0);
-  vec2 v = 1.0 - u;
-
-  // rain transition
-  vec2 t = vec2(0.101+0.2*rain, 0.099+0.2*rain*rain);
-
-  // mix noise gradients
-  float n = v.y*(randt(p0,t)*v.x + randt(p0+vec2(1.0,0.0),t)*u.x) +
-        u.y*(randt(p0+vec2(0.0,1.0),t)*v.x + randt(p0+vec2(1.0,1.0),t)*u.x);
-
-  // round y
-  float b = 0.5*bevel(2.0*abs(pos.y-0.5), 0.3);
-  return smoothstep(b,0.5+b,n);
-}
-
-vec4 render_clouds(vec3 vDir, vec3 vPos, float rain, float time, vec3 fog_col, vec3 sky_col) {
-  // local cloud pos
-  vec3 pos = vPos;
-  pos.y = 0.0;
-  pos.xz = NL_CLOUD2_SCALE*(vPos.xz + vec2(1.0,0.5)*(time*NL_CLOUD2_VELOCIY));
-
-  // scaled ray offset
-  float height = 12.0*(NL_CLOUD0_THICKNESS + rain*(NL_CLOUD0_RAIN_THICKNESS - NL_CLOUD0_THICKNESS));
-  vec3 delta_p;
-  delta_p.xyz = (NL_CLOUD2_SCALE*height/NL_CLOUD2_STEPS.0)*vDir.xyz/(0.02+0.98*abs(vDir.y));
-  delta_p.y = abs(delta_p.y);
-
-  // alpha, gradient, ray depth temp
-  vec3 d = vec3(0.0,1.0,1.0);
-  for (int i=0; i<NL_CLOUD2_STEPS; i++) {
-    pos += delta_p;
-    float m = cloud_sdf(pos.xyz, rain);
-
-    d.x += m*NL_CLOUD2_DENSITY*(1.0-d.x)/NL_CLOUD2_STEPS.0;
-    d.y = mix(d.y, pos.y, d.z);
-    d.z *= 1.0 - m;
-
-    if (d.x > 0.99) {
-      break;
-    }
-  }
-
-  if (vPos.y > 0.0) {
-    d.y = 1.0 - d.y;
-  }
-
-  d.y = 1.0-0.7*d.y*d.y;
-
-  vec4 col;
-  col.rgb = 0.6*sky_col;
-  col.rgb += (vec3(0.05,0.08,0.08)+0.8*fog_col)*d.y;
-  col.rgb *= 1.0 - 0.5*rain;
-  col.a = d.x;
-  return col;
-}
-
 #ifdef NL_AURORA
-// simple northern night sky effect
+// for rounded clouds - needs more tweaking
+vec4 render_aurora(vec3 p, float t) {
+  p.xz *= 0.06;
+  t *= 0.3;
+  p.xz += 0.03*sin(p.x*4.0 + t);
+  float d0 = sin(p.x*0.1 + 0.1*t + sin(p.z*0.2));
+  float d1 = sin(p.z*0.1 - 0.1*t + sin(p.x*0.2));
+  float d2 = sin(p.z*0.1 + 1.0*sin(d0 + d1*2.0) + d1*2.0 + d0*1.0);
+  d0 *= d0; d1 *= d1; d2 *= d2;
+  d2 = d0/(1.0 + 6.0*d2);
+  return vec4(NL_AURORA*mix(vec3(0.0,1.0,0.0),vec3(0.0,0.0,1.0),d1),1.0)*d2;
+}
+
+// for soft clouds
 vec4 renderAurora(vec2 uv, highp float t, float rain, vec3 FOG_COLOR) {
   uv *= 0.07;
   float auroraCurves = sin(uv.x*0.09 + 0.07*t) + 0.3*sin(uv.x*0.5 + 0.09*t) + 0.03*sin((uv.x+uv.y)*3.0 + 0.2*t);
@@ -429,6 +355,74 @@ vec4 renderAurora(vec2 uv, highp float t, float rain, vec3 FOG_COLOR) {
   return col;
 }
 #endif
+
+// rounded clouds
+
+// apply bevel with radius r at at corner (1.0)
+float bevel(float x, float r) {
+  float y = max(x-r,0.0)/(1.0-r);
+  return (1.0-r)*(1.0-sqrt(1.0-y*y));
+}
+
+float cloud_sdf(vec3 pos, float rain) {
+  vec2 p0 = floor(pos.xz);
+  vec2 u = smoothstep(0.6,1.0,pos.xz-p0);
+  vec2 v = 1.0 - u;
+
+  // rain transition
+  vec2 t = vec2(0.101+0.2*rain, 0.099+0.2*rain*rain);
+
+  // mix noise gradients
+  float n = v.y*(randt(p0,t)*v.x + randt(p0+vec2(1.0,0.0),t)*u.x) +
+            u.y*(randt(p0+vec2(0.0,1.0),t)*v.x + randt(p0+vec2(1.0,1.0),t)*u.x);
+
+  // round y
+  float b = 0.5*bevel(2.0*abs(pos.y-0.5), 0.3);
+  return smoothstep(b,0.5+b,n);
+}
+
+vec4 render_clouds(vec3 vDir, vec3 vPos, float rain, float time, vec3 fog_col, vec3 sky_col) {
+  // local cloud pos
+  vec3 pos = vPos;
+  pos.y = 0.0;
+  pos.xz = NL_CLOUD2_SCALE*(vPos.xz + vec2(1.0,0.5)*(time*NL_CLOUD2_VELOCIY));
+
+  // scaled ray offset
+  float height = 7.0*(NL_CLOUD2_THICKNESS + rain*(NL_CLOUD2_RAIN_THICKNESS - NL_CLOUD2_THICKNESS));
+  vec3 delta_p;
+  delta_p.xyz = (NL_CLOUD2_SCALE*height/NL_CLOUD2_STEPS.0)*vDir.xyz/(0.02+0.98*abs(vDir.y));
+  delta_p.y = abs(delta_p.y);
+
+  // alpha, gradient, ray depth temp
+  vec3 d = vec3(0.0,1.0,1.0);
+  for (int i=0; i<NL_CLOUD2_STEPS; i++) {
+    pos += delta_p;
+    float m = cloud_sdf(pos.xyz, rain);
+    d.x += m*NL_CLOUD2_DENSITY*(1.0-d.x)/NL_CLOUD2_STEPS.0;
+    d.y = mix(d.y, pos.y, d.z);
+    d.z *= 1.0 - m;
+
+    if (d.x > 0.99) {
+      break;
+    }
+  }
+
+  if (vPos.y > 0.0) {
+    d.y = 1.0 - d.y;
+  }
+
+  d.y = 1.0-0.7*d.y*d.y;
+
+  vec4 col = vec4(0.6*sky_col, d.x);
+  col.rgb += (vec3(0.03,0.05,0.05) + 0.8*fog_col)*d.y;
+  col.rgb *= 1.0 - 0.5*rain;
+  
+  #ifdef NL_AURORA
+    col += render_aurora(vPos,time)*((1.0-col.a)*(1.0-0.8*rain)/(1.0 + 64.0*sky_col.b*sky_col.b));
+  #endif
+  
+  return col;
+}
 
 
 /* LIGHTING */
@@ -485,7 +479,7 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
     // nether & end lighting
 
     // ambient - end and nether
-    light = end ? vec3(1.98,1.25,2.3) : 3.0*vec3(1.0,0.72,0.63);
+    light = end ? vec3(1.98,1.25,2.3) : vec3(3.0,2.16,1.89);
 
     light += horizonCol + torchLight*0.5;
   } else {
@@ -505,7 +499,7 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
     // shadow cast by top light
     float shadow = float(uv1.y > NL_CONST_SHADOW_EDGE);
     shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightFactor))*lit.y);
-    shadow *= shade>0.8 ? 1.0 : 0.8;
+    shadow *= shade > 0.8 ? 1.0 : 0.8;
 
     // direct light from top
     float dirLight = shadow*(1.0-uv1.x*nightFactor)*lightIntensity;
@@ -545,7 +539,7 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
     bump *= disp(tiledCpos, t) + 0.12*sin(t*2.0 + dot(cPos, vec3_splat(NL_CONST_PI_HALF)));
 
     cosR = abs(viewDir.y);
-    cosR = mix(cosR, (1.0-cosR*cosR), bump);
+    cosR = mix(cosR, 1.0-cosR*cosR, bump);
 
     // sky reflection
     waterRefl = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, cosR, -wPos.y);
@@ -585,7 +579,7 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
   color.a = COLOR.a*NL_WATER_TRANSPARENCY;
 #endif
 
-  color.a = color.a + (1.0-color.a)*opacity*opacity;
+  color.a += (1.0-color.a)*opacity*opacity;
 
   color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.4*fresnel);
 
@@ -716,7 +710,7 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
     if (camDist < endDist) {
 
       // puddles map
-      wetness *= (0.4+0.6*fastRand(tiledCpos.xz*1.4));
+      wetness *= 0.4 + 0.6*fastRand(tiledCpos.xz*1.4);
 
       float cosR = max(viewDir.y, 0.0);
       wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
@@ -726,7 +720,7 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
       wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
 
       // hide effect far from player
-      wetRefl.a *= clamp(2.0-(2.0*camDist/endDist), 0.0, 1.0);
+      wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0);
     }
 
     // darken wet parts
