@@ -755,10 +755,10 @@ uniform vec4  u_prevWorldPosOffset;
 uniform mat4  u_prevViewProj;
 
 // element indexing
-#if BGFX_SHADER_LANGUAGE_HLSL
-	#define mtxElement(mtx, col, row) mtx[row][col]
+#if BGFX_SHADER_LANGUAGE_GLSL
+	#define mtxElement(_mtx, _col, _row) _mtx[_col][_row]
 #else
-	#define mtxElement(mtx, col, row) mtx[col][row]
+	#define mtxElement(_mtx, _col, _row) _mtx[_row][_col]
 #endif
 
 #endif // __cplusplus

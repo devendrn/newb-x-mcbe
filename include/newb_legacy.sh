@@ -416,7 +416,7 @@ vec4 render_clouds(vec3 vDir, vec3 vPos, float rain, float time, vec3 fog_col, v
   vec4 col = vec4(0.6*sky_col, d.x);
   col.rgb += (vec3(0.03,0.05,0.05) + 0.8*fog_col)*d.y;
   col.rgb *= 1.0 - 0.5*rain;
-  
+
   #ifdef NL_AURORA
     col += render_aurora(vPos,time)*((1.0-col.a)*(1.0-0.8*rain)/(1.0 + 64.0*sky_col.b*sky_col.b));
   #endif

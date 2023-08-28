@@ -29,8 +29,8 @@ void main() {
   float camDis = length(modelCamPos);
   vec3 viewDir = modelCamPos / camDis;
 
-  vec3 boardPlane = normalize(vec3(viewDir.z, 0.0, -viewDir.x));
-  worldPos -= (((viewDir.yzx * boardPlane.zxy) - (viewDir.zxy * boardPlane.yzx)) *
+  vec3 boardPlane = normalize(vec3(-viewDir.z, 0.0, viewDir.x));
+  worldPos -= (((viewDir.zxy * boardPlane.yzx) - (viewDir.yzx * boardPlane.zxy)) *
                (a_color0.z - 0.5)) +
                (boardPlane * (a_color0.x - 0.5));
   vec4 color = vec4(1.0,1.0,1.0,1.0);
@@ -131,7 +131,7 @@ void main() {
     fogColor.a *= fogGradient*fogGradient*fogGradient;
   }
 
-  vec4 refl;
+  vec4 refl = vec4(0.0,0.0,0.0,0.0);
   vec4 pos;
 
 #if !defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY)
