@@ -647,8 +647,8 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
   bool isChain = bPosC.x==0.0625 && y6875;
 
   // fix for non-hanging lanterns waving top part (works only if texPosY is correct)
-  if (texPosY < 0.3 || is(texPosY, 0.67, 0.69) || is(texPosY, 0.55, 0.6)) {
-    isLantern = isLantern && !y5625;
+  if (y5625 && (texPosY < 0.3 || is(texPosY, 0.55, 0.69))) {
+    isLantern = false;
   }
 
   // X,Z axis rotation

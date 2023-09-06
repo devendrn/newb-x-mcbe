@@ -46,7 +46,7 @@ vec3 lighting(vec3 position, vec4 normal, mat4 world) {
   intensity = (0.7+abs(normal.y)*0.3)*(0.9+abs(normal.x)*0.1);
 #endif
 
-  intensity *= TileLightColor.b*TileLightColor.b*NL_SUN_INTENSITY*1.27;
+  intensity *= TileLightColor.b*TileLightColor.b*NL_SUN_INTENSITY*1.2;
 
   intensity += OverlayColor.a * 0.35;
 

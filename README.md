@@ -4,7 +4,6 @@ Newb X Legacy is a ported version of [newb-shader-mcbe](https://github.com/deven
 
 > Note:
 This is an experimental repository, breaking changes are made often.
-Also, there is no guarantee of continued development.
 
 ## Screenshot
 
