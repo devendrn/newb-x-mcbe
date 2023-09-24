@@ -47,6 +47,7 @@
 #define NL_NIGHT_BRIGHTNESS 0.1 // 0.0 (dark) - 2.0 (bright)
 #define NL_CAVE_BRIGHTNESS  0.1 // 0.0 (dark) - 2.0 (bright)
 #define NL_SHADOW_INTENSITY 0.7 // 0.0 (no shadow) - 1.0 (strong shadow)
+//#define NL_BLINKING_TORCH     // (toggle) flickering light
 
 /* Mist density */
 #define NL_MIST_DENSITY 0.18 // 0.0 (no mist) - 1.0 (misty)
@@ -58,9 +59,6 @@
 #define NL_MORNING_SUN_COL vec3(1.0,0.45,0.14)
 #define NL_NOON_SUN_COL    vec3(1.0,0.75,0.57)
 #define NL_NIGHT_SUN_COL   vec3(0.5,0.64,1.00)
-
-/* Blinking torch light (toggle) */
-//#define NL_BLINKING_TORCH
 
 /* Torch colors */
 #define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.52,0.18)
@@ -88,12 +86,8 @@
 #define NL_WATER_TRANSPARENCY 0.9 // 0.0 (transparent) - 1.0 (normal)
 #define NL_WATER_BUMP 0.07        // 0.001 (plain) - 0.2 (bumpy water)
 #define NL_WATER_TINT vec3(0.52,0.9,0.45)
-
-/* Water wave (toggle) */
-#define NL_WATER_WAVE
-
-/* Fade water opacity with fog (toggle) */
-#define NL_WATER_FOG_FADE
+#define NL_WATER_WAVE     // (toggle) wave effect
+#define NL_WATER_FOG_FADE // (toggle) disable fog fade for water
 
 /* Water texture overlay */
 #define NL_WATER_TEX_OPACITY 0.3 // 0.0 (plain water) - 1.0 (vanilla water texture)
@@ -110,7 +104,7 @@
 #define NL_LANTERN_WAVE 0.16 // 0.05 (subtle) - 0.4 (large swing)
 
 /* Cloud type */
-#define NL_CLOUD_TYPE 2 // 0 (Vanilla), 1 (Soft), 2 (Rounded)
+#define NL_CLOUD_TYPE 1 // 0 (Vanilla), 1 (Soft), 2 (Rounded)
 
 /* Vanilla cloud settings - make sure to remove clouds.png when using this */
 #define NL_CLOUD0_THICKNESS 2.0      // 0.5 (slim) - 8.0 (fat)
@@ -131,6 +125,7 @@
 #define NL_CLOUD2_SHAPE 0.6          // 0.0 (round) - 1.0 (box)
 #define NL_CLOUD2_DENSITY 5.0        // 1.0 (blurry) - 100.0 (sharp)
 #define NL_CLOUD2_VELOCIY 0.8        // 0.0 (static) - 4.0 (very fast)
+#define NL_CLOUD2_MULTILAYER         // (toggle)
 
 /*️ Aurora brightness (toggle) */
 #define NL_AURORA 1.2 // 0.4 (dim) - 4.0 (very bright)
