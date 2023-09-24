@@ -14,6 +14,11 @@ void main() {
   vec3 v_dir = normalize(v_color0.xyz);
 
   color = render_clouds(v_dir, v_color0.xyz, v_color1.a, v_color2.a, v_color2.rgb, v_color1.rgb);
+
+  #ifdef NL_AURORA
+    color += render_aurora(v_color0.xyz, v_color2.a, v_color1.a, v_color1.rgb)*(1.0-0.95*color.a);
+  #endif
+
   color.a *= v_color0.a;
 
   color.rgb = colorCorrection(color.rgb);

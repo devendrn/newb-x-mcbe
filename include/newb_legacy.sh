@@ -304,7 +304,7 @@ float cloudNoise2D(vec2 p, highp float t, float rain) {
 }
 
 // simple clouds
-vec4 renderClouds(vec3 pos, highp float t, float rain, vec3 zenith_col, vec3 horizon_col, vec3 fog_col) {
+vec4 render_clouds_simple(vec3 pos, highp float t, float rain, vec3 zenith_col, vec3 horizon_col, vec3 fog_col) {
   pos.xz *= NL_CLOUD1_SCALE;
 
   float cloudAlpha = cloudNoise2D(pos.xz, t, rain);
@@ -321,41 +321,6 @@ vec4 renderClouds(vec3 pos, highp float t, float rain, vec3 zenith_col, vec3 hor
   return color;
 }
 
-#ifdef NL_AURORA
-// for rounded clouds - needs more tweaking
-vec4 render_aurora(vec3 p, float t) {
-  p.xz *= 0.06;
-  t *= 0.3;
-  p.xz += 0.03*sin(p.x*4.0 + t);
-  float d0 = sin(p.x*0.1 + 0.1*t + sin(p.z*0.2));
-  float d1 = sin(p.z*0.1 - 0.1*t + sin(p.x*0.2));
-  float d2 = sin(p.z*0.1 + 1.0*sin(d0 + d1*2.0) + d1*2.0 + d0*1.0);
-  d0 *= d0; d1 *= d1; d2 *= d2;
-  d2 = d0/(1.0 + 6.0*d2);
-  return vec4(NL_AURORA*mix(vec3(0.0,1.0,0.0),vec3(0.0,0.0,1.0),d1),1.0)*d2;
-}
-
-// for soft clouds
-vec4 renderAurora(vec2 uv, highp float t, float rain, vec3 FOG_COLOR) {
-  uv *= 0.07;
-  float auroraCurves = sin(uv.x*0.09 + 0.07*t) + 0.3*sin(uv.x*0.5 + 0.09*t) + 0.03*sin((uv.x+uv.y)*3.0 + 0.2*t);
-  float auroraBase = uv.y*0.4 + 2.0*auroraCurves;
-  float auroraFlow = 0.5+0.5*sin(uv.x*0.3 + 0.07*t + 0.7*sin(auroraBase*0.9));
-
-  float auroraCol = sin(uv.y*0.06 + 0.07*t);
-  auroraCol = abs(auroraCol*auroraCol*auroraCol);
-
-  float aurora = sin(auroraBase)*sin(auroraBase*0.3);
-  aurora = abs(aurora*auroraFlow);
-
-  vec4 col = vec4(0.0, (1.0-auroraCol)*aurora, auroraCol*aurora, aurora*aurora);
-  col.gb *= NL_AURORA*0.6;
-  col.gba *= 1.0-rain;
-  col *= 1.0-min(4.5*max(FOG_COLOR.r, FOG_COLOR.b), 1.0);
-  return col;
-}
-#endif
-
 // rounded clouds
 
 // apply bevel with radius r at at corner (1.0)
@@ -366,11 +331,11 @@ float bevel(float x, float r) {
 
 float cloud_sdf(vec3 pos, float rain) {
   vec2 p0 = floor(pos.xz);
-  vec2 u = smoothstep(0.6,1.0,pos.xz-p0);
+  vec2 u = smoothstep(0.99*NL_CLOUD2_SHAPE,0.995,pos.xz-p0);
   vec2 v = 1.0 - u;
 
   // rain transition
-  vec2 t = vec2(0.101+0.2*rain, 0.099+0.2*rain*rain);
+  vec2 t = vec2(0.1001+0.2*rain, 0.0999+0.2*rain*rain);
 
   // mix noise gradients
   float n = v.y*(randt(p0,t)*v.x + randt(p0+vec2(1.0,0.0),t)*u.x) +
@@ -417,12 +382,27 @@ vec4 render_clouds(vec3 vDir, vec3 vPos, float rain, float time, vec3 fog_col, v
   col.rgb += (vec3(0.03,0.05,0.05) + 0.8*fog_col)*d.y;
   col.rgb *= 1.0 - 0.5*rain;
 
-  #ifdef NL_AURORA
-    col += render_aurora(vPos,time)*((1.0-col.a)*(1.0-0.8*rain)/(1.0 + 64.0*sky_col.b*sky_col.b));
-  #endif
-  
   return col;
 }
+
+
+/* AURORA */
+
+#ifdef NL_AURORA
+vec4 render_aurora(vec3 p, float t, float rain, vec3 sky_col) {
+  p.xz *= NL_AURORA_SCALE;
+  t *= NL_AURORA_VELOCITY;
+  p.xz += 0.05*sin(p.x*4.0 + 20.0*t);
+  float d0 = sin(p.x*0.1 + t + sin(p.z*0.2));
+  float d1 = sin(p.z*0.1 - t + sin(p.x*0.2));
+  float d2 = sin(p.z*0.1 + 1.0*sin(d0 + d1*2.0) + d1*2.0 + d0*1.0);
+  d0 *= d0; d1 *= d1; d2 *= d2;
+  d2 = d0/(1.0 + d2/NL_AURORA_WIDTH);
+
+  float mask = (1.0-0.8*rain)/(1.0 + 64.0*sky_col.b*sky_col.b);
+  return vec4(NL_AURORA*mix(NL_AURORA_COL1,NL_AURORA_COL2,d1),1.0)*d2*mask;
+}
+#endif
 
 
 /* LIGHTING */

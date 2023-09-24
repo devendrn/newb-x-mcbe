@@ -64,7 +64,7 @@ void main() {
   } else if (v_refl.a > 0.0 && v_extra.g < 0.0) {
     // wet effect - only on xz plane
     float dy = abs(dFdy(v_extra.g));
-    if (dy < 0.0005) {
+    if (dy < 0.0002) {
       float mask = v_refl.a*(clamp(v_extra.r*10.0,8.2,8.8)-7.8);
       diffuse.rgb += v_refl.rgb*mask;
     }

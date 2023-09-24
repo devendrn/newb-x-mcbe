@@ -60,7 +60,7 @@ void main() {
       float len = length(worldPos.xz)*0.01;
       worldPos.y -= len*len*clamp(0.2*worldPos.y, -1.0, 1.0);
 
-      color = renderClouds(worldPos.xyz, t, rain, zenith_col, horizon_col, fog_col);
+      color = render_clouds_simple(worldPos.xyz, t, rain, zenith_col, horizon_col, fog_col);
 
       // cloud depth
       worldPos.y -= NL_CLOUD1_DEPTH*color.a*3.3;
@@ -68,11 +68,11 @@ void main() {
       color.a *= NL_CLOUD1_OPACITY;
 
       #ifdef NL_AURORA
-        color += renderAurora(worldPos.xz, t, rain, FogColor.rgb)*(1.0-0.7*color.a);
+        color += render_aurora(worldPos, t, rain, fog_col)*(1.0-color.a);
       #endif
 
       color.a *= fade;
-      color.rgb = colorCorrection(color.rgb);    
+      color.rgb = colorCorrection(color.rgb);
     #else
     
       v_color2 = vec4(fog_col,ViewPositionAndTime.w);

@@ -15,22 +15,28 @@ DEFAULT_MATERIALS="RenderChunk Clouds Sky EndSky LegacyCubemap"
 #  NAMES     = names/descriptions for options
 #  MATERIALS = materials to compile for options
 SUBPACK_OPTIONS=(
-  DEFAULT
-  NO_FOG
-  NO_WAVE_NO_FOG
+  ROUNDED_CLOUDS
   CHUNK_ANIM
+  NO_WAVE_NO_FOG
+  NO_FOG
+  NO_WAVE
+  DEFAULT
 )
 SUBPACK_NAMES=(
-  "Default"
-  "No fog"
-  "No wave, No fog"
+  "Rounded Clouds"
   "Chunk loading animation"
+  "No wave, No fog"
+  "No fog"
+  "No wave"
+  "Default"
 )
 SUBPACK_MATERIALS=(
+  "Clouds"
+  "RenderChunk"
+  "RenderChunk"
+  "RenderChunk"
+  "RenderChunk"
   ""
-  "RenderChunk"
-  "RenderChunk"
-  "RenderChunk"
 )
 
 BUILD_SCRIPT="./build.sh"
@@ -77,7 +83,11 @@ if [ "$PLATFORM" == "windows" ]; then
 else
   sed -i "s/\%w/Only works with Patched Minecraft/" $MANIFEST
 fi
-sed -i "s/\%c/- §b$CUSTOM/" $MANIFEST
+if [ -z "$CUSTOM" ]; then
+  sed -i "s/\%c//" $MANIFEST
+else
+  sed -i "s/\%c/- §b$CUSTOM/" $MANIFEST
+fi
 sed -i "s/\"version\": \[.*]/\"version\": [0, ${VERSION/./, }]/g" $MANIFEST
 sed -i "s/\%v/v$VERSION ${PLATFORM^}/g" $MANIFEST
 echo -e "   - platform: $PLATFORM\n   - version: 0.$VERSION\n   - custom name: $CUSTOM"
