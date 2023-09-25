@@ -22,19 +22,18 @@ jobs:
         ./setup.sh
       shell: bash
 
-    - name: Build and zip
+    - name: Build
       run: |
         cd newb-x-mcbe
         chmod +x build.sh
         ./build.sh -p windows -t 6
-        zip -r build.zip build
       shell: bash
 
-    - name: Send to Discord
-    - uses: actions/upload-artifact@v3
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
       with:
         name: windows
-        path: build.zip
+        path: newb-x-mcbe/build
 
     - name: Clean up
       run: |
