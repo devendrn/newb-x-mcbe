@@ -10,8 +10,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - name: Clone
+      shell: cmd
+      run: |
+        git clone https://github.com/miqumi/newb-x-mcbe
 
     - name: Run setup.bat
       shell: cmd
