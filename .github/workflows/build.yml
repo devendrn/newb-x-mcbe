@@ -3,38 +3,40 @@ name: build
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Clone
-      shell: cmd
+    - name: Clone repository
       run: |
-        git clone https://github.com/miqumi/newb-x-mcbe
+        git clone https://github.com/miqumi/newb-x-mcbe newb-x-mcbe
+      working-directory: ${{ github.workspace }}
 
-    - name: Run setup.bat
-      shell: cmd
+    - name: Run setup.sh
       run: |
         cd newb-x-mcbe
-        .\setup.sh
+        chmod +x setup.sh
+        ./setup.sh
+      shell: bash
 
     - name: Build and zip
-      shell: cmd
       run: |
         cd newb-x-mcbe
-        .\build.sh -p windows -t 6
-        Compress-Archive -Path .\build -DestinationPath build.zip
+        chmod +x build.sh
+        ./build.sh -p windows -t 6
+        zip -r build.zip build
+      shell: bash
 
     - name: Send to Discord
     - uses: actions/upload-artifact@v3
       with:
         name: windows
         path: build.zip
-     - name: Clean up
-      shell: cmd
+
+    - name: Clean up
       run: |
-        cd ..
-        rmdir /s /q newb-x-mcbe
+        rm -rf newb-x-mcbe
+      shell: bash
