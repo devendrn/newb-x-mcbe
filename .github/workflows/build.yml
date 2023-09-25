@@ -11,7 +11,8 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      run: |
+        git clone https://github.com/miqumi/newb-x-mcbe
 
     - name: Run setup.bat
       run: |
