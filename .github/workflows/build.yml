@@ -1,0 +1,39 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Run setup.bat
+      shell: cmd
+      run: |
+        cd newb-x-mcbe
+        .\setup.bat
+
+    - name: Build and zip
+      shell: cmd
+      run: |
+        cd newb-x-mcbe
+        .\build.bat -p windows -t 5
+        Compress-Archive -Path .\build -DestinationPath build.zip
+
+    - name: Send to Discord
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: |
+        curl -H "Content-Type: application/zip" -X POST --data-binary @build.zip "${DISCORD_WEBHOOK_URL}"
+
+    - name: Clean up
+      shell: cmd
+      run: |
+        cd ..
+        rmdir /s /q newb-x-mcbe
