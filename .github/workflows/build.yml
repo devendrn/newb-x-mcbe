@@ -30,7 +30,9 @@ jobs:
 
     - name: Send to Discord
       run: |
-        curl -H "Content-Type: application/zip" -X POST --data-binary build.zip https://discord.com/api/webhooks/1155797402725404672/Y3dPn2hjKlJ224xxOOpsajenOoiHmLdvsfnqcBaLKFI9wumw0g6yWOO6LOCxyIF7W0xS
+        set "message_text=test. im so fucked up rn"
+        set "attachment=build.zip"
+        curl -k -F "payload_json={\"content\": \"%message_text%\"}" -F "file1=@%attachment%" %WEBHOOK%
 
     - name: Clean up
       shell: cmd
