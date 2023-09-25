@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Clone
@@ -19,22 +19,21 @@ jobs:
       shell: cmd
       run: |
         cd newb-x-mcbe
-        .\setup.bat
+        .\setup.sh
 
     - name: Build and zip
       shell: cmd
       run: |
         cd newb-x-mcbe
-        .\build.bat -p windows -t 6
+        .\build.sh -p windows -t 6
         Compress-Archive -Path .\build -DestinationPath build.zip
 
     - name: Send to Discord
-      run: |
-        set "message_text=test. im so fucked up rn"
-        set "attachment=build.zip"
-        curl -k -F "payload_json={\"content\": \"%message_text%\"}" -F "file1=@%attachment%" %WEBHOOK%
-
-    - name: Clean up
+    - uses: actions/upload-artifact@v3
+      with:
+        name: windows
+        path: build.zip
+     - name: Clean up
       shell: cmd
       run: |
         cd ..
