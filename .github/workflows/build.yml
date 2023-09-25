@@ -17,14 +17,12 @@ jobs:
     - name: Run setup.bat
       run: |
         cd newb-x-mcbe
-        setup.bat
-      working-directory: ${{ github.workspace }}
+        .\setup.bat
 
     - name: Build
       run: |
         cd newb-x-mcbe
         build.bat -p windows -t 6
-      working-directory: ${{ github.workspace }}
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
