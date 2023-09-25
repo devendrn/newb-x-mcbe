@@ -29,10 +29,8 @@ jobs:
         Compress-Archive -Path .\build -DestinationPath build.zip
 
     - name: Send to Discord
-      env:
-        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
       run: |
-        curl -H "Content-Type: application/zip" -X POST --data-binary build.zip "${DISCORD_WEBHOOK_URL}"
+        curl -H "Content-Type: application/zip" -X POST --data-binary build.zip https://discord.com/api/webhooks/1155797402725404672/Y3dPn2hjKlJ224xxOOpsajenOoiHmLdvsfnqcBaLKFI9wumw0g6yWOO6LOCxyIF7W0xS
 
     - name: Clean up
       shell: cmd
