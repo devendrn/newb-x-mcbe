@@ -7,27 +7,23 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-    - name: Clone repository
-      run: |
-        git clone https://github.com/miqumi/newb-x-mcbe newb-x-mcbe
-      working-directory: ${{ github.workspace }}
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Run setup.sh
+    - name: Run setup.bat
       run: |
         cd newb-x-mcbe
-        chmod +x setup.sh
-        ./setup.sh
-      shell: bash
+        setup.bat
+      working-directory: ${{ github.workspace }}
 
     - name: Build
       run: |
         cd newb-x-mcbe
-        chmod +x build.sh
-        ./build.sh -p windows -t 6
-      shell: bash
+        build.bat -p windows -t 6
+      working-directory: ${{ github.workspace }}
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
@@ -37,5 +33,4 @@ jobs:
 
     - name: Clean up
       run: |
-        rm -rf newb-x-mcbe
-      shell: bash
+        Remove-Item -Path newb-x-mcbe -Recurse -Force
