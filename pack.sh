@@ -45,17 +45,16 @@ CONFIG_FILE="include/newb_config_legacy.h"
 PLATFORM=android
 
 # version format: tag.commits
+VERSION=15.0
 if command -v git &> /dev/null; then
   GIT_TAG=$(git describe --tags)
   GIT_TAG=${GIT_TAG/v/}
   GIT_TAG=(${GIT_TAG//-/ })
   if [ ${#GIT_TAG[*]} == 3 ]; then
     VERSION=${GIT_TAG[0]}.${GIT_TAG[1]}
-  else
+  elif [ -n "${GIT_TAG[0]}" ]; then
     VERSION=${GIT_TAG[0]}.0
   fi
-else
-  VERSION=15.0
 fi
 
 CUSTOM=
