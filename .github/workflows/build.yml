@@ -24,12 +24,28 @@ jobs:
         cd newb-x-mcbe
         .\build.bat -p windows android ios -t 6
 
+    - name: Upload Windows
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows
+        path: newb-x-mcbe/build/windows
+
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
         name: windows
-        path: newb-x-mcbe/build
+        path: newb-x-mcbe/build/android
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows
+        path: newb-x-mcbe/build/android
 
     - name: Clean up
       run: |
         Remove-Item -Path newb-x-mcbe -Recurse -Force
+
+    - name: Test
+      run: |
+          echo Hi
