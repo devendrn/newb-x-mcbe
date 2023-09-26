@@ -10,11 +10,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
+    - name: Clone repo
       run: |
         git clone https://github.com/miqumi/newb-x-mcbe
 
-    - name: Run setup.bat
+    - name: Set-up environment
       run: |
         cd newb-x-mcbe
         .\setup.bat
@@ -24,28 +24,24 @@ jobs:
         cd newb-x-mcbe
         .\build.bat -p windows android ios -t 6
 
-    - name: Upload Windows
+    - name: Upload Windows Materials
       uses: actions/upload-artifact@v3
       with:
         name: windows
         path: newb-x-mcbe/build/windows
 
-    - name: Upload Artifacts
+    - name: Upload Android Materials
       uses: actions/upload-artifact@v3
       with:
-        name: windows
+        name: android
         path: newb-x-mcbe/build/android
 
-    - name: Upload Artifacts
+    - name: Upload iOS Materials
       uses: actions/upload-artifact@v3
       with:
-        name: windows
-        path: newb-x-mcbe/build/android
+        name: ios
+        path: newb-x-mcbe/build/ios
 
     - name: Clean up
       run: |
         Remove-Item -Path newb-x-mcbe -Recurse -Force
-
-    - name: Test
-      run: |
-          echo Hi
