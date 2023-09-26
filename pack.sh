@@ -44,8 +44,20 @@ PACK_DIR="pack"
 CONFIG_FILE="include/newb_config_legacy.h"
 PLATFORM=android
 
-# version format: xx.xx
-VERSION=15.0
+# version format: tag.commits
+if command -v git &> /dev/null; then
+  GIT_TAG=$(git describe --tags)
+  GIT_TAG=${GIT_TAG/v/}
+  GIT_TAG=(${GIT_TAG//-/ })
+  if [ ${#GIT_TAG[*]} == 3 ]; then
+    VERSION=${GIT_TAG[0]}.${GIT_TAG[1]}
+  else
+    VERSION=${GIT_TAG[0]}.0
+  fi
+else
+  VERSION=15.0
+fi
+
 CUSTOM=
 ARG_MODE=""
 for t in "$@"; do
