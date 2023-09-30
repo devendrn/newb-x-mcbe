@@ -34,6 +34,14 @@ if [ ! -f "$SHADERC" ]; then
   chmod +x $SHADERC
 fi
 
+# libc++_shared.so not found fix for termux
+TERMUX_FILES="/data/data/com.termux/files"
+if [ -d "$TERMUX_FILES" ]; then
+  echo "Termux fix: libc++_shared.so"
+  mkdir -p ./env/lib
+  cp $TERMUX_FILES/usr/lib/libc++_shared.so ./env/lib
+fi
+
 if [ ! -d "$DATA_DIR" ]; then
   mkdir -p $DATA_DIR
   echo "Downloading materials-data.zip"
