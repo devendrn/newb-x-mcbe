@@ -19,7 +19,9 @@ jobs:
       uses: actions/cache@v3
       with:
         key: env-files
-        path: ./env ./data   
+        path: |
+          {{ github.workspace }}/env
+          {{ github.workspace }}/data
 
     - name: Setup build env
       run: .\setup.bat

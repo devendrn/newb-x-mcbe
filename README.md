@@ -16,8 +16,10 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord serv
 ## Installation
 
 #### Linux: ([minecraft-manifest](https://github.com/minecraft-linux/mcpelauncher-ui-manifest))
-1. Replace material.bin files inside data root (backup original files first).
-2. Import resource pack and activate it in global resources.
+1. Extract material.bin files from shader mcpack / build materials manually
+2. Move these files to data root `mcpelauncher/versions/1.20.x/assets/renderer/materials/`.
+   (Make sure to backup all files in this folder)
+3. Import resource pack and activate it in global resources.
 
 #### Windows:
 1. Use [BetterRenderDragon](https://github.com/ddf8196/BetterRenderDragon) to enable MaterialBinLoader.
@@ -61,3 +63,4 @@ Compiled material.bin files will be at `build/<platform>/`
 ## Note
 
 **Shaders are not officially supported on MCBE**.
+

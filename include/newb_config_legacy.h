@@ -122,10 +122,10 @@
 #define NL_CLOUD2_RAIN_THICKNESS 2.5 // 0.5 (slim) - 5.0 (fat)
 #define NL_CLOUD2_STEPS 5            // 3 (low quality) - 16 (high quality)
 #define NL_CLOUD2_SCALE 0.033        // 0.003 (large) - 0.3 (tiny)
-#define NL_CLOUD2_SHAPE 0.6          // 0.0 (round) - 1.0 (box)
+#define NL_CLOUD2_SHAPE 0.65         // 0.0 (round) - 1.0 (box)
 #define NL_CLOUD2_DENSITY 5.0        // 1.0 (blurry) - 100.0 (sharp)
 #define NL_CLOUD2_VELOCIY 0.8        // 0.0 (static) - 4.0 (very fast)
-#define NL_CLOUD2_MULTILAYER         // (toggle)
+//#define NL_CLOUD2_MULTILAYER       // (toggle)
 
 /*️ Aurora brightness (toggle) */
 #define NL_AURORA 1.2 // 0.4 (dim) - 4.0 (very bright)
