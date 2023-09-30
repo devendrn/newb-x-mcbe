@@ -1,9 +1,10 @@
 #!/bin/bash
 
 MBT_JAR_FILES=(env/jar/MaterialBinTool-0.*.jar)
-MBT_JAR="${MBT_JAR_FILES[0]}"
+MBT_JAR="java -jar ${MBT_JAR_FILES[0]}"
 
 SHADERC=env/bin/shaderc
+LIB_SET=LD_PRELOAD=./env/lib
 
 MBT_ARGS="--compile --shaderc $SHADERC --include include/"
 
@@ -61,7 +62,7 @@ for p in $TARGETS; do
 
     for s in $MATERIALS; do
       echo -e "\n - $s"
-      java -jar $MBT_JAR $MBT_ARGS --output $BUILD_DIR/$p --data $DATA_DIR/$p/${s##*/} $s -m
+      LD_LIBRARY_PATH=./env/lib $MBT_JAR $MBT_ARGS --output $BUILD_DIR/$p --data $DATA_DIR/$p/${s##*/} $s -m
     done
   else
     echo "Build aborted for $p: $DATA_DIR/$p not found"
