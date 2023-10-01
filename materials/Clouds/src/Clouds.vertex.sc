@@ -50,9 +50,13 @@ void main() {
     pos.xz = pos.xz - 32.0;
     pos.y *= 0.01;
     vec3 worldPos;
-    worldPos.x = pos.x*mtxElement(model, 0, 0);
-    worldPos.y = pos.y+mtxElement(model, 3, 1);
-    worldPos.z = pos.z*mtxElement(model, 2, 2);
+    worldPos.x = pos.x*model[0][0];
+    worldPos.z = pos.z*model[2][2];
+    #if BGFX_SHADER_LANGUAGE_GLSL
+      worldPos.y = pos.y+model[3][1];
+    #else
+      worldPos.y = pos.y+model[1][3];
+    #endif
 
     float fade = clamp(2.0-2.0*length(worldPos.xyz)*0.0022, 0.0, 1.0);
     #if NL_CLOUD_TYPE == 1

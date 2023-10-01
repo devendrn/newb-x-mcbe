@@ -576,6 +576,9 @@ float bgfxShadow2DProj(sampler2DShadow _sampler, vec4 _coord)
 
 #	endif // BGFX_SHADER_LANGUAGE_HLSL > 300
 
+#define SAMPLER2D_HIGHP(_name, _reg) SAMPLER2D(_name, _reg)
+#define SAMPLERCUBE_HIGHP(_name, _reg) SAMPLERCUBE(_name, _reg)
+
 vec3 instMul(vec3 _vec, mat3 _mtx) { return mul(_mtx, _vec); }
 vec3 instMul(mat3 _mtx, vec3 _vec) { return mul(_vec, _mtx); }
 vec4 instMul(vec4 _vec, mat4 _mtx) { return mul(_mtx, _vec); }
@@ -625,6 +628,8 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #	define SAMPLER3D(_name, _reg)       uniform highp sampler3D _name
 #	define SAMPLERCUBE(_name, _reg)     uniform lowp samplerCube _name
 #	define SAMPLER2DSHADOW(_name, _reg) uniform highp sampler2DShadow _name
+#	define SAMPLER2D_HIGHP(_name, _reg) uniform highp sampler2D _name
+#	define SAMPLERCUBE_HIGHP(_name, _reg) uniform highp samplerCube _name
 
 #	define SAMPLER2DARRAY(_name, _reg)       uniform highp sampler2DArray _name
 #	define SAMPLER2DMSARRAY(_name, _reg)     uniform highp sampler2DMSArray _name
@@ -662,6 +667,24 @@ vec2  rcp(vec2  _a) { return vec2(1.0)/_a; }
 vec3  rcp(vec3  _a) { return vec3(1.0)/_a; }
 vec4  rcp(vec4  _a) { return vec4(1.0)/_a; }
 #endif // BGFX_SHADER_LANGUAGE_*
+
+#define SAMPLER2D_AUTOREG(_name)       SAMPLER2D(_name, _name ## __REG)
+#define SAMPLER2DMS_AUTOREG(_name)     SAMPLER2DMS(_name, _name ## __REG)
+#define SAMPLER3D_AUTOREG(_name)       SAMPLER3D(_name, _name ## __REG)
+#define SAMPLERCUBE_AUTOREG(_name)     SAMPLERCUBE(_name, _name ## __REG)
+#define SAMPLER2DSHADOW_AUTOREG(_name) SAMPLER2DSHADOW(_name, _name ## __REG)
+#define SAMPLER2D_HIGHP_AUTOREG(_name, _reg)  SAMPLER2D_HIGHP(_name, _name ## __REG)
+#define SAMPLERCUBE_HIGHP_AUTOREG(_name, _reg) SAMPLERCUBE_HIGHP(_name, _name ## __REG)
+
+#define SAMPLER2DARRAY_AUTOREG(_name)       SAMPLER2DARRAY(_name, _name ## __REG)
+#define SAMPLER2DMSARRAY_AUTOREG(_name)     SAMPLER2DMSARRAY(_name, _name ## __REG)
+#define SAMPLERCUBEARRAY_AUTOREG(_name)     SAMPLERCUBEARRAY(_name, _name ## __REG)
+#define SAMPLER2DARRAYSHADOW_AUTOREG(_name) SAMPLER2DARRAYSHADOW(_name, _name ## __REG)
+
+#define ISAMPLER2D_AUTOREG(_name) ISAMPLER2D(_name, _name ## __REG)
+#define USAMPLER2D_AUTOREG(_name) USAMPLER2D(_name, _name ## __REG)
+#define ISAMPLER3D_AUTOREG(_name) ISAMPLER3D(_name, _name ## __REG)
+#define USAMPLER3D_AUTOREG(_name) USAMPLER3D(_name, _name ## __REG)
 
 vec2 vec2_splat(float _x) { return vec2(_x, _x); }
 vec3 vec3_splat(float _x) { return vec3(_x, _x, _x); }
@@ -753,13 +776,6 @@ uniform vec4  u_alphaRef4;
 #define u_alphaRef u_alphaRef4.x
 uniform vec4  u_prevWorldPosOffset;
 uniform mat4  u_prevViewProj;
-
-// element indexing
-#if BGFX_SHADER_LANGUAGE_GLSL
-	#define mtxElement(_mtx, _col, _row) _mtx[_col][_row]
-#else
-	#define mtxElement(_mtx, _col, _row) _mtx[_row][_col]
-#endif
 
 #endif // __cplusplus
 

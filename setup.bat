@@ -3,10 +3,11 @@
 set MBT_VERSION=0.8.1
 set MBT=env\bin\MaterialBinTool-%MBT_VERSION%-native-image.exe
 set SHADERC=env\bin\shaderc.exe
-set DATA_DIR=data
+set DATA_VER=1.20.10
+set DATA_DIR=data\%DATA_VER%
 
 set MBT_RELEASE_URL=https://github.com/ddf8196/MaterialBinTool/releases/download/v%MBT_VERSION%
-set M_DATA_HTTP=https://cdn.discordapp.com/attachments/1137039470441550004/1137072623617069217/materials-data-1.20.10-few.zip
+set M_DATA_HTTP=https://cdn.discordapp.com/attachments/1137039470441550004/1137072623617069217/materials-data-%DATA_VER%-few.zip
 
 if not exist %MBT% (
   mkdir env\bin\
@@ -21,9 +22,9 @@ if not exist %SHADERC% (
 
 if not exist %DATA_DIR% (
   mkdir %DATA_DIR%
-  echo Downloading materials-data.zip
+  echo Downloading materials-data-%DATA_VER%.zip
   curl -L -o %DATA_DIR%/temp.zip %M_DATA_HTTP%
-  echo Extracting materials-data.zip
+  echo Extracting materials-data-%DATA_VER%.zip
   powershell Expand-Archive %DATA_DIR%\temp.zip -DestinationPath %DATA_DIR%
   del %DATA_DIR%\temp.zip
 )

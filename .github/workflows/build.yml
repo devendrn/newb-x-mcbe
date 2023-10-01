@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - devel
 
 jobs:
   build:
@@ -20,8 +21,8 @@ jobs:
       with:
         key: env-files
         path: |
-          {{ github.workspace }}/env
-          {{ github.workspace }}/data
+          ${{ github.workspace }}/env
+          ${{ github.workspace }}/data
 
     - name: Setup build env
       run: .\setup.bat

@@ -5,7 +5,8 @@ set SHADERC=env\bin\shaderc.exe
 
 set MBT_ARGS=--compile --shaderc %SHADERC% --include include/
 
-set DATA_DIR=data
+set DATA_VER=1.20.10
+set DATA_DIR=data/%DATA_VER%
 set BUILD_DIR=build
 set MATERIALS_DIR=materials
 

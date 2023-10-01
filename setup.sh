@@ -3,10 +3,11 @@
 MBT_VERSION="0.8.1"
 MBT_JAR=env/jar/MaterialBinTool-$MBT_VERSION-all.jar
 SHADERC=env/bin/shaderc
-DATA_DIR=data
+DATA_VER="1.20.10"
+DATA_DIR=data/$DATA_VER
 
 MBT_JAR_URL="https://github.com/ddf8196/MaterialBinTool/releases/download/v$MBT_VERSION/MaterialBinTool-$MBT_VERSION-all.jar"
-M_DATA_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1137072623617069217/materials-data-1.20.10-few.zip"
+M_DATA_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1137072623617069217/materials-data-$DATA_VER-few.zip"
 
 SHADERC_URL=
 CPU_ARCH=$(uname -m)
@@ -18,7 +19,7 @@ elif [ $CPU_ARCH == "armv7l" ] || [ $CPU_ARCH == "armv8l" ]; then
   SHADERC_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1139817533805953145/shaderc.arm32"
 else
   echo "Cannot setup build environment for $CPU_ARCH"
-  exit 0;
+  exit 1;
 fi
 
 if [ ! -f "$MBT_JAR" ]; then
@@ -44,10 +45,10 @@ fi
 
 if [ ! -d "$DATA_DIR" ]; then
   mkdir -p $DATA_DIR
-  echo "Downloading materials-data.zip"
+  echo "Downloading materials-data-$DATA_VER.zip"
   curl -Lo $DATA_DIR/temp.zip $M_DATA_URL
-  echo "Extracting materials-data.zip"
-  unzip -d $DATA_DIR/ $DATA_DIR/temp.zip
+  echo "Extracting materials-data-$DATA_VER.zip"
+  unzip -qd $DATA_DIR/ $DATA_DIR/temp.zip
   rm $DATA_DIR/temp.zip
 fi
 
@@ -58,5 +59,4 @@ if [ "$1" == "-u" ]; then
     echo -e "\n> $i"
     java -jar $MBT_JAR --unpack --data-only $i/*.material.bin
   done
-  exit
 fi

@@ -285,6 +285,31 @@ __IMAGE_IMPL_ATOMIC(uint,       x,    uvec4, xxxx)
 
 #endif // BGFX_SHADER_LANGUAGE_GLSL
 
+#define IMAGE2D_RO_AUTOREG( _name, _format) IMAGE2D_RO(_name, _format, _name ## _REG)
+#define UIMAGE2D_RO_AUTOREG(_name, _format) UIMAGE2D_RO(_name, _format, _name ## _REG)
+#define IMAGE2D_WR_AUTOREG( _name, _format) IMAGE2D_WR(_name, _format, _name ## _REG)
+#define UIMAGE2D_WR_AUTOREG(_name, _format) UIMAGE2D_WR(_name, _format, _name ## _REG)
+#define IMAGE2D_RW_AUTOREG( _name, _format) IMAGE2D_RW(_name, _format, _name ## _REG)
+#define UIMAGE2D_RW_AUTOREG(_name, _format) UIMAGE2D_RW(_name, _format, _name ## _REG)
+
+#define IMAGE2D_ARRAY_RO_AUTOREG( _name, _format) IMAGE2D_ARRAY_RO(_name, _format, _name ## _REG)
+#define UIMAGE2D_ARRAY_RO_AUTOREG(_name, _format) UIMAGE2D_ARRAY_RO(_name, _format, _name ## _REG)
+#define IMAGE2D_ARRAY_WR_AUTOREG( _name, _format) IMAGE2D_ARRAY_WR(_name, _format, _name ## _REG)
+#define UIMAGE2D_ARRAY_WR_AUTOREG(_name, _format) UIMAGE2D_ARRAY_WR(_name, _format, _name ## _REG)
+#define IMAGE2D_ARRAY_RW_AUTOREG( _name, _format) IMAGE2D_ARRAY_RW(_name, _format, _name ## _REG)
+#define UIMAGE2D_ARRAY_RW_AUTOREG(_name, _format) UIMAGE2D_ARRAY_RW(_name, _format, _name ## _REG)
+
+#define IMAGE3D_RO_AUTOREG( _name, _format) IMAGE3D_RO(_name, _format, _name ## _REG)
+#define UIMAGE3D_RO_AUTOREG(_name, _format) UIMAGE3D_RO(_name, _format, _name ## _REG)
+#define IMAGE3D_WR_AUTOREG( _name, _format) IMAGE3D_WR(_name, _format, _name ## _REG)
+#define UIMAGE3D_WR_AUTOREG(_name, _format) UIMAGE3D_WR(_name, _format, _name ## _REG)
+#define IMAGE3D_RW_AUTOREG( _name, _format) IMAGE3D_RW(_name, _format, _name ## _REG)
+#define UIMAGE3D_RW_AUTOREG(_name, _format) UIMAGE3D_RW(_name, _format, _name ## _REG)
+
+#define BUFFER_RO_AUTOREG(_name, _type) BUFFER_RO(_name, _type, _name ## _REG)
+#define BUFFER_RW_AUTOREG(_name, _type) BUFFER_RW(_name, _type, _name ## _REG)
+#define BUFFER_WR_AUTOREG(_name, _type) BUFFER_WR(_name, _type, _name ## _REG)
+
 #define dispatchIndirect( \
 	  _buffer             \
 	, _offset             \
