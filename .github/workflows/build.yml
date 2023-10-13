@@ -28,11 +28,11 @@ jobs:
       run: .\setup.bat
 
     - name: Build for Windows
-      run: ./pack.sh win -p windows
+      run: ./pack.sh -w -p windows
       shell: bash
 
     - name: Build for Android
-      run: ./pack.sh win -p android
+      run: ./pack.sh -w -p android
       shell: bash
 
     - name: Build for iOS

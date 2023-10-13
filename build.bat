@@ -59,16 +59,13 @@ set MBT_ARGS=%MBT_ARGS% --threads %THREADS%
 for %%f in (%MBT%) do echo %%~nxf 
 for %%p in (%TARGETS%) do (
   echo ---------------------------
+  echo ^>^> Building materials - %%p %DATA_VER%:
   if exist %DATA_DIR%\%%p (
-    echo Building materials: target=%%p
-
     for /d %%s in (%MATERIALS%) do (
-      echo.
       echo  - %%s
       %MBT% %MBT_ARGS% --output %BUILD_DIR%\%%p --data %DATA_DIR%\%%p\%%~nxs %%s
     )
-
   ) else (
-    echo Build aborted for %%p: %DATA%\%%p not found
+    echo Error: %DATA%\%%p not found
   )
 )

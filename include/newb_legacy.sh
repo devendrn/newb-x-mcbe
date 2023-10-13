@@ -189,7 +189,7 @@ vec3 getUnderwaterCol(vec3 FOG_COLOR) {
 }
 
 vec3 getEndSkyCol() {
-  return vec3(0.28,0.031,0.33);
+  return NL_END_SKY_COL;
 }
 
 vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR) {

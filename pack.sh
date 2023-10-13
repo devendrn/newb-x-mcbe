@@ -4,8 +4,8 @@
 # - linux: (android pack only)
 #     pack.sh -v 15.0 -m "Custom name (optional)"
 # - bash on windows: (windows and android pack)
-#     pack.sh win -v 15.0 -m "Custom name" -p windows
-#     pack.sh win -v 15.0 -m "Custom name" -p android
+#     pack.sh -w -v 15.0 -m "Custom name" -p windows
+#     pack.sh -w -v 15.0 -m "Custom name" -p android
 
 # materials to compile for default
 DEFAULT_MATERIALS="RenderChunk Clouds Sky EndSky LegacyCubemap Actor"
@@ -42,7 +42,7 @@ SUBPACK_MATERIALS=(
 BUILD_SCRIPT="./build.sh"
 PACK_DIR="pack"
 CONFIG_FILE="include/newb_config_legacy.h"
-PLATFORM=android
+PLATFORM="android"
 
 # version format: tag.commits
 VERSION=15.0
@@ -57,25 +57,28 @@ if command -v git &> /dev/null; then
   fi
 fi
 
-CUSTOM=
+MSG=""
 ARG_MODE=""
 for t in "$@"; do
-  if [ "$t" == "-v" ] || [ "$t" == "-m" ] || [ "$t" == "-p" ]; then
-    ARG_MODE="$t"
-    continue
-  elif [ "$ARG_MODE" == "-v" ]; then
-    VERSION="$t"
-  elif [ "$ARG_MODE" == "-m" ]; then
-    CUSTOM="$t"
-  elif [ "$ARG_MODE" == "-p" ]; then
-    PLATFORM="$t"
-  elif [ -z "$ARG_MODE" ]; then
-    # using bash on win
-    if [ "$t" == "win" ]; then
+  if [ "${t:0:1}" == "-" ]; then
+    # mode
+    OPT=${t:1}
+    if [[ "$OPT" =~ ^[pmv]$ ]]; then
+      ARG_MODE=$OPT
+    elif [ "$OPT" == "w" ]; then  
+      # using bash on win
       BUILD_SCRIPT="./build.bat"
+    else
+      echo "Invalid option: $t"      
+      exit 1
     fi
+  elif [ "$ARG_MODE" == "v" ]; then
+    VERSION="$t"
+  elif [ "$ARG_MODE" == "m" ]; then
+    MSG="- §b$t"
+  elif [ "$ARG_MODE" == "p" ]; then
+    PLATFORM="$t"
   fi
-  ARG_MODE=
   shift
 done
 
@@ -84,31 +87,27 @@ BUILD_DIR="build/$PLATFORM"
 TEMP_PACK_DIR="$BUILD_DIR/temp"
 MANIFEST="$TEMP_PACK_DIR/manifest.json"
 
-echo -e ">> CREATE PACK FOLDER:\n   - $TEMP_PACK_DIR"
+echo ">> Pack directory: $TEMP_PACK_DIR"
 mkdir -p $TEMP_PACK_DIR/renderer/materials
-cp -rf $PACK_DIR/* $TEMP_PACK_DIR
+cp -ru $PACK_DIR/* $TEMP_PACK_DIR
 
-echo ">> UPDATE MANIFEST"
+echo ">> Updating manifest.json"
 if [ "$PLATFORM" == "windows" ]; then
   sed -i "s/\%w/Only works with BetterRenderDragon/" $MANIFEST
 else
   sed -i "s/\%w/Only works with Patched Minecraft/" $MANIFEST
 fi
-if [ -z "$CUSTOM" ]; then
-  sed -i "s/\%c//" $MANIFEST
-else
-  sed -i "s/\%c/- §b$CUSTOM/" $MANIFEST
-fi
+sed -i "s/\%c/$MSG/" $MANIFEST
 sed -i "s/\"version\": \[.*]/\"version\": [0, ${VERSION/./, }]/g" $MANIFEST
 sed -i "s/\%v/v$VERSION ${PLATFORM^}/g" $MANIFEST
-echo -e "   - platform: $PLATFORM\n   - version: 0.$VERSION\n   - custom name: $CUSTOM"
+echo -e "   - platform: $PLATFORM\n   - version: 0.$VERSION\n   - message: ${MSG:4}"
 
-echo ">> BUILD MATERIALS"
+echo ">> Building default materials"
 rm -f $BUILD_DIR/*.material.bin
 $BUILD_SCRIPT -m $DEFAULT_MATERIALS
 mv -f $BUILD_DIR/*.material.bin $TEMP_PACK_DIR/renderer/materials/
 
-echo ">> BUILD SUBPACKS"
+echo ">> Building subpack materials"
 SUBPACK_COUNT=${#SUBPACK_OPTIONS[@]}
 CONTENT=
 for ((s=0; s<$SUBPACK_COUNT; s+=1)); do
@@ -122,12 +121,12 @@ for ((s=0; s<$SUBPACK_COUNT; s+=1)); do
     echo "done"
   else
     sed -i "3s/.*/#define $OPTION/" $CONFIG_FILE
-    STAT=($($BUILD_SCRIPT -m $S_MATS | tail -n 1))
-    if [ "${STAT[0]}" == "Compiling" ]; then
+    STAT=$($BUILD_SCRIPT -m $S_MATS)
+    if [[ $STAT =~ "Compilation failed" ]]; then
+      echo "failed"
+    else
       mv $BUILD_DIR/*.material.bin $S_DIR
       echo "done"
-    else
-      echo "failed"
     fi
   fi
 
