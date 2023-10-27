@@ -71,7 +71,7 @@
 #define NL_END_SKY_COL vec3(0.28,0.031,0.33)
 
 /* Ore glow intensity */
-#define NL_GLOW_TEX 2.2 // 0.4 weak ~ 8.0 bright
+#define NL_GLOW_TEX 10.2 // 0.4 weak ~ 8.0 bright
 
 /* Waving */
 #define NL_PLANTS_WAVE 0.04  // [toggle] 0.02 gentle ~ 0.4 violent
