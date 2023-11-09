@@ -6,6 +6,5 @@ vec4 i_data1      : TEXCOORD7;
 vec4 i_data2      : TEXCOORD6;
 vec4 i_data3      : TEXCOORD5;
 
-vec3 v_color0       : COLOR0;
-vec3 v_pos          : COLOR1;
+vec3 v_pos          : COLOR0;
 vec2 v_texcoord0    : TEXCOORD0;

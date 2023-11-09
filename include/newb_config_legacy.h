@@ -60,15 +60,17 @@
 #define NL_FOG_TYPE 2        // 0:no fog, 1:vanilla, 2:smoother vanilla
 #define NL_MIST_DENSITY 0.18 // 0.0 no mist ~ 1.0 misty
 
-/* Sky/fog colors */
-#define NL_NIGHT_SKY_COL    vec3(0.01,0.06,0.1)
-#define NL_BASE_SKY_COL     vec3(0.15,0.45,1.0)
-#define NL_BASE_HORIZON_COL vec3(1.00,0.40,0.3)
-#define NL_EDGE_HORIZON_COL vec3(1.00,0.40,0.2)
-#define NL_DAY_SKY_CLARITY 0.3 // 0.0 fogy sky ~ 1.0 clear sky
-
-/* End sky colors */
-#define NL_END_SKY_COL vec3(0.28,0.031,0.33)
+/* Sky colors - zenith=top, horizon=bottom */
+#define NL_DAY_ZENITH_COL    vec3(0.15,0.45,1.0)
+#define NL_DAY_HORIZON_COL   vec3(0.53,0.83,0.93)
+#define NL_NIGHT_ZENITH_COL  vec3(0.004,0.024,0.04)
+#define NL_NIGHT_HORIZON_COL vec3(0.01,0.06,0.1)
+#define NL_RAIN_ZENITH_COL   vec3(0.85,0.9,1.0)
+#define NL_RAIN_HORIZON_COL  vec3(1.0,1.0,1.0)
+#define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
+#define NL_END_HORIZON_COL   vec3(0.28,0.031,0.33)
+#define NL_DAWN_HORIZON_COL  vec3(1.0,0.4,0.3)
+#define NL_DAWN_EDGE_COL     vec3(1.0,0.4,0.2)
 
 /* Ore glow intensity */
 #define NL_GLOW_TEX 2.2 // 0.4 weak ~ 8.0 bright

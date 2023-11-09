@@ -188,8 +188,12 @@ vec3 getUnderwaterCol(vec3 FOG_COLOR) {
   return 2.0*NL_UNDERWATER_TINT*FOG_COLOR*FOG_COLOR;
 }
 
-vec3 getEndSkyCol() {
-  return NL_END_SKY_COL;
+vec3 getEndZenithCol() {
+  return NL_END_ZENITH_COL;
+}
+
+vec3 getEndHorizonCol() {
+  return NL_END_HORIZON_COL;
 }
 
 vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR) {
@@ -197,13 +201,13 @@ vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR) {
   float val = max(FOG_COLOR.r*0.6, max(FOG_COLOR.g, FOG_COLOR.b));
 
   // zenith color
-  vec3 zenithCol = (0.77*val*val + 0.33*val)*NL_BASE_SKY_COL;
-  zenithCol += NL_NIGHT_SKY_COL*(0.4-0.4*FOG_COLOR.b);
+  vec3 zenithCol = (0.77*val*val + 0.33*val)*NL_DAY_ZENITH_COL;
+  zenithCol += NL_NIGHT_ZENITH_COL*(1.0-FOG_COLOR.b);
 
   // rain sky
   float brightness = min(FOG_COLOR.g, 0.26);
   brightness *= brightness*13.2;
-  return mix(zenithCol*(1.0+0.5*rainFactor), vec3(0.85,0.9,1.0)*brightness, rainFactor);
+  return mix(zenithCol*(1.0+0.5*rainFactor), NL_RAIN_ZENITH_COL*brightness, rainFactor);
 }
 
 vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR) {
@@ -212,23 +216,20 @@ vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR) {
   float sun = max(FOG_COLOR.r-FOG_COLOR.b, 0.0);
 
   // horizon color
-  vec3 horizonCol = NL_BASE_HORIZON_COL*(((0.7*val*val) + (0.4*val) + sun)*2.4);
-  horizonCol += NL_NIGHT_SKY_COL;
-
-  horizonCol = mix(horizonCol,
-                   2.0*val*mix(vec3(0.7,1.0,0.9), NL_BASE_SKY_COL, NL_DAY_SKY_CLARITY),
-                   val*val);
+  vec3 horizonCol = NL_DAWN_HORIZON_COL*(((0.7*val*val) + (0.4*val) + sun)*2.4);
+  horizonCol += NL_NIGHT_HORIZON_COL;
+  horizonCol = mix(horizonCol, 2.0*val*NL_DAY_HORIZON_COL, val*val);
 
   // rain horizon
   float brightness = min(FOG_COLOR.g, 0.26);
   brightness *= brightness*19.6;
-  return mix(horizonCol, vec3_splat(brightness), rainFactor);
+  return mix(horizonCol, NL_RAIN_HORIZON_COL*brightness, rainFactor);
 }
 
 // tinting on horizon col
 vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR) {
   float val = 2.1*(1.1-FOG_COLOR.b)*FOG_COLOR.g*(1.0-rainFactor);
-  horizonCol *= vec3_splat(1.0-val) + NL_EDGE_HORIZON_COL*val;
+  horizonCol *= vec3_splat(1.0-val) + NL_DAWN_EDGE_COL*val;
   return horizonCol;
 }
 

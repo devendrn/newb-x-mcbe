@@ -2,7 +2,7 @@ $input a_texcoord0, a_position
 #ifdef INSTANCING
   $input i_data0, i_data1, i_data2, i_data3
 #endif
-$output v_color0, v_pos, v_texcoord0
+$output v_pos, v_texcoord0
 
 #include <bgfx_shader.sh>
 #include <newb_legacy.sh>
@@ -28,7 +28,6 @@ void main() {
   float cosA = cos(t);
   pos.xz = mul(mtxFromRows(vec2(cosA,-sinA),vec2(sinA,cosA)), pos.xz);
 
-  v_color0 = colorCorrection(getEndSkyCol());
   v_texcoord0 = 2.0*a_texcoord0;
   v_pos = pos;
   gl_Position = mul(u_viewProj, vec4(pos, 1.0));

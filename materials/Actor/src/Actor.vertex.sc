@@ -106,7 +106,7 @@ void main() {
   if (underWater) {
     newFog = getUnderwaterCol(FogColor.rgb);
   } else if (end) {
-    newFog = getEndSkyCol();
+    newFog = getEndHorizonCol();
   } else {
     newFog = getHorizonCol(rainFactor, FogColor.rgb);
     newFog = getHorizonEdgeCol(newFog.rgb, rainFactor, FogColor.rgb);
