@@ -16,7 +16,7 @@ void main() {
   vec3 color = mix(getEndZenithCol(), getEndHorizonCol(), smoothstep(0.0, 1.0, grad));
 
   // stars
-  color += diffuse.rgb*(1.0-grad*grad);
+  color += 2.8*diffuse.rgb*(1.0-grad*grad);
 
   // end void gradient
   float glow = max((-sphereY-0.5)*2.0, 0.0);
