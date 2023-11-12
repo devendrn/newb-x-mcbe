@@ -76,9 +76,10 @@
 #define NL_GLOW_TEX 2.2 // 0.4 weak ~ 8.0 bright
 
 /* Waving */
-#define NL_PLANTS_WAVE 0.04  // [toggle] 0.02 gentle ~ 0.4 violent
-#define NL_LANTERN_WAVE 0.16 // [toggle] 0.05 subtle ~ 0.4 large swing
-#define NL_WAVE_SPEED 2.8    // 0.5 slow wave ~ 5.0 very fast wave
+#define NL_PLANTS_WAVE 0.04    // [toggle] 0.02 gentle ~ 0.4 violent
+#define NL_LANTERN_WAVE 0.16   // [toggle] 0.05 subtle ~ 0.4 large swing
+#define NL_WAVE_SPEED 2.8      // 0.5 slow wave ~ 5.0 very fast wave
+//#define NL_EXTRA_PLANTS_WAVE // [toggle] !dont use! wave using texture coords (1.20.40 vanilla)
 
 /* Water */
 #define NL_WATER_TRANSPARENCY 0.9 // 0.0 transparent ~ 1.0 normal
@@ -126,8 +127,10 @@
 #define NL_AURORA_COL1 vec3(0.1,1.0,0.0)
 #define NL_AURORA_COL2 vec3(0.1,0.0,1.0)
 
-/* Rainy wind blow transparency */
-#define NL_RAIN_MIST_OPACITY 0.12 // [toggle] 0.04 very subtle ~ 0.5 thick
+/* Rain effects */
+#define NL_RAIN_MIST_OPACITY 0.12 // [toggle] 0.04 very subtle ~ 0.5 thick mist blow
+#define NL_RAIN_WETNESS 1.0       // 0.0 no wetness - 1.0 fully wet blocks
+#define NL_RAIN_PUDDLES 0.7       // 0.0 no puddles - 1.0 puddles
 
 /* Chunk loading slide in animation */
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
