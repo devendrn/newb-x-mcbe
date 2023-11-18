@@ -139,10 +139,8 @@ highp float noise1D(highp float x) {
 }
 
 // simpler rand for disp,wetmap
-float fastRand(vec2 n) {
-  float a = cos(dot(n, vec2(4.2683, 1.367)));
-  float b = dot(n, vec2(1.367, 4.683));
-  return fract(a+b);
+float fastRand(vec2 n){
+  return fract(37.45*sin(dot(n, vec2(4.36, 8.28))));
 }
 
 // water displacement map (also used by caustic)
@@ -587,13 +585,49 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
 
   bool isTop = texPosY < 0.5;
   bool isPlants = COLOR.r/COLOR.g<1.9;
-  bool isVines = bPosC.x==0.453125 || (bPosC.y<0.451 && bPosC.y>0.4492 && bPos.x==0.0);
+  bool isVines = (bPosC.x==0.453125 && bPos.z==0.0) || (bPosC.y==0.453125 && bPos.x==0.0);
   bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25);
   bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop);
 
   float windStrength = lit.y*(noise1D(t*0.36) + rainFactor*0.4);
 
+  // darken plants bottom - better to not move it elsewhere
+  light *= isFarmPlant && !isTop ? 0.7 : 1.1;
+  if (isColored && !isTreeLeaves && uv0.y>0.43 && uv0.y<0.48) {
+    light *= isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5);
+  }
+
 #ifdef NL_PLANTS_WAVE
+
+  #ifdef NL_EXTRA_PLANTS_WAVE
+  // 1.20.40 vanilla
+  int tex_n = 32*int(uv0.y*64.0) + int(uv0.x*32.0) + 1;
+  if (
+    (tex_n == 168) || // cherrry leaves
+    (tex_n>378 && tex_n<389) || // tall flowers top
+    (tex_n==914) // sunflower sepal
+  ) {
+    shouldWave = true;
+  } else if (
+    (tex_n==173) || // cherry blossom sapling
+    (tex_n>749 && tex_n<761)  || // short flowers
+    (tex_n>372 && tex_n<379)  || // tall flowers bottom
+    (tex_n>795 && tex_n<803) || // saplings
+    (tex_n==866) || // spore blossom petal
+    (tex_n>922 && tex_n<927) || // cherry bush
+    (tex_n>939 && tex_n<943) || // torch flower
+    (tex_n==988) || // wither rose
+    (tex_n==1009)  // yellow dandelion
+  ) {
+    shouldWave = isTop;
+  } else if (
+    (tex_n==477) || // hanging roots
+    (tex_n==19 || tex_n==418)  // azeala
+  ) {
+    shouldWave = !isTop;
+  }
+  #endif
+
   if (shouldWave) {
 
     float wave = NL_PLANTS_WAVE*windStrength;
@@ -691,11 +725,11 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
     if (camDist < endDist) {
 
       // puddles map
-      wetness *= 0.4 + 0.6*fastRand(tiledCpos.xz*1.4);
+      wetness *= 1.0 - NL_RAIN_PUDDLES*fastRand(tiledCpos.xz);
 
       float cosR = max(viewDir.y, 0.0);
       wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
-      wetRefl.a = calculateFresnel(cosR, 0.03)*wetness;
+      wetRefl.a = calculateFresnel(cosR, 0.03)*wetness*NL_RAIN_WETNESS;
 
       // torch light
       wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
