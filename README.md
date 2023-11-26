@@ -1,4 +1,4 @@
-# newb-x-renewed
+# newb-x-nostalgia
 
 Newb X Legacy is a ported version of [newb-shader-mcbe](https://github.com/devendrn/newb-shader-mcbe) for MCBE 1.20. It is a vanilla shader based on the theme "lightweight and soft aesthetics".
 
