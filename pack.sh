@@ -8,7 +8,7 @@
 #     pack.sh -w -v 15.0 -m "Custom name" -p android
 
 # materials to compile for default
-DEFAULT_MATERIALS="RenderChunk Clouds Sky EndSky LegacyCubemap Actor"
+DEFAULT_MATERIALS="RenderChunk Clouds Sky EndSky LegacyCubemap Actor SunMoon"
 
 # subpacks:
 #  OPTIONS   = subpack options

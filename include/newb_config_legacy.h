@@ -87,6 +87,7 @@
 #define NL_WATER_TEX_OPACITY 0.3  // 0.0 plain water ~ 1.0 vanilla water texture
 #define NL_WATER_WAVE             // [toggle] wave effect
 #define NL_WATER_FOG_FADE         // [toggle] fog fade for water
+#define NL_WATER_CLOUD_REFLECTION // [toggle] simple clouds/aurora reflection
 #define NL_WATER_TINT vec3(0.52,0.9,0.45)
 
 /* Underwater */
@@ -134,6 +135,10 @@
 
 /* Chunk loading slide in animation */
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
+
+/* Sun/Moon */
+//#define NL_SUNMOON_ANGLE 45.0 // [toggle] 0.0 no tilt - 90.0 tilt of 90 degrees
+#define NL_SUNMOON_SIZE 1.0     // 0.3 tiny - 4.0 massive
 
 /* -------- CONFIG ENDS HERE ----------- */
 

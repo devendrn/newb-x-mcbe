@@ -23,7 +23,7 @@ vec3 colorCorrection(vec3 col) {
     // extended reinhard tonemapping
     const float white_scale = 0.063;
     col = col*(1.0+col*white_scale)/(1.0+col);
-  #elif NL_TONEMAP_TYPE==4
+  #elif NL_TONEMAP_TYPE == 4
     // aces tone mapping
     const float a = 1.04;
     const float b = 0.03;
@@ -32,10 +32,10 @@ vec3 colorCorrection(vec3 col) {
     const float e = 0.14;
     col *= 0.85;
     col = clamp((col*(a*col + b)) / (col*(c*col + d) + e), 0.0, 1.0);
-  #elif NL_TONEMAP_TYPE==2
+  #elif NL_TONEMAP_TYPE == 2
     // simple reinhard tonemapping
     col = col/(1.0+col);
-  #elif NL_TONEMAP_TYPE==1
+  #elif NL_TONEMAP_TYPE == 1
     // exponential tonemapping
     col = 1.0-exp(-col*0.8);
   #endif
@@ -54,7 +54,7 @@ vec3 colorCorrection(vec3 col) {
   return col;
 }
 
-// inv used in fogcolor for end
+// inv used in fogcolor for nether
 vec3 colorCorrectionInv(vec3 col) {
 
   #ifdef NL_TINT
@@ -312,7 +312,7 @@ vec4 render_clouds_simple(vec3 pos, highp float t, float rain, vec3 zenith_col, 
   vec4 color = vec4(0.02,0.04,0.05,cloudAlpha);
 
   color.rgb += fog_col;
-  color.rgb *= 1.0-0.5*cloudShadow*float(pos.y>0.0);
+  color.rgb *= 1.0-0.5*cloudShadow*step(0.0,pos.y);
 
   color.rgb += zenith_col*0.7;
   color.rgb *= 1.0 - 0.4*rain;
@@ -476,7 +476,7 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
     light += mix(horizonCol,zenithCol,0.5+uv1.y-0.5*lit.y)*(lit.y*(3.0-2.0*uv1.y)*(1.3 + (4.0*nightFactor) - rainDim));
 
     // shadow cast by top light
-    float shadow = float(uv1.y > NL_CONST_SHADOW_EDGE);
+    float shadow = step(NL_CONST_SHADOW_EDGE, uv1.y);
     shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightFactor))*lit.y);
     shadow *= shade > 0.8 ? 1.0 : 0.8;
 
@@ -524,6 +524,29 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
     waterRefl = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, cosR, -wPos.y);
     waterRefl += getSunRefl(viewDir.x,horizonEdgeCol.r, FOG_COLOR);
 
+    // cloud reflection
+    #if defined(NL_WATER_CLOUD_REFLECTION)
+      if (wPos.y < 0.0) {
+        vec2 parallax = viewDir.xz/viewDir.y;
+        vec2 projectedPos = wPos.xz - parallax*100.0*(1.0-bump);
+
+        float fade = 1.0 - 0.002*length(projectedPos);
+        //projectedPos += fade*parallax;
+
+        fade = clamp(2.0*fade,0.0,1.0);
+
+        #ifdef NL_AURORA
+        vec4 aurora = render_aurora(projectedPos.xyy, t, rainFactor, horizonEdgeCol);
+        waterRefl += 2.0*aurora.rgb*aurora.a*fade;
+        #endif
+
+        #if NL_CLOUD_TYPE == 1
+        vec4 clouds = render_clouds_simple(projectedPos.xyy, t, rainFactor, zenithCol, horizonCol, horizonEdgeCol);
+        waterRefl = mix(waterRefl,1.5*clouds.rgb,clouds.a*fade);
+        #endif
+      }
+    #endif
+
     // mask sky reflection
     if (!end) {
       waterRefl *= 0.05 + lit.y*1.14;
@@ -534,7 +557,7 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
 
     if (is(fractCposY, 0.8, 0.9)) {
       // flat plane
-      waterRefl *= 1.0 - 0.66*clamp(wPos.y, 0.0, 1.0);
+      waterRefl *= 1.0 - clamp(wPos.y, 0.0, 0.66);
     } else {
       // slanted plane and highly slanted plane
       waterRefl *= (0.1*sin(t*2.0+cPos.y*12.566)) + (fractCposY > 0.9 ? 0.2 : 0.4);
@@ -543,7 +566,7 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
   // reflection for side plane
   else {
     bump *= 0.5 + 0.5*sin(1.5*t + dot(cPos, vec3_splat(NL_CONST_PI_HALF)));
-    cosR = max(sqrt(dot(viewDir.xz, viewDir.xz)), float(wPos.y < 0.5));
+    cosR = max(sqrt(dot(viewDir.xz, viewDir.xz)), step(wPos.y,0.5));
     cosR += (1.0-cosR*cosR)*bump;
 
     waterRefl = zenithCol*uv1.y*uv1.y*1.3;
@@ -560,7 +583,7 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
 
   color.a += (1.0-color.a)*opacity*opacity;
 
-  color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.4*fresnel);
+  color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.8*fresnel);
 
 #ifdef NL_WATER_WAVE
   if(camDist < 14.0) {
@@ -742,6 +765,42 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
     color.rgb *= 1.0 - 0.4*wetness;
   }
   return wetRefl;
+}
+
+vec3 nl_actor_lighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonCol, bool nether, bool underWater, bool end, float t) {
+  float intensity;
+#ifdef FANCY
+  vec3 N = normalize(mul(world, normal)).xyz;
+  N.y *= tileLightCol.w;
+  N.xz *= N.xz;
+
+  //intensity = (0.5 + N.y*0.5)*0.5 - N.x*0.1 + N.z*0.1 + 0.5;
+  intensity = 0.75 + N.y*0.25 - N.x*0.1 + N.z*0.1;
+  intensity *= intensity;
+#else
+  intensity = (0.7+0.3*abs(normal.y))*(0.9+0.1*abs(normal.x));
+#endif
+
+  intensity *= tileLightCol.b*tileLightCol.b*NL_SUN_INTENSITY*1.2;
+  intensity += overlayCol.a * 0.35;
+
+  float factor = tileLightCol.b-tileLightCol.r;
+  vec3 light = intensity*vec3(1.0-2.8*factor,1.0-2.7*factor,1.0);
+  light *= 1.0-0.3*step(0.0,pos.y);
+  light += 0.55*horizonCol*tileLightCol.x;
+
+  // nether,end,underwater tint
+  if (nether) {
+    light *= tileLightCol.x*vec3(1.4,0.96,0.9);
+  } else if (end) {
+    light *= vec3(2.1,1.5,2.3);
+  } else if (underWater) {
+    light += NL_UNDERWATER_BRIGHTNESS;
+    light *= mix(normalize(horizonCol),vec3(1.0,1.0,1.0),tileLightCol.x*0.5);
+    light += NL_CAUSTIC_INTENSITY*max(tileLightCol.x-0.46,0.0)*(0.5+0.5*sin(t + dot(pos,vec3_splat(1.5)) ));
+  }
+
+  return light;
 }
 
 #endif

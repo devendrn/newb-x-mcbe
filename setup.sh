@@ -7,7 +7,7 @@ DATA_VER="1.20.10"
 DATA_DIR=data/$DATA_VER
 
 MBT_JAR_URL="https://github.com/ddf8196/MaterialBinTool/releases/download/v$MBT_VERSION/MaterialBinTool-$MBT_VERSION-all.jar"
-M_DATA_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1137072623617069217/materials-data-$DATA_VER-few.zip"
+M_DATA_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1178732085628915803/materials-data-$DATA_VER-few.zip"
 
 SHADERC_URL=
 CPU_ARCH=$(uname -m)

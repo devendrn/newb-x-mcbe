@@ -7,7 +7,7 @@ set DATA_VER=1.20.10
 set DATA_DIR=data\%DATA_VER%
 
 set MBT_RELEASE_URL=https://github.com/ddf8196/MaterialBinTool/releases/download/v%MBT_VERSION%
-set M_DATA_HTTP=https://cdn.discordapp.com/attachments/1137039470441550004/1137072623617069217/materials-data-%DATA_VER%-few.zip
+set M_DATA_HTTP=https://cdn.discordapp.com/attachments/1137039470441550004/1178732085628915803/materials-data-%DATA_VER%-few.zip
 
 if not exist %MBT% (
   mkdir env\bin\
