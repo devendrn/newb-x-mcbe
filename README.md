@@ -25,7 +25,11 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord serv
 1. Use [BetterRenderDragon](https://github.com/ddf8196/BetterRenderDragon) to enable MaterialBinLoader.
 2. Import resource pack and activate it in global resources.
 
-## Building 
+#### Android:
+1. Install [Patched Minecraft app (Only for 64-bit)](https://github.com/DominoKorean/Render-dragon-shader-list/blob/main/patchedapp.md)
+2. Import resource pack and activate it in global resources.
+
+## Building
 
 #### Windows:
 1. Setup build evironment:

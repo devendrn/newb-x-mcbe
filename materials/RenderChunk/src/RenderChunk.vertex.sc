@@ -103,7 +103,7 @@ void main() {
 #endif
 
   vec3 torchColor; // modified by nl_lighting
-  vec3 light = nl_lighting(torchColor, a_color0.rgb, FogColor.rgb, rainFactor,uv1, lit, isTree,
+  vec3 light = nl_lighting(worldPos, torchColor, a_color0.rgb, FogColor.rgb, rainFactor,uv1, lit, isTree,
                            horizonCol, zenithCol, shade, end, nether, underWater, t);
 
 #if defined(ALPHA_TEST) && (defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE))
