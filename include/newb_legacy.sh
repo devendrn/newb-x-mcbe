@@ -23,7 +23,7 @@ vec3 colorCorrection(vec3 col) {
     // extended reinhard tonemapping
     const float white_scale = 0.063;
     col = col*(1.0+col*white_scale)/(1.0+col);
-  #elif NL_TONEMAP_TYPE==4
+  #elif NL_TONEMAP_TYPE == 4
     // aces tone mapping
     const float a = 1.04;
     const float b = 0.03;
@@ -32,10 +32,10 @@ vec3 colorCorrection(vec3 col) {
     const float e = 0.14;
     col *= 0.85;
     col = clamp((col*(a*col + b)) / (col*(c*col + d) + e), 0.0, 1.0);
-  #elif NL_TONEMAP_TYPE==2
+  #elif NL_TONEMAP_TYPE == 2
     // simple reinhard tonemapping
     col = col/(1.0+col);
-  #elif NL_TONEMAP_TYPE==1
+  #elif NL_TONEMAP_TYPE == 1
     // exponential tonemapping
     col = 1.0-exp(-col*0.8);
   #endif
@@ -54,7 +54,7 @@ vec3 colorCorrection(vec3 col) {
   return col;
 }
 
-// inv used in fogcolor for end
+// inv used in fogcolor for nether
 vec3 colorCorrectionInv(vec3 col) {
 
   #ifdef NL_TINT
@@ -139,10 +139,8 @@ highp float noise1D(highp float x) {
 }
 
 // simpler rand for disp,wetmap
-float fastRand(vec2 n) {
-  float a = cos(dot(n, vec2(4.2683, 1.367)));
-  float b = dot(n, vec2(1.367, 4.683));
-  return fract(a+b);
+float fastRand(vec2 n){
+  return fract(37.45*sin(dot(n, vec2(4.36, 8.28))));
 }
 
 // water displacement map (also used by caustic)
@@ -286,7 +284,7 @@ float calculateFresnel(float cosR, float r0) {
 
 /* CLOUDS */
 
-// 2D cloud noise - used by clouds
+// simple clouds noise
 float cloudNoise2D(vec2 p, highp float t, float rain) {
   t *= NL_CLOUD1_SPEED;
   p += t;
@@ -314,7 +312,7 @@ vec4 render_clouds_simple(vec3 pos, highp float t, float rain, vec3 zenith_col, 
   vec4 color = vec4(0.02,0.04,0.05,cloudAlpha);
 
   color.rgb += fog_col;
-  color.rgb *= 1.0-0.5*cloudShadow*float(pos.y>0.0);
+  color.rgb *= 1.0-0.5*cloudShadow*step(0.0,pos.y);
 
   color.rgb += zenith_col*0.7;
   color.rgb *= 1.0 - 0.4*rain;
@@ -330,7 +328,7 @@ float bevel(float x, float r) {
   return (1.0-r)*(1.0-sqrt(1.0-y*y));
 }
 
-float cloud_sdf(vec3 pos, float rain) {
+float cloud_df(vec3 pos, float rain) {
   vec2 p0 = floor(pos.xz);
   vec2 u = smoothstep(0.99*NL_CLOUD2_SHAPE,0.995,pos.xz-p0);
   vec2 v = 1.0 - u;
@@ -363,7 +361,7 @@ vec4 render_clouds(vec3 vDir, vec3 vPos, float rain, float time, vec3 fog_col, v
   vec3 d = vec3(0.0,1.0,1.0);
   for (int i=0; i<NL_CLOUD2_STEPS; i++) {
     pos += delta_p;
-    float m = cloud_sdf(pos.xyz, rain);
+    float m = cloud_df(pos.xyz, rain);
     d.x += m*NL_CLOUD2_DENSITY*(1.0-d.x)/NL_CLOUD2_STEPS.0;
     d.y = mix(d.y, pos.y, d.z);
     d.z *= 1.0 - m;
@@ -424,15 +422,10 @@ vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {
              dayFactor), r*r);
 }
 
-// bool between function
-bool is(float val, float val1, float val2) {
-  return (val > val1 && val < val2);
-}
-
 
 /* IMPLEMENTATION */
 
-vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
+vec3 nl_lighting(vec3 wPos, out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
                  vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether, bool underwater, highp float t) {
   // all of these will be multiplied by tex uv1 in frag so functions should be divided by uv1 here
 
@@ -478,9 +471,14 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
     light += mix(horizonCol,zenithCol,0.5+uv1.y-0.5*lit.y)*(lit.y*(3.0-2.0*uv1.y)*(1.3 + (4.0*nightFactor) - rainDim));
 
     // shadow cast by top light
-    float shadow = float(uv1.y > NL_CONST_SHADOW_EDGE);
+    float shadow = step(NL_CONST_SHADOW_EDGE, uv1.y);
     shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightFactor))*lit.y);
     shadow *= shade > 0.8 ? 1.0 : 0.8;
+
+    // shadow cast by simple cloud
+    #ifdef NL_CLOUD_SHADOW
+      shadow *= 1.0 - cloudNoise2D(wPos.xz*NL_CLOUD1_SCALE, t, rainFactor);
+    #endif
 
     // direct light from top
     float dirLight = shadow*(1.0-uv1.x*nightFactor)*lightIntensity;
@@ -494,7 +492,10 @@ vec3 nl_lighting(out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFact
   }
 
   // darken at crevices
-  light *= COLOR.g > 0.35 ? 1.0 : 0.8;
+float col_max = max(COLOR.r, max(COLOR.g, COLOR.b));
+  if (col_max < 0.7) {
+    light *= 0.4;
+}
 
   // brighten tree leaves
   if (isTree) {
@@ -526,6 +527,29 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
     waterRefl = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, cosR, -wPos.y);
     waterRefl += getSunRefl(viewDir.x,horizonEdgeCol.r, FOG_COLOR);
 
+    // cloud reflection
+    #if defined(NL_WATER_CLOUD_REFLECTION)
+      if (wPos.y < 0.0) {
+        vec2 parallax = viewDir.xz/viewDir.y;
+        vec2 projectedPos = wPos.xz - parallax*100.0*(1.0-bump);
+
+        float fade = 1.0 - 0.002*length(projectedPos);
+        //projectedPos += fade*parallax;
+
+        fade = clamp(2.0*fade,0.0,1.0);
+
+        #ifdef NL_AURORA
+        vec4 aurora = render_aurora(projectedPos.xyy, t, rainFactor, horizonEdgeCol);
+        waterRefl += 2.0*aurora.rgb*aurora.a*fade;
+        #endif
+
+        #if NL_CLOUD_TYPE == 1
+        vec4 clouds = render_clouds_simple(projectedPos.xyy, t, rainFactor, zenithCol, horizonCol, horizonEdgeCol);
+        waterRefl = mix(waterRefl,1.5*clouds.rgb,clouds.a*fade);
+        #endif
+      }
+    #endif
+
     // mask sky reflection
     if (!end) {
       waterRefl *= 0.05 + lit.y*1.14;
@@ -534,9 +558,9 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
     // torch light reflection
     waterRefl += torchColor*NL_TORCH_INTENSITY*(lit.x*lit.x + lit.x)*bump*10.0;
 
-    if (is(fractCposY, 0.8, 0.9)) {
+    if (fractCposY>0.8 || fractCposY<0.9) {
       // flat plane
-      waterRefl *= 1.0 - 0.66*clamp(wPos.y, 0.0, 1.0);
+      waterRefl *= 1.0 - clamp(wPos.y, 0.0, 0.66);
     } else {
       // slanted plane and highly slanted plane
       waterRefl *= (0.1*sin(t*2.0+cPos.y*12.566)) + (fractCposY > 0.9 ? 0.2 : 0.4);
@@ -545,7 +569,7 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
   // reflection for side plane
   else {
     bump *= 0.5 + 0.5*sin(1.5*t + dot(cPos, vec3_splat(NL_CONST_PI_HALF)));
-    cosR = max(sqrt(dot(viewDir.xz, viewDir.xz)), float(wPos.y < 0.5));
+    cosR = max(sqrt(dot(viewDir.xz, viewDir.xz)), step(wPos.y,0.5));
     cosR += (1.0-cosR*cosR)*bump;
 
     waterRefl = zenithCol*uv1.y*uv1.y*1.3;
@@ -562,7 +586,7 @@ vec4 nl_water(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 
 
   color.a += (1.0-color.a)*opacity*opacity;
 
-  color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.4*fresnel);
+  color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.8*fresnel);
 
 #ifdef NL_WATER_WAVE
   if(camDist < 14.0) {
@@ -587,13 +611,49 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
 
   bool isTop = texPosY < 0.5;
   bool isPlants = COLOR.r/COLOR.g<1.9;
-  bool isVines = bPosC.x==0.453125 || (bPosC.y<0.451 && bPosC.y>0.4492 && bPos.x==0.0);
+  bool isVines = (bPosC.x==0.453125 && bPos.z==0.0) || (bPosC.y==0.453125 && bPos.x==0.0);
   bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25);
   bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop);
 
   float windStrength = lit.y*(noise1D(t*0.36) + rainFactor*0.4);
 
+  // darken plants bottom - better to not move it elsewhere
+  light *= isFarmPlant && !isTop ? 0.7 : 1.1;
+  if (isColored && !isTreeLeaves && uv0.y>0.43 && uv0.y<0.48) {
+    light *= isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5);
+  }
+
 #ifdef NL_PLANTS_WAVE
+
+  #ifdef NL_EXTRA_PLANTS_WAVE
+  // 1.20.40 vanilla
+  int tex_n = 32*int(uv0.y*64.0) + int(uv0.x*32.0) + 1;
+  if (
+    (tex_n == 168) || // cherrry leaves
+    (tex_n>378 && tex_n<389) || // tall flowers top
+    (tex_n==914) // sunflower sepal
+  ) {
+    shouldWave = true;
+  } else if (
+    (tex_n==173) || // cherry blossom sapling
+    (tex_n>749 && tex_n<761)  || // short flowers
+    (tex_n>372 && tex_n<379)  || // tall flowers bottom
+    (tex_n>795 && tex_n<803) || // saplings
+    (tex_n==866) || // spore blossom petal
+    (tex_n>922 && tex_n<927) || // cherry bush
+    (tex_n>939 && tex_n<943) || // torch flower
+    (tex_n==988) || // wither rose
+    (tex_n==1009)  // yellow dandelion
+  ) {
+    shouldWave = isTop;
+  } else if (
+    (tex_n==477) || // hanging roots
+    (tex_n==19 || tex_n==418)  // azeala
+  ) {
+    shouldWave = !isTop;
+  }
+  #endif
+
   if (shouldWave) {
 
     float wave = NL_PLANTS_WAVE*windStrength;
@@ -628,17 +688,14 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
   bool isChain = bPosC.x==0.0625 && y6875;
 
   // fix for non-hanging lanterns waving top part (works only if texPosY is correct)
-  if (y5625 && (texPosY < 0.3 || is(texPosY, 0.55, 0.69))) {
+  if (y5625 && (texPosY < 0.3 || (texPosY>0.55 && texPosY<0.69))) {
     isLantern = false;
   }
 
-  // X,Z axis rotation
   if (uv1.x > 0.6 && (isChain || isLantern)) {
-    // wave phase diff for individual lanterns
-    float offset = dot(floor(cPos), vec3_splat(0.3927));
-
     // simple random wave for angle
-    highp vec2 theta = vec2(t + offset, t*1.4 + offset);
+    float phase = dot(floor(cPos), vec3_splat(0.3927));
+    highp vec2 theta = vec2(t + phase, t*1.4 + phase);
     theta = sin(vec2(theta.x,theta.x+0.7)) + rainFactor*sin(vec2(theta.y,theta.y+0.7));
     theta *= NL_LANTERN_WAVE*windStrength;
 
@@ -647,6 +704,7 @@ void nl_wave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, 
 
     vec3 pivotPos = vec3(0.5,1.0,0.5) - bPos;
 
+    // apply XZ rotation
     worldPos.x += dot(pivotPos.xy, vec2(1.0-cosA.x, -sinA.x));
     worldPos.y += dot(pivotPos, vec3(sinA.x*cosA.y, 1.0-cosA.x*cosA.y, sinA.y));
     worldPos.z += dot(pivotPos, vec3(sinA.x*sinA.y, -cosA.x*sinA.y, 1.0-cosA.y));
@@ -691,11 +749,11 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
     if (camDist < endDist) {
 
       // puddles map
-      wetness *= 0.4 + 0.6*fastRand(tiledCpos.xz*1.4);
+      wetness *= 1.0 - NL_RAIN_PUDDLES*fastRand(tiledCpos.xz);
 
       float cosR = max(viewDir.y, 0.0);
       wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
-      wetRefl.a = calculateFresnel(cosR, 0.03)*wetness;
+      wetRefl.a = calculateFresnel(cosR, 0.03)*wetness*NL_RAIN_WETNESS;
 
       // torch light
       wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
@@ -708,6 +766,41 @@ vec4 nl_refl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 ti
     color.rgb *= 1.0 - 0.4*wetness;
   }
   return wetRefl;
+}
+
+vec3 nl_actor_lighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonCol, bool nether, bool underWater, bool end, float t) {
+  float intensity;
+#ifdef FANCY
+  vec3 N = normalize(mul(world, normal)).xyz;
+  N.y *= tileLightCol.w;
+  N.xz *= N.xz;
+
+  intensity = 0.75 + N.y*0.25 - N.x*0.1 + N.z*0.1;
+  intensity *= intensity;
+#else
+  intensity = (0.7+0.3*abs(normal.y))*(0.9+0.1*abs(normal.x));
+#endif
+
+  intensity *= tileLightCol.b*tileLightCol.b*NL_SUN_INTENSITY*1.2;
+  intensity += overlayCol.a * 0.35;
+
+  float factor = tileLightCol.b-tileLightCol.r;
+  vec3 light = intensity*vec3(1.0-2.8*factor,1.0-2.7*factor,1.0);
+  light *= 1.0-0.3*step(0.0,pos.y);
+  light += 0.55*horizonCol*tileLightCol.x;
+
+  // nether,end,underwater tint
+  if (nether) {
+    light *= tileLightCol.x*vec3(1.4,0.96,0.9);
+  } else if (end) {
+    light *= vec3(2.1,1.5,2.3);
+  } else if (underWater) {
+    light += NL_UNDERWATER_BRIGHTNESS;
+    light *= mix(normalize(horizonCol),vec3(1.0,1.0,1.0),tileLightCol.x*0.5);
+    light += NL_CAUSTIC_INTENSITY*max(tileLightCol.x-0.46,0.0)*(0.5+0.5*sin(t + dot(pos,vec3_splat(1.5)) ));
+  }
+
+  return light;
 }
 
 #endif
