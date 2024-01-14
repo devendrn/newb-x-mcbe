@@ -2,7 +2,7 @@ $input a_color0, a_position
 $output v_color0, v_color1, v_color2, v_color3
 
 #include <bgfx_shader.sh>
-#include <newb_legacy.sh>
+#include <newb/main.sh>
 
 //uniform vec4 SkyColor;
 uniform vec4 FogColor;

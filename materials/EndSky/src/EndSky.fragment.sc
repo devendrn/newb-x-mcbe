@@ -1,7 +1,7 @@
 $input v_texcoord0, v_pos
 
 #include <bgfx_shader.sh>
-#include <newb_legacy.sh>
+#include <newb/main.sh>
 
 SAMPLER2D(s_MatTexture, 0);
 

@@ -1,11 +1,11 @@
 $input v_color0
-#include <newb_config_legacy.h>
+#include <newb/config.h>
 #if defined(TRANSPARENT) && NL_CLOUD_TYPE == 2
   $input v_color1, v_color2
 #endif
 
 #include <bgfx_shader.sh>
-#include <newb_legacy.sh>
+#include <newb/main.sh>
 
 void main() {
   vec4 color = v_color0;

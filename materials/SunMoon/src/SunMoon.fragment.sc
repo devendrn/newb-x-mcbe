@@ -1,7 +1,7 @@
 $input v_texcoord0
 
 #include <bgfx_shader.sh>
-#include <newb_config_legacy.h>
+#include <newb/config.h>
 
 uniform vec4 SunMoonColor;
 

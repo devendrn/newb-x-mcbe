@@ -1,7 +1,7 @@
 $input v_color0, v_color1, v_color2, v_color3
 
 #include <bgfx_shader.sh>
-#include <newb_legacy.sh>
+#include <newb/main.sh>
 
 void main() {
 #if defined(OPAQUE)

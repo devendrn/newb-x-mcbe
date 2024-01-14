@@ -2,7 +2,7 @@ $input a_position, a_texcoord0
 $output v_texcoord0, v_color
 
 #include <bgfx_shader.sh>
-#include <newb_legacy.sh>
+#include <newb/main.sh>
 
 uniform mat4 CubemapRotation;
 

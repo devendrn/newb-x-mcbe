@@ -9,7 +9,7 @@ $output v_color0, v_fog, v_light, v_texcoord0, v_edgemap
 #include <MinecraftRenderer.Materials/FogUtil.dragonh>
 #include <MinecraftRenderer.Materials/DynamicUtil.dragonh>
 #include <MinecraftRenderer.Materials/TAAUtil.dragonh>
-#include <newb_legacy.sh>
+#include <newb/main.sh>
 
 uniform vec4 ColorBased;
 uniform vec4 ChangeColor;

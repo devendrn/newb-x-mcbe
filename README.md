@@ -26,7 +26,7 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord serv
 2. Import resource pack and activate it in global resources.
 
 #### Android:
-1. Install [Patched Minecraft app (Only for 64-bit)](https://github.com/DominoKorean/Render-dragon-shader-list/blob/main/patchedapp.md)
+1. Install [Patched Minecraft app](https://devendrn.github.io/renderdragon-shaders/shaders/installation/android#using-patch-app)
 2. Import resource pack and activate it in global resources.
 
 ## Building

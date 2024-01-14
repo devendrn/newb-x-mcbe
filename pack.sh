@@ -41,7 +41,7 @@ SUBPACK_MATERIALS=(
 
 BUILD_SCRIPT="./build.sh"
 PACK_DIR="pack"
-CONFIG_FILE="include/newb_config_legacy.h"
+CONFIG_FILE="include/newb/config.h"
 PLATFORM="android"
 
 # version format: tag.commits

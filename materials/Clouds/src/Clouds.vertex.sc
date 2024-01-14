@@ -3,13 +3,13 @@ $input a_color0, a_position
   $input i_data0, i_data1, i_data2, i_data3
 #endif
 $output v_color0
-#include <newb_config_legacy.h>
+#include <newb/config.h>
 #if defined(TRANSPARENT) && NL_CLOUD_TYPE == 2
   $output v_color1, v_color2
 #endif
 
 #include <bgfx_shader.sh>
-#include <newb_legacy.sh>
+#include <newb/main.sh>
 
 uniform vec4 CloudColor;
 uniform vec4 FogColor;

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MBT_VERSION="0.8.1"
+MBT_VERSION="0.8.2"
 MBT_JAR=env/jar/MaterialBinTool-$MBT_VERSION-all.jar
 SHADERC=env/bin/shaderc
 DATA_VER="1.20.10"
