@@ -2,6 +2,7 @@
 #define LIGHTING_H
 
 #include "constants.h"
+#include "noise.h"
 
 #define SHADOW_EDGE 0.93
 
@@ -21,7 +22,7 @@ vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {
              dayFactor), r*r);
 }
 
-vec3 nl_lighting(vec3 wPos, out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
+vec3 nlLighting(vec3 wPos, out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
                  vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether, bool underwater, highp float t) {
   // all of these will be multiplied by tex uv1 in frag so functions should be divided by uv1 here
 
@@ -37,13 +38,13 @@ vec3 nl_lighting(vec3 wPos, out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, flo
     torchColor = NL_OVERWORLD_TORCH_COL;
   }
 
-  float torch_attenuation = (NL_TORCH_INTENSITY*uv1.x)/(0.5-0.45*lit.x);
+  float torchAttenuation = (NL_TORCH_INTENSITY*uv1.x)/(0.5-0.45*lit.x);
 
 #ifdef NL_BLINKING_TORCH
   torch_attenuation *= 1.0 - 0.19*noise1D(t*8.0);
 #endif
 
-  vec3 torchLight = torchColor*torch_attenuation;
+  vec3 torchLight = torchColor*torchAttenuation;
 
   if (nether || end) {
     // nether & end lighting
@@ -98,20 +99,20 @@ vec3 nl_lighting(vec3 wPos, out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, flo
   return light;
 }
 
-void nl_underwater_lighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, highp float t, vec3 horizon_col) {
+void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, highp float t, vec3 horizonCol) {
   // soft caustic effect
   if (uv1.y < 0.9) {
     float caustics = disp(tiledCpos*vec3(1.0,0.1,1.0), t);
     caustics += (1.0 + sin(t + (cPos.x+cPos.z)*NL_CONST_PI_HALF));
     light += NL_UNDERWATER_BRIGHTNESS + NL_CAUSTIC_INTENSITY*caustics*(0.1 + lit.y + lit.x*0.7);
   }
-  light *= mix(normalize(horizon_col), vec3(1.0,1.0,1.0), lit.y*0.6);
+  light *= mix(normalize(horizonCol), vec3(1.0,1.0,1.0), lit.y*0.6);
 #ifdef NL_UNDERWATER_WAVE
   pos.xy += NL_UNDERWATER_WAVE*min(0.05*pos.z,0.6)*sin(t*1.2 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
 #endif
 }
 
-vec3 nl_actor_lighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonCol, bool nether, bool underWater, bool end, float t) {
+vec3 nlActorLighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonCol, bool nether, bool underWater, bool end, float t) {
   float intensity;
 #ifdef FANCY
   vec3 N = normalize(mul(world, normal)).xyz;

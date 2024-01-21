@@ -103,11 +103,11 @@ void main() {
 #endif
 
   vec3 torchColor; // modified by nl_lighting
-  vec3 light = nl_lighting(worldPos, torchColor, a_color0.rgb, FogColor.rgb, rainFactor,uv1, lit, isTree,
+  vec3 light = nlLighting(worldPos, torchColor, a_color0.rgb, FogColor.rgb, rainFactor,uv1, lit, isTree,
                            horizonCol, zenithCol, shade, end, nether, underWater, t);
 
 #if defined(ALPHA_TEST) && (defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE))
-  nl_wave(worldPos, light, rainFactor, uv1, lit,
+  nlWave(worldPos, light, rainFactor, uv1, lit,
           a_texcoord0, bPos, a_color0, cPos, tiledCpos, t,
           isColored, camDis, underWater, isTree);
 #endif
@@ -120,7 +120,7 @@ void main() {
   // loading chunks
   relativeDist += RenderChunkFogAlpha.x;
 
-  vec4 fogColor = renderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
+  vec4 fogColor = nlRenderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
 
   if (nether) {
     fogColor.rgb = mix(fogColor.rgb, vec3(0.8,0.2,0.12)*1.5, lit.x*(1.67-fogColor.a*1.67));
@@ -142,27 +142,27 @@ void main() {
   float water;
   if (a_color0.b > 0.3 && a_color0.a < 0.95) {
     water = 1.0;
-    refl = nl_water(worldPos, color, viewDir, light, cPos, bPos.y, a_color0,
+    refl = nlWater(worldPos, color, viewDir, light, cPos, bPos.y, a_color0,
                     FogColor.rgb, horizonCol, horizonEdgeCol, zenithCol, uv1, lit,
                     t, camDis, rainFactor, tiledCpos, end, torchColor);
     pos = mul(u_viewProj, vec4(worldPos, 1.0));
   } else {
     water = 0.0;
     pos = mul(u_viewProj, vec4(worldPos, 1.0));
-    refl = nl_refl(color, fogColor, lit, uv1, tiledCpos,
+    refl = nlRefl(color, fogColor, lit, uv1, tiledCpos,
                    camDis, worldPos, viewDir, torchColor, horizonCol,
                    zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz);
   }
 #else
   float water = 0.0;
   pos = mul(u_viewProj, vec4(worldPos, 1.0));
-  refl = nl_refl(color, fogColor, lit, uv1, tiledCpos, camDis,
+  refl = nlRefl(color, fogColor, lit, uv1, tiledCpos, camDis,
                  worldPos, viewDir, torchColor, horizonCol, zenithCol,
                  rainFactor, FogAndDistanceControl.z, t, pos.xyz);
 #endif
 
   if (underWater) {
-    nl_underwater_lighting(light, pos.xyz, lit, uv1, tiledCpos, cPos, t, horizonEdgeCol);
+    nlUnderwaterLighting(light, pos.xyz, lit, uv1, tiledCpos, cPos, t, horizonEdgeCol);
   }
 #else
   float water = 0.0;

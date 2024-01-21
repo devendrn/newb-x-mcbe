@@ -51,7 +51,6 @@ vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR) {
 }
 
 // 1D sky with three color gradient
-// A copy of this is in sky.fragment, make changes there aswell
 vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h) {
   h = 1.0-h*h;
   float hsq = h*h;
@@ -66,7 +65,7 @@ vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h) {
   return mix(zenithColor,horizonColor, gradient2);
 }
 
-// sky reflection on plane - used by water, wet reflection
+// sky reflection on plane
 vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, float y, float h) {
 
   // offset the reflection based on height from camera
@@ -84,13 +83,15 @@ vec3 getRainSkyRefl(vec3 horizonCol, vec3 zenithCol, float h) {
 }
 
 // sunrise/sunset reflection
-vec3 getSunRefl(float viewDirX, float fog_brightness, vec3 FOG_COLOR) {
-  float sunRefl = clamp((abs(viewDirX)-0.9)/0.099,0.0,1.0);
+vec3 getSunRefl(float viewDirX, float fogBrightness, vec3 FOG_COLOR) {
   float factor = FOG_COLOR.r/length(FOG_COLOR);
   factor *= factor;
+
+  float sunRefl = clamp((abs(viewDirX)-0.9)/0.099, 0.0, 1.0);
   sunRefl *= sunRefl*sunRefl*factor*factor;
   sunRefl *= sunRefl;
-  return fog_brightness*sunRefl*vec3(2.5,1.6,0.8);
+
+  return fogBrightness*sunRefl*vec3(2.5,1.6,0.8);
 }
 
 #endif

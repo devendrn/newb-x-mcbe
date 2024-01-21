@@ -1,7 +1,9 @@
 #ifndef FOG_H
 #define FOG_H
 
-vec4 renderFog(vec3 fogColor, float relativeDist, bool nether, vec3 FOG_COLOR, vec2 FOG_CONTROL) {
+#include "tonemap.h"
+
+vec4 nlRenderFog(vec3 fogColor, float relativeDist, bool nether, vec3 FOG_COLOR, vec2 FOG_CONTROL) {
 
 #if NL_FOG_TYPE == 0
   return vec4(0.0,0.0,0.0,0.0);
@@ -10,7 +12,7 @@ vec4 renderFog(vec3 fogColor, float relativeDist, bool nether, vec3 FOG_COLOR, v
   vec4 fog;
   if (nether) {
     // to blend fog with void color
-    fog.rgb = colorCorrectionInv(FOG_COLOR.rgb);
+    fog.rgb = colorCorrectionInv(FOG_COLOR);
   } else {
     fog.rgb = fogColor;
   }

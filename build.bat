@@ -20,7 +20,6 @@ set ARG_MODE=
   if "%1" == "-m" goto :set_arg
 
   if "%ARG_MODE%" == "" (
-    if "%1" == "deferred" set MATERIALS_DIR=materials-deferred
     goto :next_arg
   )
   if "%ARG_MODE%" == "-p" (

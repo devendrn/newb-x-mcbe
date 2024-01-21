@@ -21,7 +21,7 @@ highp float noise1D(highp float x) {
   return mix(fract(sin(x0)*84.85), fract(sin(x0+1.0)*84.85), t0);
 }
 
-// simpler rand for disp,wetmap
+// simpler rand for disp, puddles
 float fastRand(vec2 n){
   return fract(37.45*sin(dot(n, vec2(4.36, 8.28))));
 }

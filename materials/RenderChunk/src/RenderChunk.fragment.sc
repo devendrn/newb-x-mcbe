@@ -39,10 +39,10 @@ void main() {
 
   diffuse.rgb *= diffuse.rgb;
 
-  vec3 light_tint = texture2D(s_LightMapTexture, v_lightmapUV).rgb;
-  light_tint = mix(light_tint.bbb, light_tint*light_tint, 0.35 + 0.65*v_lightmapUV.y*v_lightmapUV.y*v_lightmapUV.y);
+  vec3 lightTint = texture2D(s_LightMapTexture, v_lightmapUV).rgb;
+  lightTint = mix(lightTint.bbb, lightTint*lightTint, 0.35 + 0.65*v_lightmapUV.y*v_lightmapUV.y*v_lightmapUV.y);
 
-  color.rgb *= light_tint;
+  color.rgb *= lightTint;
 
   if (GLOW_PIXEL(diffuse)) {
     color.rgb = max(color.rgb, NL_GLOW_TEX*(0.995-diffuse.a)/(0.995-0.9875));

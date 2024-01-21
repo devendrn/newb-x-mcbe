@@ -6,14 +6,13 @@ vec3 colorCorrection(vec3 col) {
     col *= NL_EXPOSURE;
   #endif
 
-  // tone map
   // ref - https://64.github.io/tonemapping/
   #if NL_TONEMAP_TYPE == 3
-    // extended reinhard tonemapping
-    const float white_scale = 0.063;
-    col = col*(1.0+col*white_scale)/(1.0+col);
+    // extended reinhard tonemap
+    const float whiteScale = 0.063;
+    col = col*(1.0+col*whiteScale)/(1.0+col);
   #elif NL_TONEMAP_TYPE == 4
-    // aces tone mapping
+    // aces tonemap
     const float a = 1.04;
     const float b = 0.03;
     const float c = 0.93;
@@ -22,14 +21,14 @@ vec3 colorCorrection(vec3 col) {
     col *= 0.85;
     col = clamp((col*(a*col + b)) / (col*(c*col + d) + e), 0.0, 1.0);
   #elif NL_TONEMAP_TYPE == 2
-    // simple reinhard tonemapping
+    // simple reinhard tonemap
     col = col/(1.0+col);
   #elif NL_TONEMAP_TYPE == 1
-    // exponential tonemapping
+    // exponential tonemap
     col = 1.0-exp(-col*0.8);
   #endif
 
-  // actually supposed to be gamma correction
+  // gamma correction + contrast
   col = pow(col, vec3_splat(NL_CONSTRAST));
 
   #ifdef NL_SATURATION

@@ -23,9 +23,6 @@ for t in "$@"; do
     OPT=${t:1}
     if [[ "$OPT" =~ ^[pmt]$ ]]; then
       ARG_MODE=$OPT
-    elif [ "$OPT" == "d" ]; then  
-      # build deferred
-      MATERIAL_DIR=materials-deferred
     else
       echo "Invalid option: $t"      
       exit 1

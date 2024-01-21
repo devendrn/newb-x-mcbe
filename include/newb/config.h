@@ -27,7 +27,6 @@
   BUILD THE SHADER AFTER EACH EDIT
 */
 
-
 /* -------- CONFIG STARTS HERE ----------- */
 
 /* Color correction */
@@ -121,7 +120,7 @@
 #define NL_CLOUD2_VELOCIY 0.8        // 0.0 static ~ 4.0 very fast
 //#define NL_CLOUD2_MULTILAYER       // [toggle] extra cloud layer
 
-/*️ Aurora settings */
+/* Aurora settings */
 #define NL_AURORA 1.2           // [toggle] 0.4 dim ~ 4.0 very bright
 #define NL_AURORA_VELOCITY 0.03 // 0.0 static ~ 0.3 very fast
 #define NL_AURORA_SCALE 0.04    // 0.002 large ~ 0.4 tiny
@@ -143,9 +142,18 @@
 
 /* -------- CONFIG ENDS HERE ----------- */
 
+/*
+  EDITING CONFIG FOR SUBPACKS:
+  
+  If a value is already defined,
+  then you must undefine it before modifying:
+  eg: #undef OPTION_NAME
 
-/* these are config of different subpacks. dont change! */
-/* names in pack.sh */
+  subpack names and flags are inside pack.sh.
+  pack.sh will enable corresponding flags when compiling. 
+*/
+
+/* ------ SUBPACK CONFIG STARTS HERE -------- */
 
 #ifdef NO_WAVE_NO_FOG
   #define NO_WAVE
@@ -173,5 +181,7 @@
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 2
 #endif
+
+/* ------ SUBPACK CONFIG ENDS HERE -------- */
 
 #endif
