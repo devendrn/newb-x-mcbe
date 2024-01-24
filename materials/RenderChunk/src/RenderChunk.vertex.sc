@@ -171,7 +171,13 @@ void main() {
 
   color.rgb *= light;
 
-  v_extra.rgb = vec3(shade, worldPos.y, water);
+  #ifdef NL_GLOW_SHIMMER
+  float shimmer = nlGlowShimmer(cPos, t);
+  #else
+  float shimmer = 0.0;
+  #endif
+
+  v_extra = vec4(shade, worldPos.y, water, shimmer);
   v_refl = refl;
   v_texcoord0 = a_texcoord0;
   v_lightmapUV = a_texcoord1;

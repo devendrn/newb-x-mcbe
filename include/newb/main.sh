@@ -18,5 +18,6 @@
 #include "functions/water.h"
 #include "functions/rain.h"
 #include "functions/wave.h"
+#include "functions/glow.h"
 
 #endif

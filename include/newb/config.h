@@ -74,6 +74,8 @@
 
 /* Ore glow intensity */
 #define NL_GLOW_TEX 2.2 // 0.4 weak ~ 8.0 bright
+#define NL_GLOW_SHIMMER // [toggle] shimmer effect
+#define NL_GLOW_LEAK    // [toggle] fake bloom 
 
 /* Waving */
 #define NL_PLANTS_WAVE 0.04    // [toggle] 0.02 gentle ~ 0.4 violent

@@ -75,7 +75,7 @@ void nlWave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, v
              vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, highp float t,
              bool isColored, float camDist, bool underWater, bool isTreeLeaves) {
 
-  if (camDist < 13.0) {  // only wave nearby (better performance)
+  if (camDist > 13.0) {  // only wave nearby (better performance)
     return;
   }
 
