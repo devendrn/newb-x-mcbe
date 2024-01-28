@@ -12,12 +12,12 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Cache env files
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         key: env-files
         path: |
@@ -39,19 +39,19 @@ jobs:
       run: .\build.bat -p ios
 
     - name: Upload Windows pack
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: newb-x-windows
         path: ./build/windows/temp
 
     - name: Upload Android pack
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: newb-x-android
         path: ./build/android/temp
 
     - name: Upload iOS materials
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: newb-x-ios-materials
         path: ./build/ios
