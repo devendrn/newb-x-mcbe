@@ -73,9 +73,9 @@
 #define NL_DAWN_EDGE_COL     vec3(1.0,0.4,0.2)
 
 /* Ore glow intensity */
-#define NL_GLOW_TEX 2.2 // 0.4 weak ~ 8.0 bright
-#define NL_GLOW_SHIMMER // [toggle] shimmer effect
-#define NL_GLOW_LEAK    // [toggle] fake bloom 
+#define NL_GLOW_TEX 2.2  // 0.4 weak ~ 8.0 bright
+#define NL_GLOW_SHIMMER  // [toggle] shimmer effect
+#define NL_GLOW_LEAK 0.6 // [toggle] 0.08 subtle ~ 1.0 100% brightness of NL_GLOW_TEX
 
 /* Waving */
 #define NL_PLANTS_WAVE 0.04    // [toggle] 0.02 gentle ~ 0.4 violent
@@ -144,6 +144,7 @@
 
 /* -------- CONFIG ENDS HERE ----------- */
 
+
 /*
   EDITING CONFIG FOR SUBPACKS:
   
@@ -151,7 +152,7 @@
   then you must undefine it before modifying:
   eg: #undef OPTION_NAME
 
-  subpack names and flags are inside pack.sh.
+  subpack names and flags are inside pack_config.sh.
   pack.sh will enable corresponding flags when compiling. 
 */
 

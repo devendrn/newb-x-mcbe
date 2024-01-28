@@ -2,7 +2,7 @@
 #define DETECTION_H
 
 bool detectEnd(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
-  // custom fog color in biomes_client.json to help in detection
+  // custom fog color set in biomes_client.json to help in detection
   return FOG_COLOR.r==FOG_COLOR.b && (FOG_COLOR.r-FOG_COLOR.g>0.24 || (FOG_COLOR.g==0.0 && FOG_COLOR.r>0.1));
 }
 

@@ -6,20 +6,23 @@
 vec4 nlRenderFog(vec3 fogColor, float relativeDist, bool nether, vec3 FOG_COLOR, vec2 FOG_CONTROL) {
 
 #if NL_FOG_TYPE == 0
+  // no fog
   return vec4(0.0,0.0,0.0,0.0);
 #endif
 
   vec4 fog;
   if (nether) {
-    // to blend fog with void color
+    // blend fog with void color
     fog.rgb = colorCorrectionInv(FOG_COLOR);
   } else {
     fog.rgb = fogColor;
   }
 
 #if NL_FOG_TYPE == 2
+  // smoother transition
   fog.a = smoothstep(FOG_CONTROL.x, FOG_CONTROL.y, relativeDist);
 #else
+  // linear transition
   fog.a = clamp((relativeDist-FOG_CONTROL.x)/(FOG_CONTROL.y-FOG_CONTROL.x), 0.0, 1.0);
 #endif
 

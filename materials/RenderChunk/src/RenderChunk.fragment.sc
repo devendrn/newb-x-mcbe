@@ -49,9 +49,8 @@ void main() {
   diffuse.a = 1.0;
 #endif
 
-  color.rgb = max(color.rgb,glow);
   diffuse.rgb *= color.rgb;
-  diffuse.rgb += 0.5*glow*glow;
+  diffuse.rgb += glow;
 
   if (v_extra.b > 0.9) {
     diffuse.rgb += v_refl.rgb*v_refl.a;
