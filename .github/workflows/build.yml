@@ -7,52 +7,52 @@ on:
       - devel
 
 jobs:
-  build:
-    runs-on: windows-latest
-
+  windows:
+    runs-on: windows-2019
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
       with:
-        fetch-depth: 0
-
-    - name: Cache env files
-      uses: actions/cache@v4
-      with:
-        key: env-files
+        key: env-files-win
         path: |
           ${{ github.workspace }}/env
           ${{ github.workspace }}/data
-
-    - name: Setup build env
-      run: .\setup.bat
-
-    - name: Build for Windows
-      run: ./pack.sh -w -p windows
+    - run: .\setup.bat
+    - run: ./pack.sh -w -p windows
       shell: bash
-
-    - name: Build for Android
-      run: ./pack.sh -w -p android
-      shell: bash
-
-    - name: Build for iOS
-      run: .\build.bat -p ios
-
-    - name: Upload Windows pack
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
         name: newb-x-windows
         path: ./build/windows/temp
-
-    - name: Upload Android pack
-      uses: actions/upload-artifact@v4
+  android:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        key: env-files-linux
+        path: |
+          ${{ github.workspace }}/env
+          ${{ github.workspace }}/data
+    - run: ./setup.sh
+    - run: ./pack.sh
+    - uses: actions/upload-artifact@v4
       with:
         name: newb-x-android
         path: ./build/android/temp
-
-    - name: Upload iOS materials
-      uses: actions/upload-artifact@v4
+  ios:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        key: env-files-linux
+        path: |
+          ${{ github.workspace }}/env
+          ${{ github.workspace }}/data
+    - run: ./setup.sh
+    - run: ./build.sh -p ios
+    - uses: actions/upload-artifact@v4
       with:
         name: newb-x-ios-materials
         path: ./build/ios
-
