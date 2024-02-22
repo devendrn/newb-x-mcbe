@@ -1,0 +1,19 @@
+If:
+  PathMatch: include/newb/functions/.*
+
+CompileFlags:
+  Add: [--include=../config.h, --include=../../../.lsp/bgfx.h]
+
+Index:
+  Background: Skip
+  StandardLibrary: No
+
+Diagnostics:
+  Suppress: ['misc-definitions-in-headers','undefined-inline']
+  ClangTidy:
+    Add: ['readability-*']
+    Remove: ['readability-magic-numbers','readability-identifier-length']
+    CheckOptions:
+      readability-identifier-naming.VariableCase: camelBack
+      readability-identifier-naming.FunctionCase: camelBack
+
