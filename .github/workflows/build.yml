@@ -18,12 +18,12 @@ jobs:
           ${{ github.workspace }}/env
           ${{ github.workspace }}/data
     - run: .\setup.bat
-    - run: ./pack.sh -w -p windows
+    - run: ./pack.sh -w -p Windows
       shell: bash
     - uses: actions/upload-artifact@v4
       with:
         name: newb-x-windows
-        path: ./build/windows/temp
+        path: ./build/Windows/temp
   android:
     runs-on: ubuntu-latest
     steps:
@@ -39,7 +39,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: newb-x-android
-        path: ./build/android/temp
+        path: ./build/Android/temp
   ios:
     runs-on: ubuntu-latest
     steps:
@@ -51,8 +51,8 @@ jobs:
           ${{ github.workspace }}/env
           ${{ github.workspace }}/data
     - run: ./setup.sh
-    - run: ./build.sh -p ios
+    - run: ./build.sh -p iOS
     - uses: actions/upload-artifact@v4
       with:
         name: newb-x-ios-materials
-        path: ./build/ios
+        path: ./build/iOS

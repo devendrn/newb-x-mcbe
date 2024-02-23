@@ -60,7 +60,7 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at [Discord serv
 ```
 eg: To build only terrain for Android and Windows, use
 ```
-.\build.bat -p windows android -m RenderChunk
+.\build.bat -p Windows Android -m RenderChunk
 ```
 Compiled material.bin files will be at `build/<platform>/`
 

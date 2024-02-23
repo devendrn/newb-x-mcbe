@@ -3,11 +3,10 @@
 MBT_VERSION="0.8.2"
 MBT_JAR=env/jar/MaterialBinTool-$MBT_VERSION-all.jar
 SHADERC=env/bin/shaderc
-DATA_VER="1.20.10"
-DATA_DIR=data/$DATA_VER
+DATA_DIR=data
 
 MBT_JAR_URL="https://github.com/ddf8196/MaterialBinTool/releases/download/v$MBT_VERSION/MaterialBinTool-$MBT_VERSION-all.jar"
-M_DATA_URL="https://cdn.discordapp.com/attachments/1137039470441550004/1178732085628915803/materials-data-$DATA_VER-few.zip"
+M_DATA_URL="https://github.com/devendrn/RenderDragonData"
 
 CPU_ARCH=$(uname -m)
 if [ $CPU_ARCH == "x86_64" ]; then
@@ -49,12 +48,12 @@ if [ -d "$TERMUX_FILES" ] && [ ! -f "env/lib/libc++_shared.so" ]; then
 fi
 
 if [ ! -d "$DATA_DIR" ]; then
-  mkdir -p $DATA_DIR
-  echo "Downloading materials-data-$DATA_VER.zip"
-  curl -Lo $DATA_DIR/temp.zip $M_DATA_URL
-  echo "Extracting materials-data-$DATA_VER.zip"
-  unzip -qd $DATA_DIR/ $DATA_DIR/temp.zip
-  rm $DATA_DIR/temp.zip
+  echo "Cloning RenderDragonData"
+  git clone --filter=tree:0 $M_DATA_URL $DATA_DIR
+else 
+  echo "Updating RenderDragonData"
+  cd $DATA_DIR
+  git pull
 fi
 
 if [ "$1" == "-u" ]; then

@@ -13,7 +13,7 @@ source include/newb/pack_config.sh
 BUILD_SCRIPT="./build.sh"
 PACK_DIR="pack"
 CONFIG_FILE="include/newb/config.h"
-PLATFORM="android"
+PLATFORM="Android"
 
 # version format: tag.commits
 VERSION=15.0
@@ -64,7 +64,7 @@ mkdir -p $TEMP_PACK_DIR/renderer/materials
 cp -ru $PACK_DIR/* $TEMP_PACK_DIR
 
 echo ">> Updating manifest.json"
-if [ "$PLATFORM" == "windows" ]; then
+if [ "$PLATFORM" == "Windows" ]; then
   sed -i "s/\%w/Only works with BetterRenderDragon/" $MANIFEST
 else
   sed -i "s/\%w/Only works with Patched Minecraft/" $MANIFEST

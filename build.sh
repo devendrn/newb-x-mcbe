@@ -8,7 +8,7 @@ LIB_DIR=env/lib
 
 MBT_ARGS="--compile --shaderc $SHADERC --include include/"
 
-DATA_VER="1.20.10"
+DATA_VER="1.20.0"
 DATA_DIR=data/$DATA_VER
 BUILD_DIR=build
 MATERIAL_DIR=materials
@@ -41,7 +41,7 @@ for t in "$@"; do
 done
 
 if [ -z "$TARGETS" ]; then
-  TARGETS="android"
+  TARGETS="Android"
 fi
 
 if [ -z "$MATERIALS" ]; then
