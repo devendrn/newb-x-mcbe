@@ -13,10 +13,12 @@ float calculateFresnel(float cosR, float r0) {
   return r0 + (1.0-r0)*a2*a2*a;
 }
 
-vec4 nlWater(inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 cPos, float fractCposY,
-              vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,vec3 horizonEdgeCol, vec3 zenithCol,
-              vec2 uv1, vec2 lit, highp float t, float camDist, float rainFactor,
-              vec3 tiledCpos, bool end, vec3 torchColor) {
+vec4 nlWater(
+  inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 cPos, float fractCposY,
+  vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,vec3 horizonEdgeCol, vec3 zenithCol,
+  vec2 uv1, vec2 lit, highp float t, float camDist, float rainFactor,
+  vec3 tiledCpos, bool end, vec3 torchColor
+) {
 
   float cosR;
   float bump = NL_WATER_BUMP;

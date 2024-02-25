@@ -11,9 +11,11 @@ float nlWindblow(vec2 p, float t){
   return 0.25*val*val;
 }
 
-vec4 nlRefl(inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos,
-             float camDist, vec3 wPos, vec3 viewDir, vec3 torchColor, vec3 horizonCol,
-             vec3 zenithCol, float rainFactor, float renderDist, highp float t, vec3 pos) {
+vec4 nlRefl(
+  inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos,
+  float camDist, vec3 wPos, vec3 viewDir, vec3 torchColor, vec3 horizonCol,
+  vec3 zenithCol, float rainFactor, float renderDist, highp float t, vec3 pos
+) {
   vec4 wetRefl = vec4(0.0,0.0,0.0,0.0);
 
   if (rainFactor > 0.0) {

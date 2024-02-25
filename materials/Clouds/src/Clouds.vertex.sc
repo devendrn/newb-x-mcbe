@@ -60,7 +60,7 @@ void main() {
 
     float fade = clamp(2.0-2.0*length(worldPos.xyz)*0.0022, 0.0, 1.0);
     #if NL_CLOUD_TYPE == 1
-      // make cloud plane sperical
+      // make cloud plane spherical
       float len = length(worldPos.xz)*0.01;
       worldPos.y -= len*len*clamp(0.2*worldPos.y, -1.0, 1.0);
 

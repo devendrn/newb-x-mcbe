@@ -5,7 +5,9 @@
 #include "noise.h"
 
 #ifdef NL_LANTERN_WAVE
-void lanternWave(inout vec3 worldPos, vec3 cPos, vec3 bPos, vec2 bPosC, float texPosY, float rainFactor, vec2 uv1, float windStrength, highp float t) {
+void lanternWave(
+  inout vec3 worldPos, vec3 cPos, vec3 bPos, vec2 bPosC, float texPosY, float rainFactor, vec2 uv1, float windStrength, highp float t
+) {
   bool y6875 = bPos.y==0.6875;
   bool y5625 = bPos.y==0.5625;
 
@@ -71,9 +73,11 @@ void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
 }
 #endif
 
-void nlWave(inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, vec2 lit,
-             vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, highp float t,
-             bool isColored, float camDist, bool underWater, bool isTreeLeaves) {
+void nlWave(
+  inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, vec2 lit,
+  vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, highp float t,
+  bool isColored, float camDist, bool isTreeLeaves
+) {
 
   if (camDist > 13.0) {  // only wave nearby (better performance)
     return;

@@ -75,7 +75,7 @@
 /* Ore glow intensity */
 #define NL_GLOW_TEX 2.2  // 0.4 weak ~ 8.0 bright
 #define NL_GLOW_SHIMMER  // [toggle] shimmer effect
-#define NL_GLOW_LEAK 0.6 // [toggle] 0.08 subtle ~ 1.0 100% brightness of NL_GLOW_TEX
+//#define NL_GLOW_LEAK 0.6 // [toggle] 0.08 subtle ~ 1.0 100% brightness of NL_GLOW_TEX
 
 /* Waving */
 #define NL_PLANTS_WAVE 0.04    // [toggle] 0.02 gentle ~ 0.4 violent
@@ -117,8 +117,8 @@
 #define NL_CLOUD2_RAIN_THICKNESS 2.5 // 0.5 slim ~ 5.0 fat
 #define NL_CLOUD2_STEPS 5            // 3 low quality ~ 16 high quality
 #define NL_CLOUD2_SCALE 0.033        // 0.003 large ~ 0.3 tiny
-#define NL_CLOUD2_SHAPE 0.65         // 0.0 round ~ 1.0 box
-#define NL_CLOUD2_DENSITY 5.0        // 1.0 blurry ~ 100.0 sharp
+#define NL_CLOUD2_SHAPE 0.5          // 0.0 round ~ 1.0 box
+#define NL_CLOUD2_DENSITY 25.0       // 1.0 blurry ~ 100.0 sharp
 #define NL_CLOUD2_VELOCIY 0.8        // 0.0 static ~ 4.0 very fast
 //#define NL_CLOUD2_MULTILAYER       // [toggle] extra cloud layer
 

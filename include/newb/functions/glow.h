@@ -48,7 +48,8 @@ vec3 nlGlow(sampler2D tex, vec2 uv, vec4 diffuse, float shimmer) {
   vec2 v = 1.0 - u;
 
   // corners
-  vec3 g = v.x*(c1*v.y + c3*u.y) + u.x*(c5*u.y + c7*v.y);
+  vec3 g = mix(mix(c1, c3, u.y), mix(c7, c5, u.y), u.x);
+
   /*
   g = max(
     max(c1*min(v.x,v.y), c3*min(v.x,u.y)),

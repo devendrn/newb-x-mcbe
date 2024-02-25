@@ -24,9 +24,7 @@ void main() {
 #endif
 
 #if defined(SEASONS) && (defined(OPAQUE) || defined(ALPHA_TEST))
-  diffuse.rgb *= mix(vec3(1.0,1.0,1.0),
-                     texture2D(s_SeasonsTexture, v_color1.xy).rgb * 2.0,
-                     v_color1.z);
+  diffuse.rgb *= mix(vec3(1.0,1.0,1.0), texture2D(s_SeasonsTexture, v_color1.xy).rgb * 2.0, v_color1.z);
 #endif
   color = v_color0;
 #endif

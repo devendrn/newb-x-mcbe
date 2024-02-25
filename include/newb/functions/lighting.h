@@ -13,17 +13,22 @@ vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {
   float noon = clamp((tintFactor-0.37)/0.45,0.0,1.0);
   float morning = clamp((tintFactor-0.05)*3.125,0.0,1.0);
 
+  vec3 clearTint = mix(
+    mix(NL_NIGHT_SUN_COL, NL_MORNING_SUN_COL, morning),
+    mix(NL_MORNING_SUN_COL, NL_NOON_SUN_COL, noon),
+    dayFactor
+  );
+
   float r = 1.0-rain;
   r *= r;
-
-  return mix(vec3(0.65,0.65,0.75), mix(
-             mix(NL_NIGHT_SUN_COL, NL_MORNING_SUN_COL, morning),
-             mix(NL_MORNING_SUN_COL, NL_NOON_SUN_COL, noon),
-             dayFactor), r*r);
+  
+  return mix(vec3(0.65,0.65,0.75), clearTint, r*r);
 }
 
-vec3 nlLighting(vec3 wPos, out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
-                 vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether, bool underwater, highp float t) {
+vec3 nlLighting(
+  vec3 wPos, out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR, float rainFactor, vec2 uv1, vec2 lit, bool isTree,
+  vec3 horizonCol, vec3 zenithCol, float shade, bool end, bool nether, bool underwater, highp float t
+) {
   // all of these will be multiplied by tex uv1 in frag so functions should be divided by uv1 here
 
   vec3 light;
