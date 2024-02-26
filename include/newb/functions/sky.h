@@ -65,23 +65,6 @@ vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h) {
   return mix(zenithColor,horizonColor, gradient2);
 }
 
-// sky reflection on plane
-vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, float y, float h) {
-
-  // offset the reflection based on height from camera
-  float offset = h/(50.0+h);   // (h*0.02)/(1.0+h*0.02)
-  y = max((y-offset)/(1.0-offset), 0.0);
-
-  return renderSky(horizonEdgeCol, horizonCol, zenithCol, y);
-}
-
-// simpler sky reflection for rain
-vec3 getRainSkyRefl(vec3 horizonCol, vec3 zenithCol, float h) {
-  h = 1.0-h*h;
-  h *= h;
-  return mix(zenithCol, horizonCol, h*h);
-}
-
 // sunrise/sunset reflection
 vec3 getSunRefl(float viewDirX, float fogBrightness, vec3 FOG_COLOR) {
   float factor = FOG_COLOR.r/length(FOG_COLOR);
@@ -92,6 +75,49 @@ vec3 getSunRefl(float viewDirX, float fogBrightness, vec3 FOG_COLOR) {
   sunRefl *= sunRefl;
 
   return fogBrightness*sunRefl*vec3(2.5,1.6,0.8);
+}
+
+vec3 renderEndSky2D(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
+  float grad = 1.0 - max(viewDir.y, 0.0);
+  grad *= grad;
+
+  // end sky base gradient
+  vec3 sky = mix(zenithCol, horizonCol, smoothstep(0.0, 1.0, grad));
+  
+  // end void gradient
+  float glow = max((-viewDir.y-0.5)*2.0, 0.0);
+  sky *= 1.0 + glow*glow*glow;
+
+  return sky;
+}
+
+vec3 nlRenderSky(vec3 reddishTint, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t, bool end, bool underWater) {
+  vec3 sky;
+
+  if (end) {
+    sky = renderEndSky2D(horizonCol, zenithCol, -1.0 * viewDir, t);
+  } else {
+    sky = renderSky(reddishTint, horizonCol, zenithCol, max(-viewDir.y, 0.0));
+  }
+
+  return sky;
+}
+
+// sky reflection on plane
+vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t, float h, bool end, bool underWater) {
+
+  // offset the reflection based on height from camera
+  float offset = h/(50.0+h);   // (h*0.02)/(1.0+h*0.02)
+  viewDir.y = max((viewDir.y-offset)/(1.0-offset), 0.0);
+
+  return nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, t, end, underWater);
+}
+
+// simpler sky reflection for rain
+vec3 getRainSkyRefl(vec3 horizonCol, vec3 zenithCol, float h) {
+  h = 1.0-h*h;
+  h *= h;
+  return mix(zenithCol, horizonCol, h*h);
 }
 
 #endif

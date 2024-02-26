@@ -119,14 +119,14 @@ void main() {
   // loading chunks
   relativeDist += RenderChunkFogAlpha.x;
 
-  vec4 fogColor = nlRenderFog(horizonEdgeCol, relativeDist, nether, FogColor.rgb, FogAndDistanceControl.xy);
+  vec4 fogColor;
+  fogColor.rgb = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, t, end, underWater);
+  fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy);
 
   if (nether) {
+    // blend fog with void color
+    fogColor.rgb = colorCorrectionInv(FogColor.rgb);
     fogColor.rgb = mix(fogColor.rgb, vec3(0.8,0.2,0.12)*1.5, lit.x*(1.67-fogColor.a*1.67));
-  } else if (!underWater) {
-    // to remove fog in heights
-    float fogGradient = 1.0-max(-viewDir.y+0.1,0.0);
-    fogColor.a *= fogGradient*fogGradient*fogGradient;
   }
 
   vec4 refl = vec4(0.0,0.0,0.0,0.0);
@@ -142,7 +142,7 @@ void main() {
   if (a_color0.b > 0.3 && a_color0.a < 0.95) {
     water = 1.0;
     refl = nlWater(
-      worldPos, color, viewDir, light, cPos, bPos.y, a_color0, FogColor.rgb, horizonCol, horizonEdgeCol, zenithCol, uv1, lit, t, camDis, rainFactor, tiledCpos, end, torchColor
+      worldPos, color, viewDir, light, cPos, tiledCpos, bPos.y, FogColor.rgb, horizonCol, horizonEdgeCol, zenithCol, lit, t, camDis, rainFactor, torchColor, end, nether, underWater
     );
     pos = mul(u_viewProj, vec4(worldPos, 1.0));
   } else {

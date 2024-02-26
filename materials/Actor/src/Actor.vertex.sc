@@ -79,7 +79,14 @@ void main() {
   // relative cam dist
   float camDist = position.z/FogControl.z;
 
-  vec4 fogColor = nlRenderFog(newFog, camDist, nether, FogColor.rgb, FogControl.xy);
+  vec4 fogColor;
+  fogColor.rgb = newFog;
+  fogColor.a = nlRenderFogFade(camDist, FogColor.rgb, FogControl.xy);
+
+  if (nether) {
+    // blend fog with void color
+    fogColor.rgb = colorCorrectionInv(FogColor.rgb);
+  }
 
   vec3 light = nlActorLighting(a_position, a_normal, World, TileLightColor, OverlayColor, newFog, nether, underWater, end, ViewPositionAndTime.w);
 

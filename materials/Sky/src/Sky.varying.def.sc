@@ -9,5 +9,5 @@ vec4 i_data3        : TEXCOORD5;
 
 vec3 v_color0       : COLOR0;
 vec3 v_color1       : COLOR1;
-vec3 v_color2       : COLOR2;
+vec4 v_color2       : COLOR2;
 vec3 v_color3       : COLOR3;

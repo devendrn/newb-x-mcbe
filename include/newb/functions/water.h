@@ -14,10 +14,10 @@ float calculateFresnel(float cosR, float r0) {
 }
 
 vec4 nlWater(
-  inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 cPos, float fractCposY,
-  vec4 COLOR, vec3 FOG_COLOR, vec3 horizonCol,vec3 horizonEdgeCol, vec3 zenithCol,
-  vec2 uv1, vec2 lit, highp float t, float camDist, float rainFactor,
-  vec3 tiledCpos, bool end, vec3 torchColor
+  inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 cPos, vec3 tiledCpos,
+  float fractCposY, vec3 FOG_COLOR, vec3 horizonCol, vec3 horizonEdgeCol, vec3 zenithCol,
+  vec2 lit, highp float t, float camDist, float rainFactor,
+  vec3 torchColor, bool end, bool nether, bool underWater
 ) {
 
   float cosR;
@@ -31,9 +31,10 @@ vec4 nlWater(
     // calculate cosine of incidence angle and apply water bump
     cosR = abs(viewDir.y);
     cosR = mix(cosR, 1.0-cosR*cosR, bump);
+    viewDir.y = cosR;
 
     // sky reflection
-    waterRefl = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, cosR, -wPos.y);
+    waterRefl = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, viewDir, t, -wPos.y, end, underWater);
     waterRefl += getSunRefl(viewDir.x, horizonEdgeCol.r, FOG_COLOR);
 
     // cloud and aurora reflection
