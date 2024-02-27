@@ -1,6 +1,6 @@
 $input a_color0, a_position
 #ifdef OPAQUE
-$output v_color0, v_color1, v_color2, v_color3
+$output v_zenithCol, v_horizonColTime, v_horizonEdgeColUnderwater, v_worldPos
 #endif
 
 #include <bgfx_shader.sh>
@@ -9,6 +9,7 @@ $output v_color0, v_color1, v_color2, v_color3
 //uniform vec4 SkyColor;
 uniform vec4 FogColor;
 uniform vec4 FogAndDistanceControl;
+uniform vec4 ViewPositionAndTime;
 
 void main() {
 #ifdef OPAQUE
@@ -22,19 +23,20 @@ void main() {
   // sky colors
   if (underWater) {
     vec3 fogcol = getUnderwaterCol(FogColor.rgb);
-    v_color0 = fogcol;
-    v_color1 = fogcol;
-    v_color2.rgb = fogcol;
+    v_zenithCol = fogcol;
+    v_horizonColTime.rgb = fogcol;
+    v_horizonEdgeColUnderwater.rgb = fogcol;
   } else {
     float rainFactor = detectRain(FogAndDistanceControl.xyz);
-    v_color0 = getZenithCol(rainFactor, FogColor.rgb);
-    v_color1 = getHorizonCol(rainFactor, FogColor.rgb);
-    v_color2.rgb = getHorizonEdgeCol(v_color1, rainFactor, FogColor.rgb);
+    v_zenithCol = getZenithCol(rainFactor, FogColor.rgb);
+    v_horizonColTime.rgb = getHorizonCol(rainFactor, FogColor.rgb);
+    v_horizonEdgeColUnderwater.rgb = getHorizonEdgeCol(v_horizonColTime.rgb, rainFactor, FogColor.rgb);
   }
 
-  v_color2.a = float(underWater);
+  v_horizonEdgeColUnderwater.a = float(underWater);
+  v_horizonColTime.a = ViewPositionAndTime.w;
 
-  v_color3 = mul(u_model[0],vec4(pos, 1.0)).xyz;
+  v_worldPos = mul(u_model[0], vec4(pos, 1.0)).xyz;
   gl_Position = mul(u_modelViewProj, vec4(pos, 1.0));
 #else
   gl_Position = vec4(0.0,0.0,0.0,0.0);

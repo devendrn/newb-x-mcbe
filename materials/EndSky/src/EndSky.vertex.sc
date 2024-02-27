@@ -2,7 +2,7 @@ $input a_texcoord0, a_position
 #ifdef INSTANCING
   $input i_data0, i_data1, i_data2, i_data3
 #endif
-$output v_pos, v_texcoord0
+$output v_posTime, v_texcoord0
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
@@ -29,6 +29,6 @@ void main() {
   pos.xz = mul(mtxFromRows(vec2(cosA,-sinA),vec2(sinA,cosA)), pos.xz);
 
   v_texcoord0 = 2.0*a_texcoord0;
-  v_pos = pos;
+  v_posTime = vec4(pos, ViewPositionAndTime.w);
   gl_Position = mul(u_viewProj, vec4(pos, 1.0));
 }

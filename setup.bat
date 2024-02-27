@@ -22,4 +22,7 @@ if not exist %SHADERC% (
 if not exist %DATA_DIR% (
   echo Cloning RenderDragonData
   git clone --filter=tree:0 %M_DATA_URL% %DATA_DIR%
+) else (
+  cd %DATA_DIR%
+  git pull
 )

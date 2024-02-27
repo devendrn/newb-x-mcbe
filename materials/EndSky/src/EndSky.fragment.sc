@@ -1,17 +1,15 @@
-$input v_texcoord0, v_pos
+$input v_texcoord0, v_posTime
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
 
 SAMPLER2D(s_MatTexture, 0);
 
-uniform vec4 ViewPositionAndTime;
-
 void main() {
   vec4 diffuse = texture2D(s_MatTexture, v_texcoord0);
 
   // end sky gradient
-  vec3 color = renderEndSky2D(getEndHorizonCol(), getEndZenithCol(), normalize(v_pos), ViewPositionAndTime.w);
+  vec3 color = renderEndSky2D(getEndHorizonCol(), getEndZenithCol(), normalize(v_posTime.xyz), v_posTime.w);
 
   // stars
   color += 2.8*diffuse.rgb;
