@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# pack.sh usage:
+# usage:
 # - linux: (android pack only)
 #     pack.sh -v 15.0 -m "Custom name (optional)"
 # - bash on windows: (windows and android pack)
-#     pack.sh -w -v 15.0 -m "Custom name" -p windows
-#     pack.sh -w -v 15.0 -m "Custom name" -p android
+#     pack.sh -w -v 15.0 -m "Custom name (optional)" -p Windows
+#     pack.sh -w -v 15.0 -m "Custom name (optional)" -p Android
 
 # load pack config
 source include/newb/pack_config.sh
