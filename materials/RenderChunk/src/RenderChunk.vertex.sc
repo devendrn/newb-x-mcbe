@@ -122,6 +122,9 @@ void main() {
   vec4 fogColor;
   fogColor.rgb = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, t, end, underWater);
   fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy);
+  #ifdef NL_GODRAY 
+    fogColor.a = mix(fogColor.a, 1.0, NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb));
+  #endif
 
   if (nether) {
     // blend fog with void color
@@ -142,7 +145,7 @@ void main() {
   if (a_color0.b > 0.3 && a_color0.a < 0.95) {
     water = 1.0;
     refl = nlWater(
-      worldPos, color, viewDir, light, cPos, tiledCpos, bPos.y, FogColor.rgb, horizonCol, horizonEdgeCol, zenithCol, lit, t, camDis, rainFactor, torchColor, end, nether, underWater
+      worldPos, color, a_color0, viewDir, light, cPos, tiledCpos, bPos.y, FogColor.rgb, horizonCol, horizonEdgeCol, zenithCol, lit, t, camDis, rainFactor, torchColor, end, nether, underWater
     );
     pos = mul(u_viewProj, vec4(worldPos, 1.0));
   } else {

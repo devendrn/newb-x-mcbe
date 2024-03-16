@@ -13,7 +13,6 @@ vec3 glowDetect(vec4 diffuse) {
   // 253/255 = partial glow
   if (GLOW_PIXEL(diffuse)) {
     return  diffuse.rgb * (0.995-diffuse.a)/(0.995-0.9875);
-    //return  diffuse.rgb;
   }
   return vec3(0.0,0.0,0.0);
 }

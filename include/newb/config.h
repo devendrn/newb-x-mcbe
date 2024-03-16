@@ -142,6 +142,10 @@
 //#define NL_SUNMOON_ANGLE 45.0 // [toggle] 0.0 no tilt - 90.0 tilt of 90 degrees
 #define NL_SUNMOON_SIZE 1.0     // 0.3 tiny - 4.0 massive
 
+/* Fake godrays during sunrise/sunset */
+//#define NL_GODRAY 0.3 // [toggle] 0.1 subtle - 0.8 strong
+
+
 /* -------- CONFIG ENDS HERE ----------- */
 
 

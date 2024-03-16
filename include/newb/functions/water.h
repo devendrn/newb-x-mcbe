@@ -14,7 +14,7 @@ float calculateFresnel(float cosR, float r0) {
 }
 
 vec4 nlWater(
-  inout vec3 wPos, inout vec4 color, vec3 viewDir, vec3 light, vec3 cPos, vec3 tiledCpos,
+  inout vec3 wPos, inout vec4 color, vec4 COLOR, vec3 viewDir, vec3 light, vec3 cPos, vec3 tiledCpos,
   float fractCposY, vec3 FOG_COLOR, vec3 horizonCol, vec3 horizonEdgeCol, vec3 zenithCol,
   vec2 lit, highp float t, float camDist, float rainFactor,
   vec3 torchColor, bool end, bool nether, bool underWater
