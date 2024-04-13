@@ -57,8 +57,9 @@
 #define NL_END_TORCH_COL        vec3(1.0,0.52,0.18)
 
 /* Fog */
-#define NL_FOG_TYPE 2        // 0:no fog, 1:vanilla, 2:smoother vanilla
-#define NL_MIST_DENSITY 0.18 // 0.0 no mist ~ 1.0 misty
+#define NL_FOG_TYPE 2             // 0:no fog, 1:vanilla, 2:smoother vanilla
+#define NL_MIST_DENSITY 0.18      // 0.0 no mist ~ 1.0 misty
+#define NL_RAIN_MIST_OPACITY 0.12 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow
 
 /* Sky colors - zenith=top, horizon=bottom */
 #define NL_DAY_ZENITH_COL    vec3(0.15,0.45,1.0)
@@ -130,20 +131,20 @@
 #define NL_AURORA_COL1 vec3(0.1,1.0,0.0)
 #define NL_AURORA_COL2 vec3(0.1,0.0,1.0)
 
-/* Rain effects */
-#define NL_RAIN_MIST_OPACITY 0.12 // [toggle] 0.04 very subtle ~ 0.5 thick mist blow
-#define NL_RAIN_WETNESS 1.0       // 0.0 no wetness - 1.0 fully wet blocks
-#define NL_RAIN_PUDDLES 0.7       // 0.0 no puddles - 1.0 puddles
-
 /* Chunk loading slide in animation */
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
 
 /* Sun/Moon */
-//#define NL_SUNMOON_ANGLE 45.0 // [toggle] 0.0 no tilt - 90.0 tilt of 90 degrees
-#define NL_SUNMOON_SIZE 1.0     // 0.3 tiny - 4.0 massive
+//#define NL_SUNMOON_ANGLE 45.0 // [toggle] 0.0 no tilt ~ 90.0 tilt of 90 degrees
+#define NL_SUNMOON_SIZE 1.0     // 0.3 tiny ~ 4.0 massive
 
 /* Fake godrays during sunrise/sunset */
-//#define NL_GODRAY 0.3 // [toggle] 0.1 subtle - 0.8 strong
+//#define NL_GODRAY 0.3 // [toggle] 0.1 subtle ~ 0.8 strong
+
+/* Sky reflection */
+//#define NL_GROUND_REFL 0.4       // [toggle] 0.2 slightly reflective ~ 1.0 fully reflect sky 
+#define NL_GROUND_RAIN_WETNESS 1.0 // 0.0 no wetness ~ 1.0 fully wet blocks when raining
+#define NL_GROUND_RAIN_PUDDLES 0.7 // 0.0 no puddles ~ 1.0 puddles
 
 
 /* -------- CONFIG ENDS HERE ----------- */

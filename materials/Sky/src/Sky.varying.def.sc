@@ -7,7 +7,6 @@ vec4 i_data1        : TEXCOORD7;
 vec4 i_data2        : TEXCOORD6;
 vec4 i_data3        : TEXCOORD5;
 
-vec3 v_zenithCol                : COLOR0;
-vec4 v_horizonColTime           : COLOR1;
-vec4 v_horizonEdgeColUnderwater : COLOR2;
-vec3 v_worldPos                 : COLOR3;
+vec3 v_fogColor                 : COLOR0;
+vec3 v_worldPos                 : COLOR1;
+vec3 v_underwaterRainTime       : COLOR2;

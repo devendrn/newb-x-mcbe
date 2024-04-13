@@ -51,7 +51,8 @@ vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR) {
 }
 
 // 1D sky with three color gradient
-vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h) {
+vec3 renderOverworldSky(vec3 horizonEdgeCol, vec3 horizonColor, vec3 zenithColor, vec3 viewDir) {
+  float h = max(viewDir.y, 0.0);
   h = 1.0-h*h;
   float hsq = h*h;
 
@@ -61,8 +62,10 @@ vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h) {
   float gradient2 = 0.6*gradient1 + 0.4*hsq;
   gradient1 *= gradient1;
 
-  horizonColor = mix(horizonColor, reddishTint, gradient1);
-  return mix(zenithColor,horizonColor, gradient2);
+  vec3 sky = mix(horizonColor, horizonEdgeCol, gradient1);
+  sky = mix(zenithColor,horizonColor, gradient2);
+
+  return sky;
 }
 
 // sunrise/sunset reflection
@@ -77,7 +80,7 @@ vec3 getSunRefl(float viewDirX, float fogBrightness, vec3 FOG_COLOR) {
   return fogBrightness*sunRefl*vec3(2.5,1.6,0.8);
 }
 
-vec3 renderEndSky2D(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
+vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
   float grad = 1.0 - max(viewDir.y, 0.0);
   grad *= grad;
 
@@ -91,26 +94,28 @@ vec3 renderEndSky2D(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
   return sky;
 }
 
-vec3 nlRenderSky(vec3 reddishTint, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t, bool end, bool underWater) {
+vec3 nlRenderSky(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, vec3 FOG_COLOR, float t, bool end, bool underWater, bool nether) {
   vec3 sky;
+  viewDir.y = -viewDir.y;
 
   if (end) {
-    sky = renderEndSky2D(horizonCol, zenithCol, -1.0 * viewDir, t);
+    sky = renderEndSky(horizonCol, zenithCol, viewDir, t);
   } else {
-    sky = renderSky(reddishTint, horizonCol, zenithCol, max(-viewDir.y, 0.0));
+    sky = renderOverworldSky(horizonEdgeCol, horizonCol, zenithCol, viewDir);
+    if (!nether) {
+      // sky += getSunRefl(viewDir.x, FOG_COLOR.r*3.0, FOG_COLOR); // TODO - CHANGE TO FOG_COLOR BASED INTENSITY
+      sky += getSunRefl(viewDir.x, horizonEdgeCol.r, FOG_COLOR);
+    }
   }
 
   return sky;
 }
 
 // sky reflection on plane
-vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t, float h, bool end, bool underWater) {
+vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, vec3 FOG_COLOR, float t, float h, bool end, bool underWater, bool nether) {
+  viewDir.y = -viewDir.y;
 
-  // offset the reflection based on height from camera
-  float offset = h/(50.0+h);   // (h*0.02)/(1.0+h*0.02)
-  viewDir.y = max((viewDir.y-offset)/(1.0-offset), 0.0);
-
-  return nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, t, end, underWater);
+  return nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, end, underWater, nether);
 }
 
 // simpler sky reflection for rain

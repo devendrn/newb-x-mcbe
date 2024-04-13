@@ -9,7 +9,7 @@ void main() {
   vec4 diffuse = texture2D(s_MatTexture, v_texcoord0);
 
   // end sky gradient
-  vec3 color = renderEndSky2D(getEndHorizonCol(), getEndZenithCol(), normalize(v_posTime.xyz), v_posTime.w);
+  vec3 color = renderEndSky(getEndHorizonCol(), getEndZenithCol(), normalize(v_posTime.xyz), v_posTime.w);
 
   // stars
   color += 2.8*diffuse.rgb;

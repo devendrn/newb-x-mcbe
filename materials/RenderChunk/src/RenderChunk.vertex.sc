@@ -120,7 +120,7 @@ void main() {
   relativeDist += RenderChunkFogAlpha.x;
 
   vec4 fogColor;
-  fogColor.rgb = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, t, end, underWater);
+  fogColor.rgb = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, FogColor.rgb, t, end, underWater, nether);
   fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy);
   #ifdef NL_GODRAY 
     fogColor.a = mix(fogColor.a, 1.0, NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb));
@@ -152,14 +152,14 @@ void main() {
     water = 0.0;
     pos = mul(u_viewProj, vec4(worldPos, 1.0));
     refl = nlRefl(
-      color, fogColor, lit, uv1, tiledCpos, camDis, worldPos, viewDir, torchColor, horizonCol, zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz
+      color, fogColor, lit, uv1, tiledCpos, camDis, worldPos, viewDir, torchColor, horizonEdgeCol, horizonCol, zenithCol, FogColor.rgb, rainFactor, FogAndDistanceControl.z, t, pos.xyz, underWater, end, nether
     );
   }
 #else
   float water = 0.0;
   pos = mul(u_viewProj, vec4(worldPos, 1.0));
   refl = nlRefl(
-    color, fogColor, lit, uv1, tiledCpos, camDis, worldPos, viewDir, torchColor, horizonCol, zenithCol, rainFactor, FogAndDistanceControl.z, t, pos.xyz
+    color, fogColor, lit, uv1, tiledCpos, camDis, worldPos, viewDir, torchColor, horizonEdgeCol, horizonCol, zenithCol, FogColor.rgb, rainFactor, FogAndDistanceControl.z, t, pos.xyz, underWater, end, nether
   );
 #endif
 

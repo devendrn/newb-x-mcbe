@@ -11,7 +11,6 @@ $output v_posTime, v_texcoord0
 uniform vec4 ViewPositionAndTime;
 
 void main() {
-
 #ifdef INSTANCING
   mat4 model = mtxFromCols(i_data0, i_data1, i_data2, i_data3);
 #else
@@ -28,7 +27,10 @@ void main() {
   float cosA = cos(t);
   pos.xz = mul(mtxFromRows(vec2(cosA,-sinA),vec2(sinA,cosA)), pos.xz);
 
+  vec3 wPos = pos;
+  wPos.xz = -wPos.xz;
+
   v_texcoord0 = 2.0*a_texcoord0;
-  v_posTime = vec4(pos, ViewPositionAndTime.w);
+  v_posTime = vec4(wPos, ViewPositionAndTime.w);
   gl_Position = mul(u_viewProj, vec4(pos, 1.0));
 }

@@ -1,5 +1,5 @@
 $input a_position, a_texcoord0
-$output v_texcoord0, v_zenithCol, v_horizonColTime, v_horizonEdgeColUnderwater, v_worldPos
+$output v_texcoord0, v_fogColor, v_worldPos, v_underwaterRainTime
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
@@ -11,22 +11,11 @@ uniform vec4 FogAndDistanceControl;
 uniform vec4 ViewPositionAndTime;
 
 void main() {
-  bool underWater = detectUnderwater(FogColor.rgb, FogAndDistanceControl.xy);
-  if (underWater) {
-    vec3 fogcol = getUnderwaterCol(FogColor.rgb);
-    v_zenithCol = fogcol;
-    v_horizonColTime.rgb = fogcol;
-    v_horizonEdgeColUnderwater.rgb = fogcol;
-  } else {
-    float rainFactor = detectRain(FogAndDistanceControl.xyz);
-    v_zenithCol = getZenithCol(rainFactor, FogColor.rgb);
-    v_horizonColTime.rgb = getHorizonCol(rainFactor, FogColor.rgb);
-    v_horizonEdgeColUnderwater.rgb = getHorizonEdgeCol(v_horizonColTime.rgb, rainFactor, FogColor.rgb);
-  }
+  v_underwaterRainTime.x = float(detectUnderwater(FogColor.rgb, FogAndDistanceControl.xy));
+  v_underwaterRainTime.y = detectRain(FogAndDistanceControl.xyz);
+  v_underwaterRainTime.z = ViewPositionAndTime.w;
 
-  v_horizonEdgeColUnderwater.w = float(underWater);
-  v_horizonColTime.w = ViewPositionAndTime.w;
-
+  v_fogColor = FogColor.rgb;
   v_texcoord0 = a_texcoord0;
   v_worldPos = mul(u_model[0], vec4(a_position, 1.0)).xyz; 
   gl_Position = mul(u_modelViewProj, mul(CubemapRotation, vec4(a_position, 1.0)));

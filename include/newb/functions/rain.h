@@ -13,30 +13,46 @@ float nlWindblow(vec2 p, float t){
 
 vec4 nlRefl(
   inout vec4 color, inout vec4 mistColor, vec2 lit, vec2 uv1, vec3 tiledCpos,
-  float camDist, vec3 wPos, vec3 viewDir, vec3 torchColor, vec3 horizonCol,
-  vec3 zenithCol, float rainFactor, float renderDist, highp float t, vec3 pos
+  float camDist, vec3 wPos, vec3 viewDir, vec3 torchColor, vec3 horizonEdgeCol, vec3 horizonCol,
+  vec3 zenithCol, vec3 FOG_COLOR, float rainFactor, float renderDist, highp float t, vec3 pos, bool underWater, bool end, bool nether
 ) {
   vec4 wetRefl = vec4(0.0,0.0,0.0,0.0);
 
+  #ifndef NL_GROUND_REFL
   if (rainFactor > 0.0) {
-    float wetness = lit.y*lit.y*rainFactor;
+  #endif
+    float wetness = lit.y*lit.y;
 
-#ifdef NL_RAIN_MIST_OPACITY
+  #ifdef NL_RAIN_MIST_OPACITY
     // humid air blow
-    float humidAir = wetness*nlWindblow(pos.xy/(1.0+pos.z), t);
+    float humidAir = rainFactor*wetness*nlWindblow(pos.xy/(1.0+pos.z), t);
     mistColor.a = min(mistColor.a + humidAir*NL_RAIN_MIST_OPACITY, 1.0);
-#endif
+  #endif
 
     // clip reflection when far (better performance)
     float endDist = renderDist*0.6;
     if (camDist < endDist) {
-
-      // puddles
-      wetness *= 1.0 - NL_RAIN_PUDDLES*fastRand(tiledCpos.xz);
-
       float cosR = max(viewDir.y, 0.0);
-      wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
-      wetRefl.a = calculateFresnel(cosR, 0.03)*wetness*NL_RAIN_WETNESS;
+      float puddles = max(1.0 - NL_GROUND_RAIN_PUDDLES*fastRand(tiledCpos.xz), 0.0);
+
+    #ifndef NL_GROUND_REFL
+      wetness *= puddles;
+      wetRefl.a = calculateFresnel(cosR, 0.03)*wetness*rainFactor*NL_GROUND_RAIN_WETNESS;
+    #else
+      float reflective = NL_GROUND_REFL;
+      if (!end && !nether) {
+        reflective *= wetness;
+      }
+
+      wetness *= puddles;
+
+      reflective = mix(reflective, wetness, rainFactor);
+
+      wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
+    #endif
+
+      // wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
+      wetRefl.rgb = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, -wPos.y, end, underWater, nether);
 
       // torch light
       wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
@@ -46,8 +62,12 @@ vec4 nlRefl(
     }
 
     // darken wet parts
-    color.rgb *= 1.0 - 0.4*wetness;
+    color.rgb *= 1.0 - 0.4*wetness*rainFactor;
+    color.rgb *= 1.0 - 0.5*wetRefl.a;
+
+  #ifndef NL_GROUND_REFL
   }
+  #endif
 
   return wetRefl;
 }
