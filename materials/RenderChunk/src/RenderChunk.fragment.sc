@@ -52,16 +52,12 @@ void main() {
 
   if (v_extra.b > 0.9) {
     diffuse.rgb += v_refl.rgb*v_refl.a;
-  } 
-  #ifdef NL_GROUND_REFL
-  else if (v_extra.g < 0.0) {
-  #else
-  else if (v_refl.a > 0.0 && v_extra.g < 0.0) {
-  #endif
+  } else if (v_refl.a > 0.0) {
     // reflective effect - only on xz plane
     float dy = abs(dFdy(v_extra.g));
     if (dy < 0.0002) {
       float mask = v_refl.a*(clamp(v_extra.r*10.0,8.2,8.8)-7.8);
+      diffuse.rgb *= 1.0 - 0.6*mask;
       diffuse.rgb += v_refl.rgb*mask;
     }
   }

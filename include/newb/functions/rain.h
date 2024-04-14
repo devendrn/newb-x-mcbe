@@ -35,35 +35,44 @@ vec4 nlRefl(
       float cosR = max(viewDir.y, 0.0);
       float puddles = max(1.0 - NL_GROUND_RAIN_PUDDLES*fastRand(tiledCpos.xz), 0.0);
 
-    #ifndef NL_GROUND_REFL
+      #ifndef NL_GROUND_REFL
       wetness *= puddles;
-      wetRefl.a = calculateFresnel(cosR, 0.03)*wetness*rainFactor*NL_GROUND_RAIN_WETNESS;
-    #else
+      float reflective = wetness*rainFactor*NL_GROUND_RAIN_WETNESS;
+      #else
       float reflective = NL_GROUND_REFL;
       if (!end && !nether) {
         reflective *= wetness;
       }
 
       wetness *= puddles;
-
       reflective = mix(reflective, wetness, rainFactor);
+      #endif
 
-      wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
-    #endif
+      if (wPos.y < 0.0) {
+        // wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
+        wetRefl.rgb = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, -wPos.y, end, underWater, nether);
+        wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
 
-      // wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
-      wetRefl.rgb = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, -wPos.y, end, underWater, nether);
+        #if defined(NL_GROUND_AURORA_REFL) && defined(NL_AURORA) && defined (NL_GROUND_REFL)
+        vec2 parallax = viewDir.xz/viewDir.y;
+        vec2 projectedPos = wPos.xz - parallax*100.0;
+        float fade = clamp(2.0 - 0.004*length(projectedPos), 0.0, 1.0);
+        //projectedPos += fade*parallax;
 
-      // torch light
-      wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
+        vec4 aurora = renderAurora(projectedPos.xyy, t, rainFactor, horizonEdgeCol);
+        wetRefl.rgb += 2.0*aurora.rgb*aurora.a*fade;
+        #endif
 
-      // fade out before clip
-      wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0);
+        // torch light
+        wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
+
+        // fade out before clip
+        wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0);
+      }
     }
 
     // darken wet parts
     color.rgb *= 1.0 - 0.4*wetness*rainFactor;
-    color.rgb *= 1.0 - 0.5*wetRefl.a;
 
   #ifndef NL_GROUND_REFL
   }
