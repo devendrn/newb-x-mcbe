@@ -50,6 +50,10 @@
 #define NL_NOON_SUN_COL    vec3(1.0,0.75,0.57)
 #define NL_NIGHT_SUN_COL   vec3(0.5,0.64,1.00)
 
+/* Ambient light on terrain (light that is added everywhere) */
+#define NL_NETHER_AMBIENT vec3(3.0,2.16,1.89)
+#define NL_END_AMBIENT vec3(1.98,1.25,2.3)
+
 /* Torch colors */
 #define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.52,0.18)
 #define NL_UNDERWATER_TORCH_COL vec3(1.0,0.52,0.18)

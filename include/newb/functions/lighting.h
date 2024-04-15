@@ -54,8 +54,7 @@ vec3 nlLighting(
   if (nether || end) {
     // nether & end lighting
 
-    // ambient - end and nether
-    light = end ? vec3(1.98,1.25,2.3) : vec3(3.0,2.16,1.89);
+    light = end ? NL_END_AMBIENT : NL_NETHER_AMBIENT;
 
     light += horizonCol + torchLight*0.5;
   } else {
@@ -140,9 +139,9 @@ vec3 nlActorLighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 
 
   // nether, end, underwater tint
   if (nether) {
-    light *= tileLightCol.x*vec3(1.4,0.96,0.9);
+    light *= tileLightCol.x*NL_NETHER_AMBIENT*0.5;
   } else if (end) {
-    light *= vec3(2.1,1.5,2.3);
+    light *= NL_END_AMBIENT;
   } else if (underWater) {
     light += NL_UNDERWATER_BRIGHTNESS;
     light *= mix(normalize(horizonCol),vec3(1.0,1.0,1.0),tileLightCol.x*0.5);
