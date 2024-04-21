@@ -21,8 +21,9 @@ void main() {
     horizonEdgeCol = fogcol;
   } else {
     float rainFactor = v_underwaterRainTime.y;
-    zenithCol = getZenithCol(rainFactor, v_fogColor);
-    horizonCol = getHorizonCol(rainFactor, v_fogColor);
+    vec3 fs = getSkyFactors(v_fogColor);
+    zenithCol = getZenithCol(rainFactor, v_fogColor, fs);
+    horizonCol = getHorizonCol(rainFactor, v_fogColor, fs);
     horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, v_fogColor);
   }
 

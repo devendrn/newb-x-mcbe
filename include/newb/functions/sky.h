@@ -13,40 +13,42 @@ vec3 getEndHorizonCol() {
   return NL_END_HORIZON_COL;
 }
 
-vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR) {
-  // value needs tweaking
-  float val = max(FOG_COLOR.r*0.6, max(FOG_COLOR.g, FOG_COLOR.b));
+// values used for getting sky colors
+vec3 getSkyFactors(vec3 FOG_COLOR) {
+  vec3 factors = vec3(
+    max(FOG_COLOR.r*0.6, max(FOG_COLOR.g, FOG_COLOR.b)), // intensity val
+    1.5*max(FOG_COLOR.r-FOG_COLOR.b, 0.0), // viewing sun
+    min(FOG_COLOR.g, 0.26) // rain brightness
+  );
 
-  // zenith color
-  vec3 zenithCol = (0.77*val*val + 0.33*val)*NL_DAY_ZENITH_COL;
-  zenithCol += NL_NIGHT_ZENITH_COL*(1.0-FOG_COLOR.b);
+  factors.z *= factors.z;
 
-  // rain sky
-  float brightness = min(FOG_COLOR.g, 0.26);
-  brightness *= brightness*13.2;
-  return mix(zenithCol*(1.0+0.5*rainFactor), NL_RAIN_ZENITH_COL*brightness, rainFactor);
+  return factors;
 }
 
-vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR) {
-  // value needs tweaking
-  float val = max(FOG_COLOR.r*0.65, max(FOG_COLOR.g*1.1, FOG_COLOR.b));
-  float sun = max(FOG_COLOR.r-FOG_COLOR.b, 0.0);
+vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR, vec3 fs) {
+  vec3 zenithCol = NL_NIGHT_ZENITH_COL*(1.0-FOG_COLOR.b);
+  zenithCol += NL_DAWN_ZENITH_COL*((0.7*fs.x*fs.x) + (0.4*fs.x) + fs.y);
+  zenithCol = mix(zenithCol, (0.7*fs.x*fs.x + 0.3*fs.x)*NL_DAY_ZENITH_COL, fs.x*fs.x);
+  zenithCol = mix(zenithCol*(1.0+0.5*rainFactor), NL_RAIN_ZENITH_COL*fs.z*13.2, rainFactor);
 
-  // horizon color
-  vec3 horizonCol = NL_DAWN_HORIZON_COL*(((0.7*val*val) + (0.4*val) + sun)*2.4);
-  horizonCol += NL_NIGHT_HORIZON_COL;
-  horizonCol = mix(horizonCol, 2.0*val*NL_DAY_HORIZON_COL, val*val);
+  return zenithCol;
+}
 
-  // rain horizon
-  float brightness = min(FOG_COLOR.g, 0.26);
-  brightness *= brightness*19.6;
-  return mix(horizonCol, NL_RAIN_HORIZON_COL*brightness, rainFactor);
+vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR, vec3 fs) {
+  vec3 horizonCol = NL_NIGHT_HORIZON_COL*(1.0-FOG_COLOR.b); 
+  horizonCol += NL_DAWN_HORIZON_COL*(((0.7*fs.x*fs.x) + (0.3*fs.x) + fs.y)*1.9); 
+  horizonCol = mix(horizonCol, 2.0*fs.x*NL_DAY_HORIZON_COL, fs.x*fs.x);
+  horizonCol = mix(horizonCol, NL_RAIN_HORIZON_COL*fs.z*19.6, rainFactor);
+
+  return horizonCol;
 }
 
 // tinting on horizon col
 vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR) {
   float val = 2.1*(1.1-FOG_COLOR.b)*FOG_COLOR.g*(1.0-rainFactor);
   horizonCol *= vec3_splat(1.0-val) + NL_DAWN_EDGE_COL*val;
+
   return horizonCol;
 }
 
@@ -68,16 +70,16 @@ vec3 renderOverworldSky(vec3 horizonEdgeCol, vec3 horizonColor, vec3 zenithColor
   return sky;
 }
 
-// sunrise/sunset reflection
-vec3 getSunRefl(float viewDirX, float fogBrightness, vec3 FOG_COLOR) {
+// sunrise/sunset bloom
+vec3 getSunBloom(float viewDirX, vec3 horizonEdgeCol, vec3 FOG_COLOR) {
   float factor = FOG_COLOR.r/length(FOG_COLOR);
   factor *= factor;
 
-  float sunRefl = clamp((abs(viewDirX)-0.9)/0.099, 0.0, 1.0);
+  float sunRefl = smoothstep(0.0, 0.95, abs(viewDirX));
   sunRefl *= sunRefl*sunRefl*factor*factor;
   sunRefl *= sunRefl;
 
-  return fogBrightness*sunRefl*vec3(2.5,1.6,0.8);
+  return horizonEdgeCol*sunRefl*NL_MORNING_SUN_COL*2.0;
 }
 
 vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
@@ -103,8 +105,7 @@ vec3 nlRenderSky(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 view
   } else {
     sky = renderOverworldSky(horizonEdgeCol, horizonCol, zenithCol, viewDir);
     if (!nether) {
-      // sky += getSunRefl(viewDir.x, FOG_COLOR.r*3.0, FOG_COLOR); // TODO - CHANGE TO FOG_COLOR BASED INTENSITY
-      sky += getSunRefl(viewDir.x, horizonEdgeCol.r, FOG_COLOR);
+      sky += getSunBloom(viewDir.x, horizonEdgeCol, FOG_COLOR);
     }
   }
 
@@ -114,8 +115,16 @@ vec3 nlRenderSky(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 view
 // sky reflection on plane
 vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, vec3 FOG_COLOR, float t, float h, bool end, bool underWater, bool nether) {
   viewDir.y = -viewDir.y;
+  vec3 refl = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, end, underWater, nether);
 
-  return nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, end, underWater, nether);
+  if (!(underWater || nether)) {
+    float specular = smoothstep(0.7, 0.0, abs(viewDir.z));
+    specular *= 2.0*max(FOG_COLOR.r-FOG_COLOR.b, 0.0);
+    specular *= specular*viewDir.x;
+    refl += horizonEdgeCol * specular * specular;
+  }
+
+  return refl;
 }
 
 // simpler sky reflection for rain

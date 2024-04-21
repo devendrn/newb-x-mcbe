@@ -1,7 +1,7 @@
 $input v_color0
 #include <newb/config.h>
 #if defined(TRANSPARENT) && NL_CLOUD_TYPE == 2
-  $input v_color1, v_color2
+  $input v_color1, v_color2, v_fogColor
 #endif
 
 #include <bgfx_shader.sh>
@@ -24,7 +24,7 @@ void main() {
   #endif
 
   #ifdef NL_AURORA
-    color += renderAurora(v_color0.xyz, v_color2.a, v_color1.a, v_color1.rgb)*(1.0-0.95*color.a);
+    color += renderAurora(v_color0.xyz, v_color2.a, v_color1.a, v_fogColor)*(1.0-0.95*color.a);
   #endif
 
   color.a *= v_color0.a;

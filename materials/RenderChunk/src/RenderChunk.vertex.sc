@@ -81,8 +81,9 @@ void main() {
     horizonCol = getEndHorizonCol();
     horizonEdgeCol = horizonCol;
   } else {
-    zenithCol = getZenithCol(rainFactor, FogColor.rgb);
-    horizonCol = getHorizonCol(rainFactor, FogColor.rgb);
+    vec3 fs = getSkyFactors(FogColor.rgb);
+    zenithCol = getZenithCol(rainFactor, FogColor.rgb, fs);
+    horizonCol = getHorizonCol(rainFactor, FogColor.rgb, fs);
     horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, FogColor.rgb);
   }
 

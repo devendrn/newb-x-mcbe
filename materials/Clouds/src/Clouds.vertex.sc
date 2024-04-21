@@ -5,7 +5,7 @@ $input a_color0, a_position
 $output v_color0
 #include <newb/config.h>
 #if defined(TRANSPARENT) && NL_CLOUD_TYPE == 2
-  $output v_color1, v_color2
+  $output v_color1, v_color2, v_fogColor
 #endif
 
 #include <bgfx_shader.sh>
@@ -27,8 +27,9 @@ void main() {
   float t = ViewPositionAndTime.w;
   float rain = detectRain(FogAndDistanceControl.xyz);
 
-  vec3 zenithCol = getZenithCol(rain, FogColor.rgb);
-  vec3 horizonCol = getHorizonCol(rain, FogColor.rgb);
+  vec3 fs = getSkyFactors(FogColor.rgb);
+  vec3 zenithCol = getZenithCol(rain, FogColor.rgb, fs);
+  vec3 horizonCol = getHorizonCol(rain, FogColor.rgb, fs);
   vec3 fogCol = getHorizonEdgeCol(horizonCol, rain, FogColor.rgb);
 
   vec3 pos = a_position;
@@ -78,7 +79,7 @@ void main() {
       color.a *= fade;
       color.rgb = colorCorrection(color.rgb);
     #else
-    
+      v_fogColor = FogColor.rgb;
       v_color2 = vec4(fogCol,ViewPositionAndTime.w);
       v_color1 = vec4(zenithCol,rain);
       color = vec4(worldPos, fade);

@@ -72,7 +72,8 @@ void main() {
   } else if (end) {
     newFog = getEndHorizonCol();
   } else {
-    newFog = getHorizonCol(rainFactor, FogColor.rgb);
+    vec3 fs = getSkyFactors(FogColor.rgb);
+    newFog = getHorizonCol(rainFactor, FogColor.rgb, fs);
     newFog = getHorizonEdgeCol(newFog.rgb, rainFactor, FogColor.rgb);
   }
 

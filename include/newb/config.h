@@ -74,7 +74,8 @@
 #define NL_RAIN_HORIZON_COL  vec3(1.0,1.0,1.0)
 #define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
 #define NL_END_HORIZON_COL   vec3(0.28,0.031,0.33)
-#define NL_DAWN_HORIZON_COL  vec3(1.0,0.4,0.3)
+#define NL_DAWN_ZENITH_COL   vec3(0.015,0.045,0.1)
+#define NL_DAWN_HORIZON_COL  vec3(0.9,0.3,0.3)
 #define NL_DAWN_EDGE_COL     vec3(1.0,0.4,0.2)
 
 /* Ore glow intensity */

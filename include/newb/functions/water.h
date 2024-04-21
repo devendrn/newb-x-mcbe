@@ -45,7 +45,7 @@ vec4 nlWater(
         //projectedPos += fade*parallax;
 
         #ifdef NL_AURORA
-        vec4 aurora = renderAurora(projectedPos.xyy, t, rainFactor, horizonEdgeCol);
+        vec4 aurora = renderAurora(projectedPos.xyy, t, rainFactor, FOG_COLOR);
         waterRefl += 2.0*aurora.rgb*aurora.a*fade;
         #endif
 
