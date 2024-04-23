@@ -175,6 +175,7 @@ TF_TF(asin)
 TF_TF(acos)
 TF_TF(atan)
 TF_TF_TF(atan)
+TF_TF_TF(atan2)
 
 TF_TF(exp)
 TF_TF_TF(pow)

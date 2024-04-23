@@ -1,6 +1,13 @@
 #ifndef SKY_H
 #define SKY_H
 
+// rainbow spectrum
+vec3 spectrum(float x) {
+    vec3 s = vec3(x-0.5, x, x+0.5);
+    s = smoothstep(1.0,0.0,abs(s));
+    return s*s;
+}
+
 vec3 getUnderwaterCol(vec3 FOG_COLOR) {
   return 2.0*NL_UNDERWATER_TINT*FOG_COLOR*FOG_COLOR;
 }
@@ -75,23 +82,35 @@ vec3 getSunBloom(float viewDirX, vec3 horizonEdgeCol, vec3 FOG_COLOR) {
   float factor = FOG_COLOR.r/length(FOG_COLOR);
   factor *= factor;
 
-  float sunRefl = smoothstep(0.0, 0.95, abs(viewDirX));
-  sunRefl *= sunRefl*sunRefl*factor*factor;
-  sunRefl *= sunRefl;
+  float sunBloom = smoothstep(0.0, 0.95, abs(viewDirX));
+  sunBloom *= sunBloom*sunBloom*factor*factor;
+  sunBloom *= sunBloom*2.0;
 
-  return horizonEdgeCol*sunRefl*NL_MORNING_SUN_COL*2.0;
+  return horizonEdgeCol*sunBloom*NL_MORNING_SUN_COL;
 }
 
-vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
-  float grad = 1.0 - max(viewDir.y, 0.0);
-  grad *= grad;
 
-  // end sky base gradient
-  vec3 sky = mix(zenithCol, horizonCol, smoothstep(0.0, 1.0, grad));
-  
-  // end void gradient
-  float glow = max((-viewDir.y-0.5)*2.0, 0.0);
-  sky *= 1.0 + glow*glow*glow;
+vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
+  t *= 0.1;
+  float a = atan2(viewDir.x, viewDir.z);
+
+  float n1 = 0.5 + 0.5*sin(3.0*a + t + 10.0*viewDir.x*viewDir.y);
+  float n2 = 0.5 + 0.5*sin(5.0*a + 0.5*t + 5.0*n1 + 0.1*sin(40.0*a -4.0*t));
+    
+  float waves = 0.7*n2*n1 + 0.3*n1;
+    
+  float grad = 0.5 + 0.5*viewDir.y;
+  float streaks = waves*(1.0 - grad*grad*grad);
+  streaks += (1.0-streaks)*smoothstep(1.0-waves, -1.0, viewDir.y);
+
+  float f = 0.3*streaks + 0.7*smoothstep(1.0, -0.5, viewDir.y);
+  float h = streaks*streaks;
+  float g = h*h;
+  g *= g;
+    
+  vec3 sky = mix(zenithCol, horizonCol, f*f);
+  sky += (0.1*streaks + 2.0*g*g*g + h*h*h)*vec3(2.0,0.5,0.0);
+  sky += 0.25*streaks*spectrum(sin(2.0*viewDir.x*viewDir.y+t));
 
   return sky;
 }
