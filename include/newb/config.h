@@ -78,6 +78,11 @@
 #define NL_DAWN_HORIZON_COL  vec3(0.9,0.3,0.3)
 #define NL_DAWN_EDGE_COL     vec3(1.0,0.4,0.2)
 
+/* Rainbow */
+//#define NL_RAINBOW         // [toggle] enable rainbow in sky
+#define NL_RAINBOW_CLEAR 0.0 // 0.3 subtle ~ 1.7 bright during clear
+#define NL_RAINBOW_RAIN 1.0  // 0.5 subtle ~ 2.0 bright during rain
+
 /* Ore glow intensity */
 #define NL_GLOW_TEX 2.2  // 0.4 weak ~ 8.0 bright
 #define NL_GLOW_SHIMMER  // [toggle] shimmer effect
@@ -102,7 +107,8 @@
 #define NL_UNDERWATER_BRIGHTNESS 0.8 // 0.0 dark ~ 3.0 bright
 #define NL_CAUSTIC_INTENSITY 1.9     // 0.5 weak ~ 5.0 bright
 #define NL_UNDERWATER_WAVE 0.1       // [toggle] 0.02 subtle ~ 0.6 trippy
-#define NL_UNDERWATER_TINT vec3(0.9,1.0,0.9)
+#define NL_UNDERWATER_STREAKS 1.0    // [toggle] 0.8 subtle - 2.0 bright streaks from top
+#define NL_UNDERWATER_TINT vec3(0.9,1.0,0.9) // fog tint color when underwater
 
 /* Cloud type */
 #define NL_CLOUD_TYPE 1 // 0:vanilla, 1:soft, 2:rounded

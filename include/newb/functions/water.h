@@ -34,7 +34,7 @@ vec4 nlWater(
     viewDir.y = cosR;
 
     // sky reflection
-    waterRefl = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, -wPos.y, end, underWater, nether);
+    waterRefl = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, -wPos.y, rainFactor, end, underWater, nether);
 
     // cloud and aurora reflection
     #if defined(NL_WATER_CLOUD_REFLECTION)

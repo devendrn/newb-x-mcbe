@@ -50,7 +50,7 @@ vec4 nlRefl(
 
       if (wPos.y < 0.0) {
         // wetRefl.rgb = getRainSkyRefl(horizonCol, zenithCol, cosR);
-        wetRefl.rgb = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, -wPos.y, end, underWater, nether);
+        wetRefl.rgb = getSkyRefl(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, -wPos.y, rainFactor, end, underWater, nether);
         wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
 
         #if defined(NL_GROUND_AURORA_REFL) && defined(NL_AURORA) && defined (NL_GROUND_REFL)

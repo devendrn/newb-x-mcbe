@@ -81,12 +81,13 @@ vec3 renderOverworldSky(vec3 horizonEdgeCol, vec3 horizonColor, vec3 zenithColor
 vec3 getSunBloom(float viewDirX, vec3 horizonEdgeCol, vec3 FOG_COLOR) {
   float factor = FOG_COLOR.r/length(FOG_COLOR);
   factor *= factor;
+  factor *= factor;
 
-  float sunBloom = smoothstep(0.0, 0.95, abs(viewDirX));
-  sunBloom *= sunBloom*sunBloom*factor*factor;
-  sunBloom *= sunBloom*2.0;
+  float spread = smoothstep(0.0, 1.0, abs(viewDirX));
+  float sunBloom = spread*spread;
+  sunBloom = 0.5*spread + sunBloom*sunBloom*sunBloom*1.5;
 
-  return horizonEdgeCol*sunBloom*NL_MORNING_SUN_COL;
+  return NL_MORNING_SUN_COL*horizonEdgeCol*(sunBloom*factor*factor);
 }
 
 
@@ -115,7 +116,7 @@ vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
   return sky;
 }
 
-vec3 nlRenderSky(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, vec3 FOG_COLOR, float t, bool end, bool underWater, bool nether) {
+vec3 nlRenderSky(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, vec3 FOG_COLOR, float t, float rainFactor, bool end, bool underWater, bool nether) {
   vec3 sky;
   viewDir.y = -viewDir.y;
 
@@ -123,6 +124,23 @@ vec3 nlRenderSky(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 view
     sky = renderEndSky(horizonCol, zenithCol, viewDir, t);
   } else {
     sky = renderOverworldSky(horizonEdgeCol, horizonCol, zenithCol, viewDir);
+    #ifdef NL_RAINBOW
+      sky += mix(NL_RAINBOW_CLEAR, NL_RAINBOW_RAIN, rainFactor)*spectrum((viewDir.z+0.6)*8.0)*max(viewDir.y, 0.0)*FOG_COLOR.g;
+    #endif
+    #ifdef NL_UNDERWATER_STREAKS
+      if (underWater) {
+        float a = atan2(viewDir.x, viewDir.z);
+        float grad = 0.5 + 0.5*viewDir.y;
+        grad *= grad;
+        float spread = (0.5 + 0.5*sin(3.0*a + 0.2*t + 2.0*sin(5.0*a - 0.4*t)));
+        spread *= (0.5 + 0.5*sin(3.0*a - sin(0.5*t)))*grad;
+        spread += (1.0-spread)*grad;
+        float streaks = spread*spread;
+        streaks *= streaks;
+        streaks = (spread + 3.0*grad*grad + 4.0*streaks*streaks);
+        sky += 2.0*streaks*horizonCol;
+      } else 
+    #endif
     if (!nether) {
       sky += getSunBloom(viewDir.x, horizonEdgeCol, FOG_COLOR);
     }
@@ -132,9 +150,9 @@ vec3 nlRenderSky(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 view
 }
 
 // sky reflection on plane
-vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, vec3 FOG_COLOR, float t, float h, bool end, bool underWater, bool nether) {
+vec3 getSkyRefl(vec3 horizonEdgeCol, vec3 horizonCol, vec3 zenithCol, vec3 viewDir, vec3 FOG_COLOR, float t, float h, float rainFactor, bool end, bool underWater, bool nether) {
   viewDir.y = -viewDir.y;
-  vec3 refl = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, end, underWater, nether);
+  vec3 refl = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, FOG_COLOR, t, rainFactor, end, underWater, nether);
 
   if (!(underWater || nether)) {
     float specular = smoothstep(0.7, 0.0, abs(viewDir.z));
