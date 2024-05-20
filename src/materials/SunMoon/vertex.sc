@@ -1,7 +1,7 @@
-#ifndef INSTANCING
 $input a_position, a_texcoord0
 $output v_texcoord0
 
+#ifndef INSTANCING
 #include <bgfx_shader.sh>
 #include <newb/config.h>
 #endif
