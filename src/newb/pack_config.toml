@@ -1,0 +1,72 @@
+name = "Newb X Legacy"
+version = [0, 15, 0]
+url = "https://devendrn.github.io/newb-shader/"
+authors = ["devendrn"]
+min_supported_mc_version = [1, 20, 80]
+materials = ["Sky", "LegacyCubemap", "Clouds", "EndSky", "SunMoon", "RenderChunk", "Actor"]
+
+[description]
+# %w = patch warning, %v = version
+long = '''
+§c%w
+§7- An enchanced vanilla shader for Minecraft!
+%v
+§3https://devendrn.github.io/newb-shader/
+'''
+short = "Legacy port of Newb Shader for RenderDragon"
+
+[uuid] # Use https://www.uuidgenerator.net/version4
+header = "95f774cf-4afa-73e7-a21a-72146307b1d2"
+module = "900f3d8b-37b4-465f-8f56-941687e36c35"
+
+# subpacks are arranged in left to right order
+# right-most subpack is enabled by default
+
+[[subpack]]
+define = "NO_FOG_NO_WAVE"
+materials = ["RenderChunk"]
+description = '''
+Disables both fog and wave effects
+'''
+
+[[subpack]]
+define = "ROUNDED_CLOUDS"
+materials = ["Clouds"]
+description = '''
+Rounded Clouds
+'''
+
+[[subpack]]
+define = "CHUNK_ANIM"
+materials = ["RenderChunk"]
+description = '''
+Chunk loading animation
+'''
+
+[[subpack]]
+define = "NO_WAVE_NO_FOG"
+materials = ["RenderChunk"]
+description = '''
+No fog and wave effects
+'''
+
+[[subpack]]
+define = "NO_FOG"
+materials = ["RenderChunk"]
+description = '''
+No fog effect
+'''
+
+[[subpack]]
+define = "NO_WAVE"
+materials = ["RenderChunk"]
+description = '''
+No wave effects
+'''
+
+[[subpack]]
+define = "DEFAULT"
+materials = []
+description = '''
+Default
+'''

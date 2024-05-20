@@ -1,0 +1,17 @@
+{
+  "compiler": {
+    "options": ["-i", "src", "-i", "include"]
+  },
+  "macro_overwrite": {
+    "passes": {
+      "Transparent": "TRANSPARENT"
+    }
+  },
+  "file_overwrite": {
+    "default": {
+      "fragment": "fragment.sc",
+      "vertex": "vertex.sc",
+      "varying": "varying.def.sc"
+    }
+  }
+}
