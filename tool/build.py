@@ -11,19 +11,21 @@ def _print_styled(line: str):
     line = line.rstrip()
     split_line = line.split()
 
-    style = ""
-    if len(split_line) == 1:
-        style = "[bold cyan]"
+    style = 'dim'
+    if len(split_line) <= 1:
+        style = 'bold cyan'
         status.update("[bold green]Building " + line)
     elif split_line[0] == "Completed":
         status.stop()
-        style = "[dim]"
+        style = 'dim'
     elif split_line[0] == "Warning:":
-        style = "[red]"
+        style = 'red'
+    elif split_line[0] in ["Error:", ">>>", "cpp:"]:
+        style = 'bold red'
     elif split_line[0] == "Compiling":
         return
 
-    console.print(style + line)
+    console.print(line, style=style)
 
 
 def run(args):
@@ -56,10 +58,12 @@ def run(args):
         env.update(LD_LIBRARY_PATH="./tool/lib")
 
     if not os.path.exists(output_path):
+        os.mkdir('build')
         os.mkdir(output_path)
 
     status.start()
     with subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=1, universal_newlines=True, env=env) as process:
         for line in process.stdout:
             _print_styled(line)
-        status.stop()
+
+    exit(process.returncode)

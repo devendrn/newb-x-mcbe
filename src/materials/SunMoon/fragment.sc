@@ -1,6 +1,6 @@
-#ifndef INSTANCING
 $input v_texcoord0
 
+#ifndef INSTANCING
 #include <bgfx_shader.sh>
 #include <newb/config.h>
 

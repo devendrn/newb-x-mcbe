@@ -75,12 +75,14 @@ def run(args):
             exit(1)
 
         # libc++_shared.so not found fix for termux
-        termux_files = "/data/data/com.termux/files"
         lib_path = "tool/lib"
-        if os.path.exists(termux_files) and os.path.exists(lib_path + "/libc++_shared.so"):
-            progress.console.log("Adding termux fix for libc++_shared.so not found")
+        if not os.path.exists(lib_path):
             os.mkdir(lib_path)
-            shutil.copyfile(termux_files + "/usr/lib/libc++_shared.so", lib_path)
+
+        termux_lib_file = "/data/data/com.termux/files/usr/lib/libc++_shared.so"
+        if os.path.exists(termux_lib_file) and not os.path.exists(lib_path + "/libc++_shared.so"):
+            progress.console.print("Adding termux fix for libc++_shared.so not found")
+            shutil.copyfile(termux_lib_file, lib_path + "/libc++_shared.so")
 
     if args.reset:
         shutil.rmtree(data_path)
