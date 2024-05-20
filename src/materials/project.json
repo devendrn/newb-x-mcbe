@@ -1,0 +1,15 @@
+{
+  "base_profile": {
+    "platforms": ["ESSL_100"],
+    "merge_source": ["../../tool/data/materials/android/"],
+    "include_patterns": ["Sky", "RenderChunk", "Actor", "LegacyCubemap", "EndSky", "Clouds"],
+    "exclude_patterns": [".*", "_*"]
+  },
+  "profiles": {
+    "android": {
+      "macros": [],
+      "platforms": ["ESSL_100"],
+      "merge_source": ["../../tool/data/materials/android/"]
+    }
+  }
+}
