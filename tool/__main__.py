@@ -56,6 +56,12 @@ def main():
         help="don't make archive"
     )
 
+    pack_parser.add_argument(
+        '--use-git',
+        action='store_true',
+        help="use git commits count for version"
+    )
+
     args = parser.parse_args()
 
     if args.subcommand is not None:

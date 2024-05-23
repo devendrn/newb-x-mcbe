@@ -65,7 +65,16 @@ def run(args):
     with open('src/newb/pack_config.toml', 'rb') as f:
         pack_config = tomllib.load(f)
 
-    pack_name = pack_config['name']
+    if args.use_git:
+        # tag-commits_count-last_commit_id
+        # eg: v15-39-g336ac45
+        res = subprocess.run(['git', 'describe', '--tags'], capture_output=True)
+        commit = res.stdout.decode('utf-8').split('-')
+        tag = commit[0][1:]
+        commits = commit[1]
+        pack_config['version'] = [0, int(tag), int(commits)]
+
+    pack_name: str = pack_config['name']
     pack_version = f"{pack_config['version'][1]}.{pack_config['version'][2]}"
     profile: str = args.p
 

@@ -57,8 +57,10 @@ def run(args):
     if os.name == "posix":
         env.update(LD_LIBRARY_PATH="./tool/lib")
 
-    if not os.path.exists(output_path):
+    if not os.path.exists('build'):
         os.mkdir('build')
+
+    if not os.path.exists(output_path):
         os.mkdir(output_path)
 
     status.start()

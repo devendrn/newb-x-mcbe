@@ -23,13 +23,6 @@ module = "900f3d8b-37b4-465f-8f56-941687e36c35"
 # right-most subpack is enabled by default
 
 [[subpack]]
-define = "NO_FOG_NO_WAVE"
-materials = ["RenderChunk"]
-description = '''
-Disables both fog and wave effects
-'''
-
-[[subpack]]
 define = "ROUNDED_CLOUDS"
 materials = ["Clouds"]
 description = '''
