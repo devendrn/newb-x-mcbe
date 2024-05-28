@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 tool $@
+LD_LIBRARY_PATH=./tool/lib python3 tool $@
