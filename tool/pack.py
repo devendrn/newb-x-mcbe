@@ -4,64 +4,80 @@ import json
 import tomllib
 import subprocess
 import platform
+from importlib import import_module
 from rich.console import Console
 from rich.status import Status
+from util import print_styled_error, get_materials_path, create_pack_manifest
+from lazurite.compiler.macro_define import MacroDefine
 
 console = Console()
+status = console.status("[bold]")
+
 
 SHADERC_PATH = os.path.join('tool', 'data', 'shaderc')
 if platform == 'nt':
     SHADERC_PATH += ".exe"
 
-env = os.environ.copy()
-if os.name == "posix":
-    env.update(LD_LIBRARY_PATH="./tool/lib")
+_current_subpack = "default"
+_last_log = ""
 
 
-def _build_mat(status: Status, profile: str, subpack: str, material: str, output_path: str):
-    global errors
-
-    log = f"[bold dim]\\[{subpack}][/bold dim] {material}"
+def _lp_print_override(m):
+    global _last_log
+    if not _last_log == "":
+        status.console.print(_last_log)
+    log = f"[bold dim]\\[{_current_subpack}][/] {m}"
     status.update(log)
+    _last_log = "  " + log + " - [green]success"
 
-    cmd = [
-        'lazurite', 'build', 'src/materials',
-        '-p', profile,
-        '-o', output_path,
-        '-m', material,
-        '--shaderc', SHADERC_PATH,
-        '-d', subpack.upper()
-    ]
 
-    res = subprocess.run(cmd, capture_output=True, env=env)
+# monkey patch print
+lp = import_module('lazurite.project.project')
+lp.print = _lp_print_override
 
-    res_str = res.stdout.decode('utf-8')
-    split_res = res_str.split('\n')
 
-    if res.returncode == 0:
-        console.print(" ", log, "- [bold green]success")
-        return
-    else:
-        console.print(" ", log, "- [bold red]fail")
-
-    for i in split_res[3:]:
-        if i == "Failed to build shader.":
-            continue
-
-        style = "dim"
-        if i.startswith(">>>"):
-            style = "bold yellow"
-        elif "Error: " in i:
-            style = "bold red"
-
-        console.print(" ", i, style=style)
-
-    console.print(res.stderr.decode('utf-8'))
+def _exit_with_error():
     status.stop()
     exit(1)
 
 
+def _build(status: Status, profile: str, subpack: str, materials: [str], output_path: str):
+    global _current_subpack, _last_log
+
+    _current_subpack = subpack
+    _last_log = ""
+
+    try:
+        material_patterns = get_materials_path(materials)
+    except FileNotFoundError as e:
+        console.print(f"Error: Material '{e.args[0]}' does not exist in project.", style="bold red")
+        _exit_with_error()
+
+    subpack_define = MacroDefine.from_string(subpack.upper())
+
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    try:
+        lp.compile(
+            os.path.join('src', 'materials'),
+            [profile],
+            output_path,
+            material_patterns=material_patterns,
+            shaderc_path=SHADERC_PATH,
+            defines=[subpack_define]
+        )
+        status.console.print(_last_log)  # flush last log
+    except Exception as e:
+        log: str = e.args[0]
+        status.console.print(_last_log[:-16] + "- [red]fail")
+        print_styled_error(console, log)
+        _exit_with_error()
+
+
 def run(args):
+    lp.print = _lp_print_override
+
     with open('src/newb/pack_config.toml', 'rb') as f:
         pack_config = tomllib.load(f)
 
@@ -78,23 +94,19 @@ def run(args):
     pack_version = f"{pack_config['version'][1]}.{pack_config['version'][2]}"
     profile: str = args.p
 
-    console.print(" Newb Pack Builder", style="bold green")
-    console.print(" build tool: Lazurite", style="dim")
-    console.print("\n~ Pack info", style="bold")
+    console.print(" [bold green]Newb Pack Builder[/] \n [dim]build tool: Lazurite\n", style="")
+    console.print("~ Pack info", style="bold")
     console.print("  [dim]name    :", "[cyan]" + pack_name)
     console.print("  [dim]authors :", "[cyan]" + ', '.join(pack_config['authors']))
-    console.print("  [dim]version :", "[cyan]" + pack_version)
+    console.print("  [dim]version :", "[cyan]" + pack_version + "\n")
 
-    console.print("\n~ Build target", style="bold")
+    console.print("~ Build target", style="bold")
     console.print("  [dim]profile :", "[cyan]" + args.p)
 
     pack_acr_name = "".join(filter(str.isupper, pack_name)).lower()
     pack_acr_name = f"{pack_acr_name}-{pack_version}-{profile}"
     pack_dir = os.path.join('build', pack_acr_name)
     mats_dir = os.path.join(pack_dir, 'renderer', 'materials')
-
-    if not os.path.exists(mats_dir):
-        os.makedirs(mats_dir)
 
     shutil.copytree('assets', pack_dir, dirs_exist_ok=True)
 
@@ -112,24 +124,25 @@ def run(args):
 
     pack_description = pack_description.replace("%w", patch_warning).replace("%v", "v" + pack_version)
     pack_config['description']['long'] = pack_description
-    pack_manifest = _create_pack_manifest(pack_config)
+    pack_manifest = create_pack_manifest(pack_config)
 
     console.print("\n~ Build materials", style="bold")
 
-    status = console.status("[bold blue]")
     status.start()
 
-    for m in pack_config['materials']:
-        _build_mat(status, args.p, "default", m, os.path.join(pack_dir, 'renderer', 'materials'))
+    _build(status, args.p, "default", pack_config['materials'], mats_dir)
 
     for subpack in pack_config['subpack']:
         subpack_name: str = subpack['define'].lower()
-        subpack_mats_path = os.path.join(pack_dir, 'subpacks', subpack_name, 'renderer', 'materials')
-        if not os.path.exists(subpack_mats_path):
-            os.makedirs(subpack_mats_path)
-        for m in subpack['materials']:
-            mat_path = os.path.join(subpack_mats_path)
-            _build_mat(status, args.p, subpack_name, m, mat_path)
+        subpack_path = os.path.join(pack_dir, 'subpacks', subpack_name)
+        subpack_mats_path = os.path.join(subpack_path, 'renderer', 'materials')
+        mats = subpack['materials']
+
+        if not os.path.exists(subpack_path):
+            os.makedirs(subpack_path)
+
+        if mats:
+            _build(status, args.p, subpack_name, mats, subpack_mats_path)
 
         pack_manifest['subpacks'].append(
             {
@@ -148,29 +161,3 @@ def run(args):
         console.print("\n~ [bold]Archive pack\n ", pack_dir + '.mcpack')
         shutil.make_archive(pack_dir, 'zip', pack_dir)
         os.rename(pack_dir + '.zip', pack_dir + '.mcpack')
-
-
-def _create_pack_manifest(config: dict) -> dict:
-    return {
-        'format_version': 2,
-        'header': {
-            "name": config['name'],
-            "description": config['description']['long'],
-            "uuid": config['uuid']['header'],
-            "version": config['version'],
-            "min_engine_version": config['min_supported_mc_version']
-        },
-        'modules': [
-            {
-                'description': config['description']['short'],
-                'type': 'resources',
-                'uuid': config['uuid']['module'],
-                'version': config['version']
-            }
-        ],
-        'subpacks': [],
-        'metadata': {
-            'authors': config['authors'],
-            'url': config['url']
-        }
-    }
