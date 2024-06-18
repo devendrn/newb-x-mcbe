@@ -1,7 +1,7 @@
-name = "Newb X Legacy"
+name = "Newb INSANITY"
 version = [0, 15, 0]
 url = "https://devendrn.github.io/newb-shader/"
-authors = ["devendrn"]
+authors = ["LynxiumMC"]
 min_supported_mc_version = [1, 20, 80]
 materials = ["Sky", "LegacyCubemap", "Clouds", "EndSky", "SunMoon", "RenderChunk", "Actor"]
 
@@ -23,38 +23,50 @@ module = "900f3d8b-37b4-465f-8f56-941687e36c35"
 # right-most subpack is enabled by default
 
 [[subpack]]
-define = "ROUNDED_CLOUDS"
-materials = ["Clouds"]
+define = "DWGR"
+materials = ["RenderChunk"]
 description = '''
-Rounded Clouds
+dwgr
 '''
 
 [[subpack]]
-define = "CHUNK_ANIM"
-materials = ["RenderChunk"]
+define = "FULL"
+materials = ["RenderChunk ; Clouds ; Sky ; EndSky"]
 description = '''
-Chunk loading animation
+full
+'''
+[[subpack]]
+define = "ULTRA"
+materials = ["RenderChunk ; Clouds"]
+description = '''
+full
 '''
 
 [[subpack]]
-define = "NO_WAVE_NO_FOG"
+define = "MID"
 materials = ["RenderChunk"]
 description = '''
-No fog and wave effects
+mid
 '''
 
 [[subpack]]
-define = "NO_FOG"
+define = "SUB"
 materials = ["RenderChunk"]
 description = '''
-No fog effect
+Sub
 '''
 
 [[subpack]]
-define = "NO_WAVE"
+define = "PVP"
 materials = ["RenderChunk"]
 description = '''
-No wave effects
+pvp
+'''
+[[subpack]]
+define = "RREFLECTIOM"
+materials = ["RenderChunk ; Clouds ; EndSky Sky"]
+description = '''
+rreflection
 '''
 
 [[subpack]]
