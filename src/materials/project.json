@@ -2,7 +2,7 @@
   "base_profile": {
     "platforms": ["ESSL_100"],
     "merge_source": ["../../tool/data/materials/android/"],
-    "include_patterns": ["Sky", "RenderChunk", "Actor", "LegacyCubemap", "EndSky", "Clouds"],
+    "include_patterns": ["Sky", "RenderChunk", "Actor", "LegacyCubemap", "EndSky", "Clouds", "SunMoon"],
     "exclude_patterns": [".*", "_*"]
   },
   "profiles": {
@@ -10,6 +10,11 @@
       "macros": [],
       "platforms": ["ESSL_100"],
       "merge_source": ["../../tool/data/materials/android/"]
+    },
+    "ios": {
+      "macros": [],
+      "platforms": ["Metal"],
+      "merge_source": ["../../tool/data/materials/ios/"]
     }
   }
 }

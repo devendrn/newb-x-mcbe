@@ -120,7 +120,7 @@ def run(args):
     elif profile == 'merged':
         patch_warning += " BetterRenderDragon or Patched Minecraft"
     else:  # ios
-        patch_warning = "Material need to be installed manually. This pack only includes texture assets."
+        patch_warning = "Materials need to be installed manually for shader to work"
 
     pack_description = pack_description.replace("%w", patch_warning).replace("%v", "v" + pack_version)
     pack_config['description']['long'] = pack_description
@@ -154,10 +154,16 @@ def run(args):
 
     status.stop()
 
+    is_ios = args.p == 'ios'
+    if is_ios:
+        pack_manifest.pop('subpacks')
+
     with open(os.path.join(pack_dir, 'manifest.json'), 'w') as f:
         json.dump(pack_manifest, f, indent=2)
 
     if not args.no_zip:
-        console.print("\n~ [bold]Archive pack\n ", pack_dir + '.mcpack')
+        pack_archive = pack_dir + ('.zip' if is_ios else '.mcpack')
+        console.print("\n~ [bold]Archive pack\n ", pack_archive)
         shutil.make_archive(pack_dir, 'zip', pack_dir)
-        os.rename(pack_dir + '.zip', pack_dir + '.mcpack')
+        if not is_ios:
+            os.rename(pack_dir + '.zip', pack_archive)

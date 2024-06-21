@@ -3,9 +3,9 @@ $input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
 
-SAMPLER2D(s_MatTexture, 0);
-SAMPLER2D(s_SeasonsTexture, 1);
-SAMPLER2D(s_LightMapTexture, 2);
+SAMPLER2D_AUTOREG(s_MatTexture);
+SAMPLER2D_AUTOREG(s_SeasonsTexture);
+SAMPLER2D_AUTOREG(s_LightMapTexture);
 
 void main() {
   vec4 diffuse;
@@ -29,6 +29,8 @@ void main() {
   color = v_color0;
 #endif
 
+  vec3 glow = nlGlow(s_MatTexture, v_texcoord0, v_extra.a);
+
   diffuse.rgb *= diffuse.rgb;
 
   vec3 lightTint = texture2D(s_LightMapTexture, v_lightmapUV).rgb;
@@ -36,7 +38,6 @@ void main() {
 
   color.rgb *= lightTint;
 
-  vec3 glow = nlGlow(s_MatTexture, v_texcoord0, diffuse, v_extra.a);
 
 #ifdef TRANSPARENT
   if (v_extra.b > 0.9) {

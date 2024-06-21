@@ -34,7 +34,7 @@ def run(args):
             exit(1)
 
     if not os.path.exists(output_path):
-        os.mkdirs(output_path)
+        os.makedirs(output_path)
 
     with status:
         try:
@@ -44,7 +44,7 @@ def run(args):
                 output_path,
                 material_patterns=materials_pattern,
                 shaderc_path=shaderc_path,
-                defines=[MacroDefine.from_string("what")] if args.s else []
+                defines=[MacroDefine.from_string(args.s)] if args.s else []
             )
         except Exception as e:
             log: str = e.args[0]

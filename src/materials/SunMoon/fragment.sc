@@ -1,7 +1,8 @@
 $input v_texcoord0
 
-#ifndef INSTANCING
 #include <bgfx_shader.sh>
+
+#ifndef INSTANCING
 #include <newb/config.h>
 
 uniform vec4 SunMoonColor;
