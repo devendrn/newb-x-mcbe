@@ -1,7 +1,10 @@
 #ifndef INSTANCING
 $input v_fogColor, v_worldPos, v_underwaterRainTime
+#endif
 
 #include <bgfx_shader.sh>
+
+#ifndef INSTANCING
 #include <newb/main.sh>
 uniform vec4 FogAndDistanceControl;
 #endif

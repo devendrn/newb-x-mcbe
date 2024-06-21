@@ -1,7 +1,10 @@
 #ifndef INSTANCING
 $input v_texcoord0, v_posTime
+#endif
 
 #include <bgfx_shader.sh>
+
+#ifndef INSTANCING
 #include <newb/main.sh>
 
 SAMPLER2D(s_MatTexture, 0);

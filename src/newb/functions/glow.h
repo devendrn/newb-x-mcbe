@@ -1,28 +1,25 @@
 #ifndef GLOW_H
 #define GLOW_H
 
-#ifdef ALPHA_TEST
-  #define GLOW_PIXEL(C) C.a>0.9875 && C.a<0.993
-#else
-  #define GLOW_PIXEL(C) C.a>0.9875 && C.a<0.995
-#endif
-
 vec3 glowDetect(vec4 diffuse) {
   // Texture alpha: diffuse.a
   // 252/255 = max glow
   // 253/255 = partial glow
-  if (GLOW_PIXEL(diffuse)) {
-    return  diffuse.rgb * (0.995-diffuse.a)/(0.995-0.9875);
+  if (diffuse.a > 0.9881 && diffuse.a < 0.9923) {
+    if (diffuse.a > 0.9885) {
+      return 0.4 * diffuse.rgb;
+    }
+    return diffuse.rgb;
   }
   return vec3(0.0,0.0,0.0);
 }
 
 vec3 glowDetectC(sampler2D tex, vec2 uv) {
-  return glowDetect(texture2D(tex, uv));
+  return glowDetect(texture2DLod(tex, uv, 0.0));
 }
 
-vec3 nlGlow(sampler2D tex, vec2 uv, vec4 diffuse, float shimmer) {
-  vec3 glow = glowDetect(diffuse);
+vec3 nlGlow(sampler2D tex, vec2 uv, float shimmer) {
+  vec3 glow = glowDetectC(tex, uv);
 
   #ifdef NL_GLOW_LEAK
   // glow leak is done by interpolating 8 surrounding pixels

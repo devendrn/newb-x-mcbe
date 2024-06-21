@@ -101,7 +101,7 @@ def run(args):
         progress.console.print("Downloading source materials")
         with progress:
             mat_filename = os.path.join(data_path, 'material.zip')
-            _download_file(NS_DEV_RELEASE + "src-materials-1.20.80.05.zip", mat_filename)
+            _download_file(NS_DEV_RELEASE + "src-materials-1.20.81.zip", mat_filename)
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
             os.remove(mat_filename)
