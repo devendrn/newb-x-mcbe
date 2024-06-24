@@ -46,7 +46,6 @@ def _download_file(url: str, path: str) -> None:
             progress.update(task_id, advance=len(data))
             if done_event.is_set():
                 return
-    progress.console.print(f"Downloaded to {path}")
 
 
 NS_DEV_RELEASE = "https://github.com/devendrn/newb-shader/releases/download/dev/"
@@ -90,18 +89,17 @@ def run(args):
     if not os.path.exists(data_path):
         os.mkdir(data_path)
 
-    if not os.path.exists(shaderc_path):
-        progress.console.print("Downloading shaderc")
-        with progress:
+    with progress:
+        if not os.path.exists(shaderc_path):
+            progress.console.print("Downloading shaderc")
             _download_file(shaderc_url, shaderc_path)
-        os.chmod(shaderc_path, 0o755)
+            os.chmod(shaderc_path, 0o755)
 
-    test_mat = os.path.join(mat_path, "android", "Sky.material.bin")
-    if not os.path.exists(test_mat):
-        progress.console.print("Downloading source materials")
-        with progress:
+        test_mat = os.path.join(mat_path, "android", "Sky.material.bin")
+        if not os.path.exists(test_mat):
+            progress.console.print("Downloading source materials")
             mat_filename = os.path.join(data_path, 'material.zip')
-            _download_file(NS_DEV_RELEASE + "src-materials-1.20.81.zip", mat_filename)
+            _download_file(NS_DEV_RELEASE + "src-materials-1.21.0.zip", mat_filename)
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
             os.remove(mat_filename)

@@ -15,6 +15,11 @@
       "macros": [],
       "platforms": ["Metal"],
       "merge_source": ["../../tool/data/materials/ios/"]
+    },
+    "windows": {
+      "macros": [],
+      "platforms": ["Direct3D_SM50"],
+      "merge_source": ["../../tool/data/materials/windows/"]
     }
   }
 }
