@@ -1,7 +1,4 @@
 {
-  "compiler": {
-    "options": ["-i", "src", "-i", "include"]
-  },
   "macro_overwrite": {
     "passes": {
       "Transparent": "TRANSPARENT"

@@ -40,34 +40,32 @@ void lanternWave(
 
 #ifdef NL_EXTRA_PLANTS_WAVE
 void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
-  // 1.20.40 vanilla only 
+  // 1.21.0 (2048x1024) vanilla only
   // not meant to be used
   
-  // count texture atlas in LR row wise order (32x64)
-  int texN = 32*int(uv0.y*64.0) + int(uv0.x*32.0) + 1;
+  // count texture atlas in left-to-right row wise order (64X32)
+  // starts from 0
+  int texN = 64*int(uv0.y*32.0) + int(uv0.x*64.0);
 
   if ( // full
-    (texN == 168) || // cherrry leaves
-    (texN>378 && texN<389) || // tall flowers top
-    (texN==914) // sunflower sepal
+    (texN==182) || // cherrry leaves
+    (texN>415 && texN<425) // tall flowers/plants bottom
   ) {
     shouldWave = true;
   } else if ( // top only
-    (texN==173) || // cherry blossom sapling
-    (texN>749 && texN<761)  || // short flowers
-    (texN>372 && texN<379)  || // tall flowers bottom
-    (texN>795 && texN<803) || // saplings
-    (texN==866) || // spore blossom petal
-    (texN>922 && texN<927) || // cherry bush
-    (texN>939 && texN<943) || // torch flower
-    (texN==988) || // wither rose
-    (texN==1009)  // yellow dandelion
+    (texN==187) || // cherry blossom sapling
+    (texN==1361) || // spore blossom petal
+    (texN>409 && texN<416) || // tall flowers/plants bottom
+    (texN>959 && texN<964) || // sweet berries bush
+    (texN>971 && texN<975) || // torch flowers
+    (texN==905) || // wither rose
+    (texN==1057)  // yellow dandelion
   ) {
     shouldWave = isTop;
   } else if ( // bottom only
-    (texN==477) || // hanging roots
-    (texN==19 || texN==418)  // azeala
-  ) {
+    (texN==524) || // hanging roots
+    (texN==23 || texN==465)  // azeala
+  ) { 
     shouldWave = !isTop;
   }
 }
@@ -83,8 +81,8 @@ void nlWave(
     return;
   }
 
-  // texture atlas has 32x64 textures (uv0.xy division)
-  float texPosY = fract(uv0.y*64.0);
+  // texture atlas has 64x32 textures (uv0.xy division)
+  float texPosY = fract(uv0.y*32.0);
   
   // x and z distance from block center
   vec2 bPosC = abs(bPos.xz-0.5);
@@ -99,7 +97,7 @@ void nlWave(
 
   // darken plants bottom - better to not move it elsewhere
   light *= isFarmPlant && !isTop ? 0.7 : 1.1;
-  if (isColored && !isTreeLeaves && uv0.y>0.43 && uv0.y<0.48) {
+  if (isColored && !isTreeLeaves && uv0.y>0.375 && uv0.y<0.466) {
     light *= isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5);
   }
 
