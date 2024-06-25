@@ -105,7 +105,7 @@ def run(args):
 
     pack_acr_name = "".join(filter(str.isupper, pack_name)).lower()
     pack_acr_name = f"{pack_acr_name}-{pack_version}-{profile}"
-    pack_dir = os.path.join('build', pack_acr_name)
+    pack_dir = os.path.join('build', 'pack-' + args.p)
     mats_dir = os.path.join(pack_dir, 'renderer', 'materials')
 
     shutil.copytree('assets', pack_dir, dirs_exist_ok=True)
@@ -162,7 +162,7 @@ def run(args):
         json.dump(pack_manifest, f, indent=2)
 
     if not args.no_zip:
-        pack_archive = pack_dir + ('.zip' if is_ios else '.mcpack')
+        pack_archive = os.path.join('build', pack_acr_name + ('.zip' if is_ios else '.mcpack'))
         console.print("\n~ [bold]Archive pack\n ", pack_archive)
         shutil.make_archive(pack_dir, 'zip', pack_dir)
         if not is_ios:

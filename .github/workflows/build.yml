@@ -3,29 +3,32 @@ name: build
 on:
   push:
     branches:
-      - main
-      - devel
+      - laz
 
 jobs:
   windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     - uses: actions/cache@v4
       with:
-        key: env-files-win
+        key: env-files-win-laz
         path: |
-          ${{ github.workspace }}/env
-          ${{ github.workspace }}/data
-    - run: .\setup.bat
-    - run: ./pack.sh -w -p Windows
-      shell: bash
+          ${{ github.workspace }}/tool/data
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11.2' 
+        cache: 'pip'
+    - run: pip install -r requirements.txt
+    - run: |
+        .\build.bat setup
+        .\build.bat pack -p windows --use-git --no-zip
     - uses: actions/upload-artifact@v4
       with:
         name: newb-x-windows
-        path: ./build/Windows/temp
+        path: ./build/pack-windows
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,29 +37,41 @@ jobs:
         fetch-depth: 0
     - uses: actions/cache@v4
       with:
-        key: env-files-linux
+        key: env-files-linux-laz
         path: |
-          ${{ github.workspace }}/env
-          ${{ github.workspace }}/data
-    - run: ./setup.sh
-    - run: ./pack.sh
+          ${{ github.workspace }}/tool/data
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11.2' 
+        cache: 'pip'
+    - run: pip install -r requirements.txt
+    - run: |
+        ./build.sh setup
+        ./build.sh pack -p android --use-git --no-zip
     - uses: actions/upload-artifact@v4
       with:
         name: newb-x-android
-        path: ./build/Android/temp
+        path: ./build/pack-android
   ios:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - uses: actions/cache@v4
       with:
-        key: env-files-linux
+        key: env-files-linux-laz
         path: |
-          ${{ github.workspace }}/env
-          ${{ github.workspace }}/data
-    - run: ./setup.sh
-    - run: ./build.sh -p iOS
+          ${{ github.workspace }}/tool/data
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11.2' 
+        cache: 'pip'
+    - run: pip install -r requirements.txt
+    - run: |
+        ./build.sh setup
+        ./build.sh pack -p ios --use-git --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-ios-materials
-        path: ./build/iOS
+        name: newb-x-ios
+        path: ./build/pack-ios
