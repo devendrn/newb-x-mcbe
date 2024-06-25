@@ -5,8 +5,8 @@ vec3 glowDetect(vec4 diffuse) {
   // Texture alpha: diffuse.a
   // 252/255 = max glow
   // 253/255 = partial glow
-  if (diffuse.a > 0.9881 && diffuse.a < 0.9923) {
-    if (diffuse.a > 0.9885) {
+  if (diffuse.a > 0.988 && diffuse.a < 0.993) {
+    if (diffuse.a > 0.989) {
       return 0.4 * diffuse.rgb;
     }
     return diffuse.rgb;
@@ -26,7 +26,7 @@ vec3 nlGlow(sampler2D tex, vec2 uv, float shimmer) {
   // c3 c4 c5
   // c2    c6
   // c1 c8 c7
-  const vec2 texSize = vec2(1024.0, 2048.0);
+  const vec2 texSize = vec2(2048.0, 1024.0);
   const vec2 offset = 1.0 / texSize;
 
   vec3 c1 = glowDetectC(tex, uv - offset);

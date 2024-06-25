@@ -3,7 +3,8 @@
     "platforms": ["ESSL_100"],
     "merge_source": ["../../tool/data/materials/android/"],
     "include_patterns": ["Sky", "RenderChunk", "Actor", "LegacyCubemap", "EndSky", "Clouds", "SunMoon"],
-    "exclude_patterns": [".*", "_*"]
+    "exclude_patterns": [".*", "_*"],
+    "include_search_paths": ["../../src", "../../include"]
   },
   "profiles": {
     "android": {

@@ -1,6 +1,6 @@
 # Newb X Legacy
 
-**Newb X Legacy** is a RenderDragon successor to the legacy GLSL shader, [Newb Shader](https://github.com/devendrn/newb-shader-mcbe). It is an enhanced vanilla shader that focuses on being lightweight and having soft aesthetics. It supports Minecraft Bedrock 1.20 (Windows/Android/*iOS).
+**Newb X Legacy** is a RenderDragon successor to the legacy GLSL shader, [Newb Shader](https://github.com/devendrn/newb-shader-mcbe). It is an enhanced vanilla shader that focuses on being lightweight and having soft aesthetics. It supports Minecraft Bedrock 1.21 (Windows/Android/*iOS).
 
 > [!WARNING]
 > This is an experimental repository, breaking changes are made often.
@@ -17,7 +17,7 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at the [Discord 
 > Shaders are not officially supported on Minecraft Bedrock. The following are unofficial ways to load shaders.
 
 **Linux:** [mcpelauncher-manifest](https://github.com/minecraft-linux/mcpelauncher-ui-manifest)
-1. Extract material.bin files from shader mcpack / build materials manually
+1. Extract material.bin files from shader mcpack / build materials from source.
 2. Move these files to data root `mcpelauncher/versions/1.20.x/assets/renderer/materials/`. (Make sure to backup all files in this folder first)
 3. Import the resource pack and activate it in global resources.
 
@@ -31,44 +31,61 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at the [Discord 
 
 ## Building
 
-**Windows:**
-1. Setup build environment: `.\setup.bat`
-2. Compile material src files: `.\build.bat`
+### Install dependencies
+- [Git](https://git-scm.com/)
+- [Python](https://www.python.org/) 3.11 or higher required
+- Python packages [lazurite](https://veka0.github.io/lazurite/#installation) and [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation)
 
-**Linux:**
-1. Setup build environment: `./setup.sh`
-2. Compile material src files: `./build.sh`  
+### Get source code
+```
+git clone https://github.com/devendrn/newb-x-mcbe/
+cd newb-x-mcbe
+```
 
-**Available parameters for the build script:**
-| Option | Parameter description |
-| :-: | :- |
-| -p | Target platforms (Android, Windows, iOS, Merged) |
-| -m | Materials to compile (if unspecified, builds all material files) |
-| -t | Number of threads to use for compilation (default is CPU core count) |
+### Setup build environment
+> [!NOTE]
+> On Windows, you should use `.\build.bat` instead of `./build.sh` for all following commands. 
+```
+./build.sh setup
+```
+This will download shaderc binary and material data required to build shader.
 
-For example, to build only terrain for Android and Windows, use:
+### Compile specific shader materials
 ```
-.\build.bat -p Windows Android -m RenderChunk
+./build.sh mats
+```  
+Compiled material.bin files will be inside `build/<platform>/`  
+**Command usage:**
 ```
-Compiled material.bin files will be inside `build/<platform>/`
+usage: build mats [-h] [-p {android,windows,ios}] [-m M [M ...]] [-s S]
 
-### Pack
-To build the final pack, including all subpacks, use `pack.sh`. If you are on Windows, use a bash shell like Git Bash to run this script file. (Make sure to use the -w tag when you are running the script from a Windows machine) 
+options:
+  -h, --help            show this help message and exit
+  -p {android,windows,ios}
+                        build profile
+  -m M [M ...]          build materials (eg: RenderChunk)
+  -s S                  subpack config to use (eg: ROUNDED_CLOUDS)
+```
 
-**Linux:**
+### Compile and build full shader pack
 ```
-./pack.sh -v 15.0
+./build.sh pack
 ```
-**Windows:**
+The final mcpack will be inside `build/`.  
+**Command usage:**
 ```
-./pack.sh -w -v 15.0 -p Windows
-./pack.sh -w -v 15.0 -p Android
+usage: build pack [-h] [-p {android,windows,ios}] [--no-zip] [--use-git]
+
+options:
+  -h, --help            show this help message and exit
+  -p {android,windows,ios}
+                        build profile
+  --no-zip              don't make archive
+  --use-git             use git commits count for version
 ```
-The final pack files will be inside `build/<platform>/temp/`. 
 
 ## Development
 
 Clangd can be used to get code completion and error checks for source files inside include/newb. Fake bgfx header and clangd config are provided for the same.
 - **Neovim** (NvChad): Install clangd LSP from Mason.
 - **VSCode**: Install [vscode-clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) extension.
-
