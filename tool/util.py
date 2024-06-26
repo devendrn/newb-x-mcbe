@@ -4,7 +4,7 @@ from rich.console import Console
 
 def print_styled_error(console: Console, log: str):
     log = log.strip().split('\n')
-    for line in log[1:-2]:
+    for line in log[:-2]:
         split_line = line.split()
         style = 'dim'
         if not split_line:

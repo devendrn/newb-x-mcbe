@@ -1,7 +1,7 @@
 {
   "base_profile": {
     "platforms": ["ESSL_100"],
-    "merge_source": ["../../tool/data/materials/android/"],
+    "merge_source": ["../../tool/data/materials"],
     "include_patterns": ["Sky", "RenderChunk", "Actor", "LegacyCubemap", "EndSky", "Clouds", "SunMoon"],
     "exclude_patterns": [".*", "_*"],
     "include_search_paths": ["../../src", "../../include"]
@@ -9,18 +9,19 @@
   "profiles": {
     "android": {
       "macros": [],
-      "platforms": ["ESSL_100"],
-      "merge_source": ["../../tool/data/materials/android/"]
+      "platforms": ["ESSL_100"]
     },
     "ios": {
       "macros": [],
-      "platforms": ["Metal"],
-      "merge_source": ["../../tool/data/materials/ios/"]
+      "platforms": ["Metal"]
     },
     "windows": {
       "macros": [],
-      "platforms": ["Direct3D_SM50"],
-      "merge_source": ["../../tool/data/materials/windows/"]
+      "platforms": ["Direct3D_SM50"]
+    },
+    "merged": {
+      "macros": [],
+      "platforms": ["ESSL_100", "Direct3D_SM50"]
     }
   }
 }

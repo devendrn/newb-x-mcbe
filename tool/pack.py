@@ -78,23 +78,21 @@ def _build(status: Status, profile: str, subpack: str, materials: [str], output_
 def run(args):
     lp.print = _lp_print_override
 
+    console.print(" [bold green]Newb Pack Builder[/] \n [dim]build tool: Lazurite\n", style="")
+
     with open('src/newb/pack_config.toml', 'rb') as f:
         pack_config = tomllib.load(f)
 
-    if args.use_git:
-        # tag-commits_count-last_commit_id
-        # eg: v15-39-g336ac45
-        res = subprocess.run(['git', 'describe', '--tags'], capture_output=True)
-        commit = res.stdout.decode('utf-8').split('-')
-        tag = commit[0][1:]
-        commits = commit[1]
-        pack_config['version'] = [0, int(tag), int(commits)]
+    if args.v:
+        if args.v.isdigit():
+            pack_config['version'][2] = int(args.v)
+        else:
+            console.print("[yellow]Ignoring invalid version number '" + args.v + "' specified using -v")
 
     pack_name: str = pack_config['name']
     pack_version = f"{pack_config['version'][1]}.{pack_config['version'][2]}"
     profile: str = args.p
 
-    console.print(" [bold green]Newb Pack Builder[/] \n [dim]build tool: Lazurite\n", style="")
     console.print("~ Pack info", style="bold")
     console.print("  [dim]name    :", "[cyan]" + pack_name)
     console.print("  [dim]authors :", "[cyan]" + ', '.join(pack_config['authors']))
@@ -122,7 +120,7 @@ def run(args):
     else:  # ios
         patch_warning = "Materials need to be installed manually for shader to work"
 
-    pack_description = pack_description.replace("%w", patch_warning).replace("%v", "v" + pack_version)
+    pack_description = pack_description.replace("%w", patch_warning).replace("%v", "v" + pack_version + "-" + args.p)
     pack_config['description']['long'] = pack_description
     pack_manifest = create_pack_manifest(pack_config)
 

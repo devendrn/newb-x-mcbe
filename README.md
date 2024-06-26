@@ -57,7 +57,7 @@ This will download shaderc binary and material data required to build shader.
 Compiled material.bin files will be inside `build/<platform>/`  
 **Command usage:**
 ```
-usage: build mats [-h] [-p {android,windows,ios}] [-m M [M ...]] [-s S]
+usage: build mats [-h] [-p {android,windows,merged,ios}] [-m M [M ...]] [-s S]
 
 options:
   -h, --help            show this help message and exit
@@ -74,14 +74,14 @@ options:
 The final mcpack will be inside `build/`.  
 **Command usage:**
 ```
-usage: build pack [-h] [-p {android,windows,ios}] [--no-zip] [--use-git]
+usage: build pack [-h] [-p {android,windows,merged,ios}] [--no-zip] [-v V]
 
 options:
   -h, --help            show this help message and exit
   -p {android,windows,ios}
                         build profile
   --no-zip              don't make archive
-  --use-git             use git commits count for version
+  -v V                  version number eg: 46
 ```
 
 ## Development
