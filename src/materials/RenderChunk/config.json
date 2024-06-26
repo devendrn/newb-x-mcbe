@@ -1,0 +1,32 @@
+{
+  "macro_overwrite": {
+    "flags": {
+      "Instancing": {
+        "On": "INSTANCING",
+        "Off": []
+      },
+      "RenderAsBillboards": {
+        "On": "RENDER_AS_BILLBOARDS",
+        "Off": []
+      },
+      "Seasons": {
+        "On": "SEASONS",
+        "Off": []
+      }
+    },
+    "passes": {
+      "AlphaTest": "ALPHA_TEST",
+      "DepthOnly": "DEPTH_ONLY",
+      "DepthOnlyOpaque": "DEPTH_ONLY_OPAQUE",
+      "Opaque": "OPAQUE",
+      "Transparent": "TRANSPARENT"
+    }
+  },
+  "file_overwrite": {
+    "default": {
+      "fragment": "fragment.sc",
+      "vertex": "vertex.sc",
+      "varying": "varying.def.sc"
+    }
+  }
+}
