@@ -57,9 +57,9 @@ def main():
     )
 
     pack_parser.add_argument(
-        '--use-git',
-        action='store_true',
-        help="use git commits count for version"
+        '-v',
+        default="",
+        help="version number eg: 46"
     )
 
     args = parser.parse_args()
