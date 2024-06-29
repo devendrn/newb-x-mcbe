@@ -7,13 +7,12 @@ $input v_texcoord0, v_posTime
 #ifndef INSTANCING
 #include <newb/main.sh>
 
-SAMPLER2D(s_MatTexture, 0);
+SAMPLER2D_AUTOREG(s_SkyTexture);
 #endif
 
 void main() {
-// Instancing is off normally?
 #ifndef INSTANCING
-  vec4 diffuse = texture2D(s_MatTexture, v_texcoord0);
+  vec4 diffuse = texture2D(s_SkyTexture, v_texcoord0);
 
   // end sky gradient
   vec3 color = renderEndSky(getEndHorizonCol(), getEndZenithCol(), normalize(v_posTime.xyz), v_posTime.w);

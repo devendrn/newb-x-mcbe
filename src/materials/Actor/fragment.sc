@@ -22,8 +22,8 @@ uniform vec4 HudOpacity;
 uniform vec4 UVAnimation;
 uniform mat4 Bones[8];
 
-SAMPLER2D(s_MatTexture, 0);
-SAMPLER2D(s_MatTexture1, 1);
+SAMPLER2D_AUTOREG(s_MatTexture);
+SAMPLER2D_AUTOREG(s_MatTexture1);
 
 void main() {
 #if DEPTH_ONLY
