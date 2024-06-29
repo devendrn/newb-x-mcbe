@@ -5,7 +5,7 @@
 > [!WARNING]
 > This is an experimental repository, breaking changes are made often.
 
-![Screenshot1](docs/screenshots.jpg "Newb X Legacy 15b2, MCBE 1.20.12")
+![Screenshots](docs/screenshots.jpg "Newb X Legacy 15.47, MCBE 1.21.0")
 
 ## Downloads
 
