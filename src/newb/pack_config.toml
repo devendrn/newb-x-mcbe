@@ -1,8 +1,8 @@
 name = "Newb X Legacy"
 version = [0, 15, 0]
+min_supported_mc_version = [1, 20, 80]
 url = "https://devendrn.github.io/newb-shader/"
 authors = ["devendrn"]
-min_supported_mc_version = [1, 20, 80]
 materials = ["Sky", "LegacyCubemap", "Clouds", "EndSky", "SunMoon", "RenderChunk", "Actor"]
 
 [description]
@@ -18,6 +18,16 @@ short = "Legacy port of Newb Shader for RenderDragon"
 [uuid] # Use https://www.uuidgenerator.net/version4
 header = "95f774cf-4afa-73e7-a21a-72146307b1d2"
 module = "900f3d8b-37b4-465f-8f56-941687e36c35"
+
+[info]
+# %a = authors
+copyright = '''
+Copyright (c) %a
+
+**Important Note:** Redistribution of this resource pack with links other than the official ones provided by the creator is strictly prohibited.
+'''
+credits = '''
+'''
 
 # subpacks are arranged in left to right order
 # right-most subpack is enabled by default

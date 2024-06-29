@@ -2,7 +2,6 @@ import os
 import shutil
 import json
 import tomllib
-import subprocess
 import platform
 from importlib import import_module
 from rich.console import Console
@@ -91,11 +90,12 @@ def run(args):
 
     pack_name: str = pack_config['name']
     pack_version = f"{pack_config['version'][1]}.{pack_config['version'][2]}"
+    pack_authors = ', '.join(pack_config['authors'])
     profile: str = args.p
 
     console.print("~ Pack info", style="bold")
     console.print("  [dim]name    :", "[cyan]" + pack_name)
-    console.print("  [dim]authors :", "[cyan]" + ', '.join(pack_config['authors']))
+    console.print("  [dim]authors :", "[cyan]" + pack_authors)
     console.print("  [dim]version :", "[cyan]" + pack_version + "\n")
 
     console.print("~ Build target", style="bold")
@@ -158,6 +158,16 @@ def run(args):
 
     with open(os.path.join(pack_dir, 'manifest.json'), 'w') as f:
         json.dump(pack_manifest, f, indent=2)
+
+    pack_copyright: str = pack_config['info']['copyright']
+    pack_copyright = pack_copyright.replace("%a", pack_authors)
+    with open(os.path.join(pack_dir, 'COPYRIGHT.txt'), 'w') as f:
+        f.write(pack_copyright)
+
+    pack_credits = pack_config['info']['credits']
+    if pack_credits:
+        with open(os.path.join(pack_dir, 'CREDITS.txt'), 'w') as f:
+            f.write(pack_credits)
 
     if not args.no_zip:
         pack_archive = os.path.join('build', pack_acr_name + ('.zip' if is_ios else '.mcpack'))
