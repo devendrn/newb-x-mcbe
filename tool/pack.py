@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.status import Status
 from util import print_styled_error, get_materials_path, create_pack_manifest
 from lazurite.compiler.macro_define import MacroDefine
+from lazurite import util
 
 console = Console()
 status = console.status("[bold]")
@@ -19,6 +20,7 @@ if platform == 'nt':
 
 _current_subpack = "default"
 _last_log = ""
+_name = ""
 
 
 def _lp_print_override(m):
@@ -30,9 +32,42 @@ def _lp_print_override(m):
     _last_log = "  " + log + " - [green]success"
 
 
-# monkey patch print
+# monkey patch print and label
 lp = import_module('lazurite.project.project')
 lp.print = _lp_print_override
+
+
+def mlabel(
+    self,
+    material_name: str,
+    pass_name: str,
+    variant_index: int,
+    is_supported: bool,
+    flags: dict,
+):
+    global _name, _current_subpack
+
+    if not any(
+        self.platform.name.startswith(platform_prefix)
+        for platform_prefix in ["ESSL", "GLSL", "Metal"]
+    ):
+        return self
+
+    comment = (f"// {_name} ({_current_subpack})")
+    code = self.bgfx_shader.shader_bytes.decode()
+    code = util.insert_header_comment(code, comment)
+    self.bgfx_shader.shader_bytes = code.encode()
+
+    return self
+
+
+lp.ShaderDefinition.label = mlabel
+owrite = lp.Material.write
+
+
+def mwrite(self, file):
+    self.passes[0].label(self.name)
+    owrite(self, file)
 
 
 def _exit_with_error():
@@ -75,6 +110,8 @@ def _build(status: Status, profile: str, subpack: str, materials: [str], output_
 
 
 def run(args):
+    global _name
+
     lp.print = _lp_print_override
 
     console.print(" [bold green]Newb Pack Builder[/] \n [dim]build tool: Lazurite\n", style="")
@@ -127,6 +164,10 @@ def run(args):
     console.print("\n~ Build materials", style="bold")
 
     status.start()
+
+    if not args.no_label:
+        _name = pack_name + " v" + pack_version
+        lp.Material.write = mwrite
 
     _build(status, args.p, "default", pack_config['materials'], mats_dir)
 

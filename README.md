@@ -61,10 +61,10 @@ usage: build mats [-h] [-p {android,windows,merged,ios}] [-m M [M ...]] [-s S]
 
 options:
   -h, --help            show this help message and exit
-  -p {android,windows,ios}
+  -p {android,windows,merged,ios}
                         build profile
-  -m M [M ...]          build materials (eg: RenderChunk)
-  -s S                  subpack config to use (eg: ROUNDED_CLOUDS)
+  -m M [M ...]          build materials (eg: Sky)
+  -s S                  subpack config to use (eg: NO_WAVE)
 ```
 
 ### Compile and build full shader pack
@@ -74,13 +74,14 @@ options:
 The final mcpack will be inside `build/`.  
 **Command usage:**
 ```
-usage: build pack [-h] [-p {android,windows,merged,ios}] [--no-zip] [-v V]
+usage: build pack [-h] [-p {android,windows,merged,ios}] [--no-zip] [--no-label] [-v V]
 
 options:
   -h, --help            show this help message and exit
-  -p {android,windows,ios}
+  -p {android,windows,merged,ios}
                         build profile
   --no-zip              don't make archive
+  --no-label            don't label materials
   -v V                  version number eg: 46
 ```
 

@@ -57,6 +57,12 @@ def main():
     )
 
     pack_parser.add_argument(
+        '--no-label',
+        action='store_true',
+        help="don't label materials"
+    )
+
+    pack_parser.add_argument(
         '-v',
         default="",
         help="version number eg: 46"
