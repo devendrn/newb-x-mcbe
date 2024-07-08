@@ -40,6 +40,13 @@ Rounded Clouds
 '''
 
 [[subpack]]
+define = "BOX_CLOUDS"
+materials = ["Clouds", "RenderChunk"]
+description = '''
+Box Clouds
+'''
+
+[[subpack]]
 define = "CHUNK_ANIM"
 materials = ["RenderChunk"]
 description = '''
