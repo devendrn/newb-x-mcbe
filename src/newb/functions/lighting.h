@@ -4,8 +4,6 @@
 #include "constants.h"
 #include "noise.h"
 
-#define SHADOW_EDGE 0.93
-
 // sunlight tinting
 vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {
 
@@ -45,9 +43,9 @@ vec3 nlLighting(
 
   float torchAttenuation = (NL_TORCH_INTENSITY*uv1.x)/(0.5-0.45*lit.x);
 
-#ifdef NL_BLINKING_TORCH
-  torchAttenuation *= 1.0 - 0.19*noise1D(t*8.0);
-#endif
+  #ifdef NL_BLINKING_TORCH
+    torchAttenuation *= 1.0 - 0.19*noise1D(t*8.0);
+  #endif
 
   vec3 torchLight = torchColor*torchAttenuation;
 
@@ -72,7 +70,7 @@ vec3 nlLighting(
     light += mix(horizonCol,zenithCol,0.5+uv1.y-0.5*lit.y)*(lit.y*(3.0-2.0*uv1.y)*(1.3 + (4.0*nightFactor) - rainDim));
 
     // shadow cast by top light
-    float shadow = step(SHADOW_EDGE, uv1.y);
+    float shadow = step(0.93, uv1.y);
     shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightFactor))*lit.y);
     shadow *= shade > 0.8 ? 1.0 : 0.8;
 
@@ -111,23 +109,23 @@ void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, 
     light += NL_UNDERWATER_BRIGHTNESS + NL_CAUSTIC_INTENSITY*caustics*(0.1 + lit.y + lit.x*0.7);
   }
   light *= mix(normalize(horizonCol), vec3(1.0,1.0,1.0), lit.y*0.6);
-#ifdef NL_UNDERWATER_WAVE
-  pos.xy += NL_UNDERWATER_WAVE*min(0.05*pos.z,0.6)*sin(t*1.2 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
-#endif
+  #ifdef NL_UNDERWATER_WAVE
+    pos.xy += NL_UNDERWATER_WAVE*min(0.05*pos.z,0.6)*sin(t*1.2 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
+  #endif
 }
 
 vec3 nlActorLighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonCol, bool nether, bool underWater, bool end, float t) {
   float intensity;
-#ifdef FANCY
-  vec3 N = normalize(mul(world, normal)).xyz;
-  N.y *= tileLightCol.w;
-  N.xz *= N.xz;
+  #ifdef FANCY
+    vec3 N = normalize(mul(world, normal)).xyz;
+    N.y *= tileLightCol.w;
+    N.xz *= N.xz;
 
-  intensity = 0.75 + N.y*0.25 - N.x*0.1 + N.z*0.1;
-  intensity *= intensity;
-#else
-  intensity = (0.7+0.3*abs(normal.y))*(0.9+0.1*abs(normal.x));
-#endif
+    intensity = 0.75 + N.y*0.25 - N.x*0.1 + N.z*0.1;
+    intensity *= intensity;
+  #else
+    intensity = (0.7+0.3*abs(normal.y))*(0.9+0.1*abs(normal.x));
+  #endif
 
   intensity *= tileLightCol.b*tileLightCol.b*NL_SUN_INTENSITY*1.2;
   intensity += overlayCol.a * 0.35;

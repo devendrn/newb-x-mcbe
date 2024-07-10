@@ -40,22 +40,22 @@ void main() {
 
   //StandardTemplate_VertSharedTransform
   vec3 worldPosition;
-#ifdef INSTANCING
-  mat4 model = mtxFromCols(i_data0, i_data1, i_data2, vec4(0.0, 0.0, 0.0, 1.0));
-  worldPosition = instMul(model, vec4(a_position, 1.0)).xyz;
-#else
-  worldPosition = mul(World, vec4(a_position, 1.0)).xyz;
-#endif
+  #ifdef INSTANCING
+    mat4 model = mtxFromCols(i_data0, i_data1, i_data2, vec4(0.0, 0.0, 0.0, 1.0));
+    worldPosition = instMul(model, vec4(a_position, 1.0)).xyz;
+  #else
+    worldPosition = mul(World, vec4(a_position, 1.0)).xyz;
+  #endif
 
   vec4 position = jitterVertexPosition(worldPosition);
 
-#if defined(DEPTH_ONLY)
-  v_texcoord0 = vec2(0.0, 0.0);
-  v_color0 = vec4(0.0, 0.0, 0.0, 0.0);
-#else
-  v_texcoord0 = texcoord0;
-  v_color0 = a_color0;
-#endif
+  #if defined(DEPTH_ONLY)
+    v_texcoord0 = vec2(0.0, 0.0);
+    v_color0 = vec4(0.0, 0.0, 0.0, 0.0);
+  #else
+    v_texcoord0 = texcoord0;
+    v_color0 = a_color0;
+  #endif
 
   vec4 edgeMap = fract(vec4(v_texcoord0.xy*128.0, v_texcoord0.xy*256.0));
   edgeMap = 2.0*step(edgeMap, vec4_splat(0.5)) - 1.0;

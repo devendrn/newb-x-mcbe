@@ -11,23 +11,24 @@ void main() {
   vec4 diffuse;
   vec4 color;
 
-#if defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY)
-  diffuse = vec4(1.0,1.0,1.0,1.0);
-  color = vec4(1.0,1.0,1.0,1.0);
-#else
-  diffuse = texture2D(s_MatTexture, v_texcoord0);
+  #if defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY)
+    diffuse = vec4(1.0,1.0,1.0,1.0);
+    color = vec4(1.0,1.0,1.0,1.0);
+  #else
+    diffuse = texture2D(s_MatTexture, v_texcoord0);
 
-#ifdef ALPHA_TEST
-  if (diffuse.a < 0.6) {
-    discard;
-  }
-#endif
+    #ifdef ALPHA_TEST
+      if (diffuse.a < 0.6) {
+        discard;
+      }
+    #endif
 
-#if defined(SEASONS) && (defined(OPAQUE) || defined(ALPHA_TEST))
-  diffuse.rgb *= mix(vec3(1.0,1.0,1.0), texture2D(s_SeasonsTexture, v_color1.xy).rgb * 2.0, v_color1.z);
-#endif
-  color = v_color0;
-#endif
+    #if defined(SEASONS) && (defined(OPAQUE) || defined(ALPHA_TEST))
+      diffuse.rgb *= mix(vec3(1.0,1.0,1.0), texture2D(s_SeasonsTexture, v_color1.xy).rgb * 2.0, v_color1.z);
+    #endif
+
+    color = v_color0;
+  #endif
 
   vec3 glow = nlGlow(s_MatTexture, v_texcoord0, v_extra.a);
 
@@ -38,15 +39,14 @@ void main() {
 
   color.rgb *= lightTint;
 
-
-#ifdef TRANSPARENT
-  if (v_extra.b > 0.9) {
-    diffuse.rgb = vec3_splat(1.0 - NL_WATER_TEX_OPACITY*(1.0 - diffuse.b*1.8));
-    diffuse.a = color.a;
-  }
-#else
-  diffuse.a = 1.0;
-#endif
+  #ifdef TRANSPARENT
+    if (v_extra.b > 0.9) {
+      diffuse.rgb = vec3_splat(1.0 - NL_WATER_TEX_OPACITY*(1.0 - diffuse.b*1.8));
+      diffuse.a = color.a;
+    }
+  #else
+    diffuse.a = 1.0;
+  #endif
 
   diffuse.rgb *= color.rgb;
   diffuse.rgb += glow;

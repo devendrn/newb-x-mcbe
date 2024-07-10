@@ -45,13 +45,13 @@ vec4 nlWater(
         //projectedPos += fade*parallax;
 
         #ifdef NL_AURORA
-        vec4 aurora = renderAurora(projectedPos.xyy, t, rainFactor, FOG_COLOR);
-        waterRefl += 2.0*aurora.rgb*aurora.a*fade;
+          vec4 aurora = renderAurora(projectedPos.xyy, t, rainFactor, FOG_COLOR);
+          waterRefl += 2.0*aurora.rgb*aurora.a*fade;
         #endif
 
         #if NL_CLOUD_TYPE == 1
-        vec4 clouds = renderCloudsSimple(projectedPos.xyy, t, rainFactor, zenithCol, horizonCol, horizonEdgeCol);
-        waterRefl = mix(waterRefl, 1.5*clouds.rgb, clouds.a*fade);
+          vec4 clouds = renderCloudsSimple(projectedPos.xyy, t, rainFactor, zenithCol, horizonCol, horizonEdgeCol);
+          waterRefl = mix(waterRefl, 1.5*clouds.rgb, clouds.a*fade);
         #endif
       }
     #endif
@@ -83,18 +83,19 @@ vec4 nlWater(
 
   color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.8*fresnel);
 
-#ifdef NL_WATER_FOG_FADE
-  color.a *= NL_WATER_TRANSPARENCY;
-#else
-  color.a = COLOR.a*NL_WATER_TRANSPARENCY;
-#endif
+  #ifdef NL_WATER_FOG_FADE
+    color.a *= NL_WATER_TRANSPARENCY;
+  #else
+    color.a = COLOR.a*NL_WATER_TRANSPARENCY;
+  #endif
+
   color.a += (1.0-color.a)*opacity*opacity;
 
-#ifdef NL_WATER_WAVE
-  if(camDist < 14.0) {
-    wPos.y -= bump;
-  }
-#endif
+  #ifdef NL_WATER_WAVE
+    if(camDist < 14.0) {
+      wPos.y -= bump;
+    }
+  #endif
 
   return vec4(waterRefl, fresnel);
 }

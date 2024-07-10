@@ -95,45 +95,46 @@ void nlWave(
 
   float windStrength = lit.y*(noise1D(t*0.36) + rainFactor*0.4);
 
-  // darken plants bottom - better to not move it elsewhere
+  // darken farm plants bottom
   light *= isFarmPlant && !isTop ? 0.7 : 1.1;
   if (isColored && !isTreeLeaves && uv0.y>0.375 && uv0.y<0.466) {
+    // make grass bottom more dark depending how deep it is
     light *= isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5);
   }
 
-#ifdef NL_PLANTS_WAVE
-  
-  #ifdef NL_EXTRA_PLANTS_WAVE
-    extraPlantsFlag(shouldWave, uv0, isTop);
+  #ifdef NL_PLANTS_WAVE
+    #ifdef NL_EXTRA_PLANTS_WAVE
+      extraPlantsFlag(shouldWave, uv0, isTop);
+    #endif
+
+    if (shouldWave) {
+
+      float wave = NL_PLANTS_WAVE*windStrength;
+
+      if (isTreeLeaves) {
+        wave *= 0.5;
+      } else if (isVines) {
+        wave *= fract(0.01+tiledCpos.y*0.5);
+      } else if (isPlants && isColored && !isTop) {
+        // wave the bottom of grass in opposite direction
+        // depending on how deep it is to make it look almost fixed
+        wave *= bPos.y > 0.0 ? bPos.y-1.0 : 0.0;
+      }
+
+      float phaseDiff = dot(cPos,vec3_splat(NL_CONST_PI_QUART)) + fastRand(tiledCpos.xz + tiledCpos.y);
+      wave *= 1.0 + mix(
+        sin(t*NL_WAVE_SPEED + phaseDiff),
+        sin(t*NL_WAVE_SPEED*1.5 + phaseDiff),
+        rainFactor);
+
+      //worldPos.y -= 1.0-sqrt(1.0-wave*wave);
+      worldPos.xyz -= vec3(wave, wave*wave*0.5, wave);
+    }
   #endif
 
-  if (shouldWave) {
-
-    float wave = NL_PLANTS_WAVE*windStrength;
-
-    if (isTreeLeaves) {
-      wave *= 0.5;
-    } else if (isVines) {
-      wave *= fract(0.01+tiledCpos.y*0.5);
-    } else if (isPlants && isColored && !isTop) {
-      // wave the bottom of plants in opposite direction to make it look fixed
-      wave *= bPos.y > 0.0 ? bPos.y-1.0 : 0.0;
-    }
-
-    float phaseDiff = dot(cPos,vec3_splat(NL_CONST_PI_QUART)) + fastRand(tiledCpos.xz + tiledCpos.y);
-    wave *= 1.0 + mix(
-      sin(t*NL_WAVE_SPEED + phaseDiff),
-      sin(t*NL_WAVE_SPEED*1.5 + phaseDiff),
-      rainFactor);
-
-    //worldPos.y -= 1.0-sqrt(1.0-wave*wave);
-    worldPos.xyz -= vec3(wave, wave*wave*0.5, wave);
-  }
-#endif
-
-#ifdef NL_LANTERN_WAVE
-  lanternWave(worldPos, cPos, bPos, bPosC, texPosY, rainFactor, uv1, windStrength, t);
-#endif
+  #ifdef NL_LANTERN_WAVE
+    lanternWave(worldPos, cPos, bPos, bPosC, texPosY, rainFactor, uv1, windStrength, t);
+  #endif
 }
 
 #endif
