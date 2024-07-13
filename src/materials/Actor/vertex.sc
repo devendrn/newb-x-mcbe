@@ -66,23 +66,34 @@ void main() {
   bool underWater = detectUnderwater(FogColor.rgb, FogControl.xy);
   float rainFactor = detectRain(FogControl.xyz);
 
-  vec3 newFog;
+  vec3 zenithCol;
+  vec3 horizonCol;
+  vec3 horizonEdgeCol;
   if (underWater) {
-    newFog = getUnderwaterCol(FogColor.rgb);
+    vec3 fogcol = getUnderwaterCol(FogColor.rgb);
+    zenithCol = fogcol;
+    horizonCol = fogcol;
+    horizonEdgeCol = fogcol;
   } else if (end) {
-    newFog = getEndHorizonCol();
+    zenithCol = getEndZenithCol();
+    horizonCol = getEndHorizonCol();
+    horizonEdgeCol = horizonCol;
   } else {
     vec3 fs = getSkyFactors(FogColor.rgb);
-    newFog = getHorizonCol(rainFactor, FogColor.rgb, fs);
-    newFog = getHorizonEdgeCol(newFog.rgb, rainFactor, FogColor.rgb);
+    zenithCol = getZenithCol(rainFactor, FogColor.rgb, fs);
+    horizonCol = getHorizonCol(rainFactor, FogColor.rgb, fs);
+    horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, FogColor.rgb);
   }
 
-  // relative cam dist
-  float camDist = position.z/FogControl.z;
+
+  float relativeDist = position.z/FogControl.z;
+
+  worldPosition.y = -worldPosition.y;
+  vec3 viewDir = normalize(worldPosition.xyz);
 
   vec4 fogColor;
-  fogColor.rgb = newFog;
-  fogColor.a = nlRenderFogFade(camDist, FogColor.rgb, FogControl.xy);
+  fogColor.rgb = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, FogColor.rgb, ViewPositionAndTime.w, rainFactor, end, underWater, nether);
+  fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogControl.xy);
 
   if (nether) {
     // blend fog with void color
