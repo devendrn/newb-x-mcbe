@@ -114,7 +114,7 @@ void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, 
   #endif
 }
 
-vec3 nlActorLighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonCol, bool nether, bool underWater, bool end, float t) {
+vec3 nlActorLighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonEdgeCol, bool nether, bool underWater, bool end, float t) {
   float intensity;
   #ifdef FANCY
     vec3 N = normalize(mul(world, normal)).xyz;
@@ -133,7 +133,7 @@ vec3 nlActorLighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 
   float factor = tileLightCol.b-tileLightCol.r;
   vec3 light = intensity*vec3(1.0-2.8*factor,1.0-2.7*factor,1.0);
   light *= 1.0-0.3*step(0.0,pos.y);
-  light += 0.55*horizonCol*tileLightCol.x;
+  light += 0.55*horizonEdgeCol*tileLightCol.x;
 
   // nether, end, underwater tint
   if (nether) {
@@ -142,7 +142,7 @@ vec3 nlActorLighting(vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 
     light *= NL_END_AMBIENT;
   } else if (underWater) {
     light += NL_UNDERWATER_BRIGHTNESS;
-    light *= mix(normalize(horizonCol),vec3(1.0,1.0,1.0),tileLightCol.x*0.5);
+    light *= mix(normalize(horizonEdgeCol),vec3(1.0,1.0,1.0),tileLightCol.x*0.5);
     light += NL_CAUSTIC_INTENSITY*max(tileLightCol.x-0.46,0.0)*(0.5+0.5*sin(t + dot(pos,vec3_splat(1.5)) ));
   }
 

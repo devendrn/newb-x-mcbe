@@ -100,7 +100,7 @@ void main() {
     fogColor.rgb = colorCorrectionInv(FogColor.rgb);
   }
 
-  vec3 light = nlActorLighting(a_position, a_normal, World, TileLightColor, OverlayColor, newFog, nether, underWater, end, ViewPositionAndTime.w);
+  vec3 light = nlActorLighting(a_position, a_normal, World, TileLightColor, OverlayColor, horizonEdgeCol, nether, underWater, end, ViewPositionAndTime.w);
 
   v_fog = fogColor;
   v_edgemap = edgeMap;
