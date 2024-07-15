@@ -1,25 +1,30 @@
 # Newb X Legacy
 
-**Newb X Legacy** is a RenderDragon successor to the legacy GLSL shader, [Newb Shader](https://github.com/devendrn/newb-shader-mcbe). It is an enhanced vanilla shader that focuses on being lightweight and having soft aesthetics. It supports Minecraft Bedrock 1.21 (Windows/Android/*iOS).
+**Newb X Legacy** is a RenderDragon successor to the legacy GLSL shader, [Newb Shader](https://github.com/devendrn/newb-shader-mcbe). It is an enhanced vanilla shader that focuses on being lightweight and having soft aesthetics. It supports Minecraft Bedrock 1.21+ (Windows/Android/iOS).
 
 > [!WARNING]
 > This is an experimental repository, breaking changes are made often.
 
 ![Screenshots](docs/screenshots.jpg "Newb X Legacy 15.47, MCBE 1.21.0")
 
+<br>
+
 ## Downloads
 
 Nightly builds for Android (ESSL) and Windows (DX) can be found at the [Discord server](https://discord.gg/newb-community-844591537430069279).
+
+You can also download from [v15-dev releases](https://github.com/devendrn/newb-x-mcbe/releases/tag/v15-dev)
+
+<br>
 
 ## Installation
 
 > [!NOTE]
 > Shaders are not officially supported on Minecraft Bedrock. The following are unofficial ways to load shaders.
 
-**Linux:** [mcpelauncher-manifest](https://github.com/minecraft-linux/mcpelauncher-ui-manifest)
-1. Extract material.bin files from shader mcpack / build materials from source.
-2. Move these files to data root `mcpelauncher/versions/1.20.x/assets/renderer/materials/`. (Make sure to backup all files in this folder first)
-3. Import the resource pack and activate it in global resources.
+**Linux / Mac:** For [mcpelauncher-manifest](https://mcpelauncher.readthedocs.io/en/latest/getting_started/index.html) only
+1. Download [mcpelauncher-shadersmod](https://github.com/GameParrot/mcpelauncher-shadersmod/releases/latest).
+2. Follow this [guide](https://faizul118.github.io/guides/shadersmodinstallation) to setup.
 
 **Windows:**
 1. Use [BetterRenderDragon](https://github.com/ddf8196/BetterRenderDragon) to enable MaterialBinLoader.
@@ -28,6 +33,8 @@ Nightly builds for Android (ESSL) and Windows (DX) can be found at the [Discord 
 **Android:**
 1. Install [Patched Minecraft App](https://devendrn.github.io/renderdragon-shaders/shaders/installation/android#using-patch-app)
 2. Import the resource pack and activate it in global resources.
+
+<br>
 
 ## Building
 
@@ -84,6 +91,8 @@ options:
   --no-label            don't label materials
   -v V                  version number eg: 46
 ```
+
+<br>
 
 ## Development
 
