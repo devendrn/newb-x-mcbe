@@ -7,10 +7,22 @@ on:
         description: 'Sub-version (eg: 46)'
         required: true
         type: string
+      platform:
+        description: 'platform'
+        required: true
+        default: 'All'
+        type: choice
+        options:
+        - Android
+        - Windows
+        - IOS
+        - Merged
+        - All
 
 jobs:
   windows:
     runs-on: windows-2022
+    if:  ${{ (github.event.inputs.platform == 'Windows') || (github.event.inputs.platform == 'All') }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/cache@v4
@@ -32,6 +44,7 @@ jobs:
         path: ./build/pack-windows
   android:
     runs-on: ubuntu-latest
+    if:  ${{ (github.event.inputs.platform == 'Android') || (github.event.inputs.platform == 'All') }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/cache@v4
@@ -53,6 +66,7 @@ jobs:
         path: ./build/pack-android
   ios:
     runs-on: ubuntu-latest
+    if:  ${{ (github.event.inputs.platform == 'IOS') || (github.event.inputs.platform == 'All') }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -76,6 +90,7 @@ jobs:
         path: ./build/pack-ios
   merged:
     runs-on: windows-2022
+    if:  ${{ (github.event.inputs.platform == 'Merged') || (github.event.inputs.platform == 'All')}}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/cache@v4
