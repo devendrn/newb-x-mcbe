@@ -11,7 +11,7 @@
 
 ## Downloads
 
-Nightly builds for Android (ESSL) and Windows (DX) can be found at the [Discord server](https://discord.gg/newb-community-844591537430069279).
+Nightly builds for Android (ESSL), Windows (DX), and iOS (Metal) can be found at the [Discord server](https://discord.gg/newb-community-844591537430069279).
 
 You can also download from [v15-dev releases](https://github.com/devendrn/newb-x-mcbe/releases/tag/v15-dev)
 
@@ -41,7 +41,9 @@ You can also download from [v15-dev releases](https://github.com/devendrn/newb-x
 ### Install dependencies
 - [Git](https://git-scm.com/)
 - [Python](https://www.python.org/) 3.11 or higher required
-- Python packages [lazurite](https://veka0.github.io/lazurite/#installation) and [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation)
+- Python packages:
+  - [lazurite](https://veka0.github.io/lazurite/#installation) (must be v0.2.1. newer or older version may not be supported)
+  - [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation) (must be v13.x.x)
 
 ### Get source code
 ```
