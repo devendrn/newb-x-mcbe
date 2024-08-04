@@ -48,10 +48,6 @@ Nightly (beta) builds for Android (ESSL), Windows (DX), and iOS (Metal) can also
 - Python packages:
   - [lazurite](https://veka0.github.io/lazurite/#installation) (must be v0.2.1. newer or older version may not be supported)
   - [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation) (must be v13.x.x)
-> [!NOTE]
-> Newer versions may not work as expected. In this case install from requirements.txt
-
-<br>
 
 ### Get source code
 ```
@@ -59,18 +55,11 @@ git clone https://github.com/devendrn/newb-x-mcbe/
 cd newb-x-mcbe
 ```
 
-<br>
-
 ### Install dependencies from requirements.txt
 *Skip if you already have installed those versions.*
 ```
 python -m pip install -r requirements.txt
 ```
-
-> [!TIP]
-> If you have multiple Python versions on Linux like python3, python3.11, python3.12 etc and want to use specific version for compiling `let's say python3.11`. Open up build.sh file. Change **python3** to **python3.11** and that version will be used for all the scripts.
-
-<br>
 
 ### Setup build environment
 > [!NOTE]
@@ -86,9 +75,7 @@ This will download shaderc binary and material data required to build shader.
 ```
 ./build.sh mats
 ```
-
 Compiled material.bin files will be inside `build/<platform>/`
-
 
 **Command usage:**
 ```
@@ -102,14 +89,14 @@ options:
   -s S                  subpack config to use (eg: NO_WAVE)
 ```
 
-<br>
-
 ### Compile and build full shader pack
 ```
 ./build.sh pack
 ```
 
 The final mcpack will be inside `build/`.  
+
+**Command usage:**
 ```
 usage: build pack [-h] [-p {android,windows,merged,ios}] [--no-zip] [--no-label] [-v V]
 
