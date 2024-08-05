@@ -36,16 +36,15 @@ def create_pack_manifest(config: dict) -> dict:
         'format_version': 2,
         'header': {
             "name": config['name'],
-            "description": config['description']['long'],
-            "uuid": config['uuid']['header'],
+            "description": config['description'],
+            "uuid": config['uuid'],
             "version": config['version'],
             "min_engine_version": config['min_supported_mc_version']
         },
         'modules': [
             {
-                'description': config['description']['short'],
                 'type': 'resources',
-                'uuid': config['uuid']['module'],
+                'uuid': '900f3d8b-37b4-465f-8f56-941687e36c35',
                 'version': config['version']
             }
         ],

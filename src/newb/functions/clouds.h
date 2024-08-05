@@ -74,7 +74,7 @@ vec4 renderClouds(vec3 vDir, vec3 vPos, float rain, float time, vec3 fogCol, vec
   // local cloud pos
   vec3 pos;
   pos.y = 0.0;
-  pos.xz = NL_CLOUD2_SCALE*(vPos.xz + vec2(1.0,0.5)*(time*NL_CLOUD2_VELOCIY));
+  pos.xz = NL_CLOUD2_SCALE*(vPos.xz + vec2(1.0,0.5)*(time*NL_CLOUD2_VELOCITY));
   pos += deltaP;
 
   deltaP /= -float(NL_CLOUD2_STEPS);
