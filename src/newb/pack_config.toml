@@ -1,74 +1,55 @@
-name = "Newb X Legacy"
-version = [0, 15, 0]
-min_supported_mc_version = [1, 20, 80]
-description = '''
+name = "Newb X Chiz"
+version = [0, 0, 2.9]
+min_supported_mc_version = [1, 21, 1]
+url = "https://devendrn.github.io/newb-shader/"
+authors = ["Chizaxxvii", "devendrn"]
+materials = ["Sky", "LegacyCubemap", "Clouds", "EndSky", "SunMoon", "RenderChunk", "Actor"]
+
+[description]
+# %w = patch warning, %v = version
+long = '''
 §c%w
 §7- An enchanced vanilla shader for Minecraft!
 %v
 §3https://devendrn.github.io/newb-shader/
-''' # %w = patch warning, %v = version
-authors = ["devendrn"]
-url = "https://devendrn.github.io/newb-shader/"
-uuid = "95f774cf-4afa-73e7-a21a-72146307b1d2" # Use https://www.uuidgenerator.net/version4
-materials = ["Sky", "LegacyCubemap", "Clouds", "EndSky", "SunMoon", "RenderChunk", "Actor"]
+'''
+short = "Legacy port of Newb Shader for RenderDragon"
 
-[info] 
+[uuid] # 
+header = "64c474c6-5d65-4cf6-bb61-734e1b71b4d8"
+module = "900f3d8b-37b4-465f-8f56-941687e36c35"
+
+[info]
+# %a = authors
 copyright = '''
 Copyright (c) %a
 
 **Important Note:** Redistribution of this resource pack with links other than the official ones provided by the creator is strictly prohibited.
-''' # %a = authors
+'''
 credits = '''
 '''
 
 # subpacks are arranged in left to right order
 # right-most subpack is enabled by default
 
-[[subpack]]
-define = "ROUNDED_CLOUDS"
-materials = ["Clouds"]
-description = '''
-Rounded Clouds
-'''
 
 [[subpack]]
-define = "BOX_CLOUDS"
-materials = ["Clouds", "RenderChunk"]
-description = '''
-Box Clouds
-'''
-
-[[subpack]]
-define = "CHUNK_ANIM"
-materials = ["RenderChunk"]
-description = '''
-Chunk loading animation
-'''
-
-[[subpack]]
-define = "NO_WAVE_NO_FOG"
-materials = ["RenderChunk"]
-description = '''
-No fog and wave effects
-'''
-
-[[subpack]]
-define = "NO_FOG"
-materials = ["RenderChunk"]
-description = '''
-No fog effect
-'''
-
-[[subpack]]
-define = "NO_WAVE"
-materials = ["RenderChunk"]
-description = '''
-No wave effects
-'''
-
-[[subpack]]
-define = "DEFAULT"
+define = "CUSTOM TEXTURE"
 materials = []
 description = '''
-Default
+3 custom texture
+'''
+
+[[subpack]]
+define = "BAREBONE ONLY ORE GLOW"
+materials = []
+description = '''
+2 Barebone only ore glow
+'''
+
+[[subpack]]
+define = "CLASSIC TEXTURE"
+materials = []
+description = '''
+1 classic textures
 '''
