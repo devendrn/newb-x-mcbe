@@ -62,7 +62,7 @@
 #define NL_END_TORCH_COL        vec3(1.0,0.52,0.18)
 
 /* Fog */
-#define NL_FOG_TYPE 3             // 0:no fog, 1:vanilla, 2:smoother vanilla, 3:exponential fog
+#define NL_FOG_TYPE 2             // 0:no fog, 1:vanilla, 2:smoother vanilla, 3:exponential fog
 #define NL_MIST_DENSITY 1.0      // 0.0 no mist ~ 1.0 misty
 #define NL_RAIN_MIST_OPACITY 0.2 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow
 
