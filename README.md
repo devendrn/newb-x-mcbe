@@ -14,6 +14,8 @@
 ## Downloads
 [v15 stable](https://github.com/devendrn/newb-x-mcbe/releases/tag/v15) (For 1.20.73 or older)  
 [v15 beta](https://github.com/devendrn/newb-x-mcbe/releases/tag/v15-dev) (For 1.20.80 or newer)
+> [!NOTE]
+> Please note that **only beta releases starting from v15.53 are supported on 1.21.20+.**
 
 Nightly (beta) builds for Android (ESSL), Windows (DX), and iOS (Metal) can also be found at the [Discord server](https://discord.gg/newb-community-844591537430069279).
 
@@ -36,7 +38,7 @@ Nightly (beta) builds for Android (ESSL), Windows (DX), and iOS (Metal) can also
 <h6>This method is for <a href=https://mcpelauncher.readthedocs.io/en/latest/getting_started/index.html>mcpelauncher-manifest</a></h6>
 
 1. Download [mcpelauncher-shadersmod](https://github.com/GameParrot/mcpelauncher-shadersmod/releases/latest).
-2. Follow this [guide](https://faizul118.github.io/guides/shadersmodinstallation) to setup.
+2. Follow this [guide](https://faizul726.github.io/guides/shadersmodinstallation) to setup.
 
 <br>
 
@@ -46,7 +48,7 @@ Nightly (beta) builds for Android (ESSL), Windows (DX), and iOS (Metal) can also
 - [Git](https://git-scm.com/)
 - [Python](https://www.python.org/) 3.11 or higher required
 - Python packages:
-  - [lazurite](https://veka0.github.io/lazurite/#installation) (must be v0.2.1. newer or older version may not be supported)
+  - [lazurite](https://veka0.github.io/lazurite/#installation) (must be v0.3.0. Newer or older version may not be supported)
   - [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation) (must be v13.x.x)
 
 ### Get source code
@@ -108,6 +110,8 @@ options:
   --no-label            don't label materials
   -v V                  version number eg: 46
 ```
+
+<!-- any thoughts on moving build profile next to -p {...}?-->
 
 > [!TIP]
 > If you want to customize pack name, author, version and other details, you can do so in `src/newb/pack_config.toml`.
