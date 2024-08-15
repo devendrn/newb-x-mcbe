@@ -145,7 +145,7 @@ def run(args):
 
     shutil.copytree('assets', pack_dir, dirs_exist_ok=True)
 
-    pack_description: str = pack_config['description']['long']
+    pack_description: str = pack_config['description']
 
     patch_warning = "Only works with "
     if profile == 'android':
@@ -158,7 +158,7 @@ def run(args):
         patch_warning = "Materials need to be installed manually for shader to work"
 
     pack_description = pack_description.replace("%w", patch_warning).replace("%v", "v" + pack_version + "-" + args.p)
-    pack_config['description']['long'] = pack_description
+    pack_config['description'] = pack_description
     pack_manifest = create_pack_manifest(pack_config)
 
     console.print("\n~ Build materials", style="bold")

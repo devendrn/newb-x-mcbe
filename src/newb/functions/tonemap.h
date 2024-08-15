@@ -29,7 +29,7 @@ vec3 colorCorrection(vec3 col) {
   #endif
 
   // gamma correction + contrast
-  col = pow(col, vec3_splat(NL_CONSTRAST));
+  col = pow(col, vec3_splat(NL_CONTRAST));
 
   #ifdef NL_SATURATION
     col = mix(vec3_splat(dot(col,vec3(0.21, 0.71, 0.08))), col, NL_SATURATION);
@@ -56,7 +56,7 @@ vec3 colorCorrectionInv(vec3 col) {
   // incomplete
   // extended reinhard only
   float ws = 0.7966;
-  col = pow(col, vec3_splat(1.0/NL_CONSTRAST));
+  col = pow(col, vec3_splat(1.0/NL_CONTRAST));
   col = col*(ws + col)/(ws + col*(1.0 - ws));
 
   #ifdef NL_EXPOSURE

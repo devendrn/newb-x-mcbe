@@ -1,31 +1,23 @@
 name = "Newb X Legacy"
 version = [0, 15, 0]
-min_supported_mc_version = [1, 20, 80]
-url = "https://devendrn.github.io/newb-shader/"
-authors = ["devendrn"]
-materials = ["Sky", "LegacyCubemap", "Clouds", "EndSky", "SunMoon", "RenderChunk", "Actor"]
-
-[description]
-# %w = patch warning, %v = version
-long = '''
+min_supported_mc_version = [1, 21, 20]
+description = '''
 §c%w
 §7- An enchanced vanilla shader for Minecraft!
 %v
 §3https://devendrn.github.io/newb-shader/
-'''
-short = "Legacy port of Newb Shader for RenderDragon"
+''' # %w = patch warning, %v = version
+authors = ["devendrn"]
+url = "https://devendrn.github.io/newb-shader/"
+uuid = "95f774cf-4afa-73e7-a21a-72146307b1d2" # Use https://www.uuidgenerator.net/version4
+materials = ["Sky", "LegacyCubemap", "Clouds", "EndSky", "SunMoon", "RenderChunk", "Actor"]
 
-[uuid] # Use https://www.uuidgenerator.net/version4
-header = "95f774cf-4afa-73e7-a21a-72146307b1d2"
-module = "900f3d8b-37b4-465f-8f56-941687e36c35"
-
-[info]
-# %a = authors
+[info] 
 copyright = '''
 Copyright (c) %a
 
 **Important Note:** Redistribution of this resource pack with links other than the official ones provided by the creator is strictly prohibited.
-'''
+''' # %a = authors
 credits = '''
 '''
 

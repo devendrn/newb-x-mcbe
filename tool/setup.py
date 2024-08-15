@@ -57,18 +57,22 @@ def run(args):
     data_path = os.path.join('tool', 'data')
     mat_path = os.path.join(data_path, 'materials')
 
-    shaderc_url = NS_DEV_RELEASE + "shaderc"
+    shaderc_url = NS_DEV_RELEASE + "shaderc-"
     shaderc_path = os.path.join(data_path, "shaderc")
-    if os.name == 'nt':
-        shaderc_url += ".exe"
+
+    os_name = platform.system()
+    if os_name == 'Windows':
+        shaderc_url += "win-x64.exe"
         shaderc_path += ".exe"
-    else:
+    elif os_name == "Darwin":
+        shaderc_url += "osx-x64"
+    elif os_name == "Linux":
         if arch == 'x86_64':
-            shaderc_url += ".x86_64"
+            shaderc_url += "linux-x64"
         elif arch in ['aarch64']:
-            shaderc_url += ".arm64"
+            shaderc_url += "android-arm64"
         elif arch in ['armv8l', 'armv8l']:
-            shaderc_url += ".arm32"
+            shaderc_url += "android-arm"
         else:
             progress.console.print("No shaderc version found for", arch, style='red')
             exit(1)
@@ -82,6 +86,9 @@ def run(args):
         if os.path.exists(termux_lib_file) and not os.path.exists(lib_path + "/libc++_shared.so"):
             progress.console.print("Adding termux fix for libc++_shared.so not found")
             shutil.copyfile(termux_lib_file, lib_path + "/libc++_shared.so")
+    else:
+        print("Unable to determine platform!")
+        exit(1)
 
     if args.reset:
         shutil.rmtree(data_path)
@@ -95,11 +102,11 @@ def run(args):
             _download_file(shaderc_url, shaderc_path)
             os.chmod(shaderc_path, 0o755)
 
-        test_mat = os.path.join(mat_path, "Sky.material.bin")
+        test_mat = os.path.join(mat_path, "Sky.material.json")
         if not os.path.exists(test_mat):
             progress.console.print("Downloading source materials")
             mat_filename = os.path.join(data_path, 'materials.zip')
-            _download_file(NS_DEV_RELEASE + "src-materials-1.21.0-merged.zip", mat_filename)
+            _download_file(NS_DEV_RELEASE + "src-materials-1.21.20.zip", mat_filename)
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
             os.remove(mat_filename)
