@@ -1,6 +1,6 @@
 {
   "base_profile": {
-    "platforms": ["ESSL_100"],
+    "platforms": ["ESSL_300"],
     "merge_source": ["../../tool/data/materials"],
     "include_patterns": ["Sky", "RenderChunk", "Actor", "LegacyCubemap", "EndSky", "Clouds", "SunMoon"],
     "exclude_patterns": [".*", "_*"],
@@ -9,7 +9,7 @@
   "profiles": {
     "android": {
       "macros": [],
-      "platforms": ["ESSL_100"]
+      "platforms": ["ESSL_300"]
     },
     "ios": {
       "macros": [],
@@ -21,7 +21,7 @@
     },
     "merged": {
       "macros": [],
-      "platforms": ["ESSL_100", "Direct3D_SM50"]
+      "platforms": ["ESSL_300", "Direct3D_SM50"]
     }
   }
 }
