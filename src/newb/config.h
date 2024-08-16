@@ -115,6 +115,7 @@
 #define NL_CLOUD0_THICKNESS 2.1      // 0.5 slim ~ 8.0 fat
 #define NL_CLOUD0_RAIN_THICKNESS 4.0 // 0.5 slim ~ 8.0 fat
 #define NL_CLOUD0_OPACITY 0.9        // 0.0 invisible ~ 1.0 opaque
+#define NL_CLOUD0_MULTILAYER         // [toggle] extra cloud layer
 
 /* Soft cloud settings */
 #define NL_CLOUD1_SCALE vec2(0.016, 0.022) // 0.003 large ~ 0.2 tiny

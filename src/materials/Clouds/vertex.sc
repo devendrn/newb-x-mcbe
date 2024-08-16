@@ -39,38 +39,26 @@ void main() {
   vec4 color;
   
   #if NL_CLOUD_TYPE == 0
-    // clouds.png has two non-overlaping layers:
-    // r=unused, g=layers, b=reference, a=unused
-    // g=0 (normal clouds), g=1 (used for aurora)
-    bool isL2 = a_color0.g > 0.5 * a_color0.b;
-
-    if (!isL2) {
-      pos.y *= (NL_CLOUD0_THICKNESS + rain*(NL_CLOUD0_RAIN_THICKNESS - NL_CLOUD0_THICKNESS));
-    }
-
+    pos.y *= (NL_CLOUD0_THICKNESS + rain*(NL_CLOUD0_RAIN_THICKNESS - NL_CLOUD0_THICKNESS));
     vec3 worldPos = mul(model, vec4(pos, 1.0)).xyz;
-    
+
     color.rgb = zenithCol + horizonEdgeCol*(0.5 + 0.5*a_position.y);
     color.rgb *= 1.0 - 0.5*rain;
-    color.a = NL_CLOUD0_OPACITY;
+    color.rgb = colorCorrection(color.rgb);
+    color.a = NL_CLOUD0_OPACITY * fog_fade(worldPos.xyz);
 
+    // clouds.png has two non-overlaping layers:
+    // r=unused, g=layers, b=reference, a=unused
+    // g=0 (layer 0), g=1 (layer 1)
+    bool isL2 = a_color0.g > 0.5 * a_color0.b;
     if (isL2) {
-      #ifdef NL_AURORA
-        worldPos.xyz += 4.0*sin(0.1*worldPos.zxx + vec3(0.2,0.5,0.3)*t);
-        worldPos.y += 24.0*a_position.y*(1.0 + sin(0.1*(worldPos.z+worldPos.x) + 0.5*t));
-        worldPos.y += NL_CLOUD0_THICKNESS + 20.0;
-        vec4 aurora = renderAurora(worldPos, t, rain, FogColor.rgb);
-        color.rgb = zenithCol + 0.8*horizonCol;
-        color.rgb +=  aurora.rgb;
-        color.a = (a_position.y < 0.5 && a_color0.b > 0.9) ? aurora.a : 0.0;
+      #ifdef NL_CLOUD0_MULTILAYER
+        worldPos.y += 64.0;
       #else
-        worldPos.xyz = vec3(0.0,0.0,0.0);
+        worldPos = vec3(0.0,0.0,0.0);
         color.a = 0.0;
       #endif
     } 
-
-    color.a *= fog_fade(worldPos.xyz);
-    color.rgb = colorCorrection(color.rgb);
   #else
     pos.xz = pos.xz - 32.0;
     pos.y *= 0.01;
