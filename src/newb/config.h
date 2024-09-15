@@ -142,6 +142,11 @@
 #define NL_AURORA_COL1 vec3(0.1,1.0,0.0)
 #define NL_AURORA_COL2 vec3(0.1,0.0,1.0)
 
+/* Shooting star */
+#define NL_SHOOTING_STAR 1.0        // [toggle] 0.2 dim ~ 1.0 bright
+#define NL_SHOOTING_STAR_PERIOD 6.0 // 0.4 fast ~ 12.0 slow (12 secs)
+#define NL_SHOOTING_STAR_DELAY 64.0  // 0.0 no delay ~ 100.0 long time (100 secs)
+
 /* Chunk loading slide in animation */
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
 

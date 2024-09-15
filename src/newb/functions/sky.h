@@ -97,9 +97,9 @@ vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
 
   float n1 = 0.5 + 0.5*sin(3.0*a + t + 10.0*viewDir.x*viewDir.y);
   float n2 = 0.5 + 0.5*sin(5.0*a + 0.5*t + 5.0*n1 + 0.1*sin(40.0*a -4.0*t));
-    
+
   float waves = 0.7*n2*n1 + 0.3*n1;
-    
+
   float grad = 0.5 + 0.5*viewDir.y;
   float streaks = waves*(1.0 - grad*grad*grad);
   streaks += (1.0-streaks)*smoothstep(1.0-waves, -1.0, viewDir.y);
@@ -108,7 +108,7 @@ vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
   float h = streaks*streaks;
   float g = h*h;
   g *= g;
-    
+
   vec3 sky = mix(zenithCol, horizonCol, f*f);
   sky += (0.1*streaks + 2.0*g*g*g + h*h*h)*vec3(2.0,0.5,0.0);
   sky += 0.25*streaks*spectrum(sin(2.0*viewDir.x*viewDir.y+t));
@@ -169,6 +169,40 @@ vec3 getRainSkyRefl(vec3 horizonCol, vec3 zenithCol, float h) {
   h = 1.0-h*h;
   h *= h;
   return mix(zenithCol, horizonCol, h*h);
+}
+
+// shooting star
+vec3 nlRenderShootingStar(vec3 viewDir, vec3 FOG_COLOR, float t) {
+  // transition vars
+  float h = t / (NL_SHOOTING_STAR_DELAY + NL_SHOOTING_STAR_PERIOD);
+  float h0 = floor(h);
+  t = (NL_SHOOTING_STAR_DELAY + NL_SHOOTING_STAR_PERIOD) * (h-h0);
+  t = min(t/NL_SHOOTING_STAR_PERIOD, 1.0);
+  float t0 = t*t;
+  float t1 = 1.0-t0;
+  t1 *= t1; t1 *= t1; t1 *= t1;
+
+  // randomize size, rotation, add motion, add skew
+  float r = fract(sin(h0) * 43758.545313);
+  float a = 6.2831*r;
+  float cosa = cos(a);
+  float sina = sin(a);
+  vec2 uv = viewDir.xz * (6.0 + 4.0*r);
+  uv = vec2(cosa*uv.x + sina*uv.y, -sina*uv.x + cosa*uv.y);
+  uv.x += t1 - t;
+  uv.x -= 2.0*r + 3.5;
+  uv.y += viewDir.y * 3.0;
+
+  // draw star
+  float g = 1.0-min(abs((uv.x-0.95))*20.0, 1.0); // source glow
+  float s = 1.0-min(abs(8.0*uv.y), 1.0); // line
+  s *= s*s*smoothstep(-1.0+1.96*t1, 0.98-t, uv.x); // decay tail
+  s *= s*s*smoothstep(1.0, 0.98-t0, uv.x); // decay source
+  s *= 1.0-t1; // fade in
+  s *= 1.0-t0; // fade out
+  s *= 0.7 + 16.0*g*g;
+  s *= max(1.0-FOG_COLOR.r-FOG_COLOR.g-FOG_COLOR.b, 0.0); // fade out during day
+  return s*vec3(0.8, 0.9, 1.0);
 }
 
 #endif
