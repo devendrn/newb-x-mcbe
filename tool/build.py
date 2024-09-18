@@ -1,5 +1,4 @@
 import os
-import platform
 from rich.console import Console
 from importlib import import_module
 from lazurite.compiler.macro_define import MacroDefine
@@ -22,7 +21,7 @@ lp.print = _lp_print_override
 def run(args):
     output_path = os.path.join('build', args.p)
     shaderc_path = os.path.join('tool', 'data', 'shaderc')
-    if platform.os == 'nt':
+    if os.name == 'nt':
         shaderc_path += '.exe'
 
     materials_pattern = []
