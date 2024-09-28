@@ -34,16 +34,21 @@ void main() {
     texcoord.x += spriteSelector * UVOffsetAndScale.z;
   #endif
 
+  bool isRain = UVOffsetAndScale.x < 0.0001;
   vec3 velocity = Velocity.xyz;
-  velocity.x *= 4.0;
+  if (isRain) {
+    velocity.x *= 4.0;
+  }
 
   const vec3 PARTICLE_BOX = vec3(30.0, 30.0, 30.0);
   vec3 worldSpacePos = mod(a_position + PositionBaseOffset.xyz, PARTICLE_BOX); // should this be fmod?
   worldSpacePos += PositionForwardOffset.xyz - 0.5*PARTICLE_BOX;
-  worldSpacePos.xz -= worldSpacePos.y*velocity.xz;
+  if (isRain) {
+    worldSpacePos.xz -= worldSpacePos.y*velocity.xz;
+  }
 
   vec3 worldSpacePosBottom = worldSpacePos;
-  vec3 worldSpacePosTop = worldSpacePosBottom + velocity.xyz*Dimensions.y;
+  vec3 worldSpacePosTop = worldSpacePosBottom + velocity*Dimensions.y;
 
   vec4 screenSpacePosBottom = mul(u_modelViewProj, vec4(worldSpacePosBottom, 1.0));
   vec4 screenSpacePosTop = mul(u_modelViewProj, vec4(worldSpacePosTop, 1.0));
