@@ -59,6 +59,11 @@ vec4 nlWater(
     // torch light reflection
     waterRefl += torchColor*NL_TORCH_INTENSITY*(lit.x*lit.x + lit.x)*bump*10.0;
 
+    #ifdef NL_WATER_REFL_MASK
+    float mask = 0.15+0.08*sin(viewDir.x*12.0 + 31.4*bump);
+    waterRefl *= 0.3+0.7*smoothstep(mask,0.2+mask,viewDir.y);
+    #endif
+
     if (fractCposY>0.8 || fractCposY<0.9) { // flat plane
       waterRefl *= 1.0 - clamp(wPos.y, 0.0, 0.66);
     } else { // slanted plane and highly slanted plane
