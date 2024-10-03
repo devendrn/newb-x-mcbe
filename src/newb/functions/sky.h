@@ -61,18 +61,22 @@ vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR) {
 
 // 1D sky with three color gradient
 vec3 renderOverworldSky(vec3 horizonEdgeCol, vec3 horizonColor, vec3 zenithColor, vec3 viewDir) {
-  float h = max(viewDir.y, 0.0);
-  h = 1.0-h*h;
+  float h = 1.0-viewDir.y*viewDir.y;
   float hsq = h*h;
+  if (viewDir.y < 0.0) {
+    hsq *= hsq*hsq;
+    hsq *= hsq;
+  }
 
   // gradient 1  h^16
   // gradient 2  h^8 mix h^2
-  float gradient1 = hsq*hsq*hsq*hsq;
+  float gradient1 = hsq*hsq;
+  gradient1 *= gradient1;
   float gradient2 = 0.6*gradient1 + 0.4*hsq;
   gradient1 *= gradient1;
 
   vec3 sky = mix(horizonColor, horizonEdgeCol, gradient1);
-  sky = mix(zenithColor,horizonColor, gradient2);
+  sky = mix(zenithColor, horizonColor, gradient2);
 
   return sky;
 }

@@ -132,6 +132,12 @@ void main() {
     fogColor.rgb = mix(fogColor.rgb, vec3(0.8,0.2,0.12)*1.5, lit.x*(1.67-fogColor.a*1.67));
   }
 
+  #ifdef NL_CLOUDY_FOG
+    float fg = smoothstep(0.0, 1.0-NL_CLOUDY_FOG, relativeDist);
+    fg *= noise2D(4.0*viewDir.xz - 3.0*abs(viewDir.y) + 0.2*t);
+    fogColor.a += (1.0-fogColor.a)*fg;
+  #endif
+
   vec4 refl = vec4(0.0,0.0,0.0,0.0);
   vec4 pos;
 

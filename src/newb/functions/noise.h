@@ -32,4 +32,18 @@ float disp(vec3 pos, highp float t) {
   return mix(fastRand(pos.xz), fastRand(pos.xz+vec2_splat(1.0)), val);
 }
 
+float noise2D(vec2 u) {
+  vec2 u0 = floor(u);
+  vec2 v = u-u0;
+  v = 3.0*v*v - 2.0*v*v*v;
+
+  float c0 = rand(u0);
+  float c1 = rand(u0+vec2(1.0, 0.0));
+  float c2 = rand(u0+vec2(1.0, 1.0));
+  float c3 = rand(u0+vec2(0.0, 1.0));
+
+  float n = mix(mix(c0, c3, v.y),mix(c1, c2, v.y), v.x);
+  return n;
+}
+
 #endif
