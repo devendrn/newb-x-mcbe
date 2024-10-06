@@ -114,10 +114,14 @@ def run(args):
 
     lp.print = _lp_print_override
 
-    console.print(" [bold green]Newb Pack Builder[/] \n [dim]build tool: Lazurite\n", style="")
+    console.print("  [bold green]Newb Pack Builder[/] \n  [dim]build tool: Lazurite\n", style="")
 
     with open('src/newb/pack_config.toml', 'rb') as f:
-        pack_config = tomllib.load(f)
+        try:
+            pack_config = tomllib.load(f)
+        except tomllib.TOMLDecodeError as e:
+            console.print(f"~ Error in 'pack_config.toml': \n  {e.args[0]}", style="bold red")
+            exit(1)
 
     if args.v:
         if args.v.isdigit():
@@ -143,7 +147,8 @@ def run(args):
     pack_dir = os.path.join('build', 'pack-' + args.p)
     mats_dir = os.path.join(pack_dir, 'renderer', 'materials')
 
-    shutil.copytree('assets', pack_dir, dirs_exist_ok=True)
+    shutil.rmtree(pack_dir)
+    shutil.copytree('assets', pack_dir)
 
     pack_description: str = pack_config['description']
 

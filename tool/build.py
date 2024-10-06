@@ -9,6 +9,9 @@ status = console.status("[bold green]Building...")
 
 
 def _lp_print_override(m):
+    if m.startswith("Warning"):
+        console.print(m, style='bold red')
+        exit(1)
     console.print(m, style='bold cyan')
     status.update("[bold green]Building " + m)
 
@@ -23,6 +26,11 @@ def run(args):
     shaderc_path = os.path.join('tool', 'data', 'shaderc')
     if os.name == 'nt':
         shaderc_path += '.exe'
+    src_materials_eg_path = os.path.join('tool', 'data', 'materials', 'Sky.material.json')
+
+    if not (os.path.exists(shaderc_path) and os.path.exists(src_materials_eg_path)):
+        console.print(f"Error: 'setup' not done", style="bold red")
+        exit(1)
 
     materials_pattern = []
     if not args.m == "":
