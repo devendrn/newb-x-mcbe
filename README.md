@@ -39,7 +39,7 @@ This method is for [mcpelauncher-manifest](https://mcpelauncher.readthedocs.io/e
 2. Import the resource pack and activate it in global resources.  
 ##### x86_64, x86, arm64, arm arch
 1. Download [mcpelauncher-shadersmod](https://github.com/GameParrot/mcpelauncher-shadersmod/releases/latest).
-2. Follow this [guide](https://faizul726.github.io/guides/shadersmodinstallation) to setup.  
+2. Follow this [guide](https://faizul726.github.io/guides/shadersmodinstallation) to setup.
 
 <br>
 
@@ -49,7 +49,7 @@ This method is for [mcpelauncher-manifest](https://mcpelauncher.readthedocs.io/e
 - [Git](https://git-scm.com/)
 - [Python](https://www.python.org/) 3.11 or higher required
 - Python packages:
-  - [lazurite](https://veka0.github.io/lazurite/#installation) (Must be `v0.3.0`. Newer or older version may not be supported)
+  - [lazurite](https://veka0.github.io/lazurite/#installation) (Must be `v0.4.0`. Newer or older version may not be supported)
   - [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation) (Must be `v13.x.x`)
 
 ### Get source code
@@ -66,7 +66,7 @@ python -m pip install -r requirements.txt
 
 ### Setup build environment
 > [!NOTE]
-> On Windows, run `.\build.bat` instead of `./build.sh` for all following commands. 
+> On Windows, run `.\build.bat` instead of `./build.sh` for all following commands.
 ```
 ./build.sh setup
 ```
@@ -97,7 +97,7 @@ options:
 ./build.sh pack
 ```
 
-The final mcpack will be inside `build/`.  
+The final mcpack will be inside `build/`.
 
 **Command usage:**
 ```
@@ -120,5 +120,5 @@ options:
 ## Development
 
 Clangd can be used to get code completion and error checks for source files inside include/newb. Fake bgfx header and clangd config are provided for the same.
-- **Neovim** (NvChad): Install clangd LSP from Mason.
+- **Neovim**: Install clangd LSP.
 - **VSCode**: Install [vscode-clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) extension.
