@@ -147,7 +147,8 @@ def run(args):
     pack_dir = os.path.join('build', 'pack-' + args.p)
     mats_dir = os.path.join(pack_dir, 'renderer', 'materials')
 
-    shutil.rmtree(pack_dir)
+    if os.path.exists(pack_dir):
+        shutil.rmtree(pack_dir)
     shutil.copytree('assets', pack_dir)
 
     pack_description: str = pack_config['description']
