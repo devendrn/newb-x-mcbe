@@ -12,25 +12,21 @@
 void main() {
   #ifndef INSTANCING
     vec3 viewDir = normalize(v_worldPos);
-    bool underWater = v_underwaterRainTime.x > 0.5;
-    float rainFactor = v_underwaterRainTime.y;
 
-    vec3 zenithCol;
-    vec3 horizonCol;
-    vec3 horizonEdgeCol;
-    if (underWater) {
-      vec3 fogcol = getUnderwaterCol(v_fogColor);
-      zenithCol = fogcol;
-      horizonCol = fogcol;
-      horizonEdgeCol = fogcol;
+    nl_environment env;
+    env.end = false;
+    env.nether = false;
+    env.underwater = v_underwaterRainTime.x > 0.5;
+    env.rainFactor = v_underwaterRainTime.y;
+
+    nl_skycolor skycol;
+    if (env.underwater) {
+      skycol = nlUnderwaterSkyColors(env.rainFactor, v_fogColor.rgb);
     } else {
-      vec3 fs = getSkyFactors(v_fogColor);
-      zenithCol = getZenithCol(rainFactor, v_fogColor, fs);
-      horizonCol = getHorizonCol(rainFactor, v_fogColor, fs);
-      horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, v_fogColor);
+      skycol = nlOverworldSkyColors(env.rainFactor, v_fogColor.rgb);
     }
 
-    vec3 skyColor = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, -viewDir, v_fogColor, v_underwaterRainTime.z, rainFactor, false, underWater, false);
+    vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_fogColor, v_underwaterRainTime.z);
     #ifdef NL_SHOOTING_STAR
       skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, v_fogColor, v_underwaterRainTime.z);
     #endif

@@ -49,61 +49,35 @@ void main() {
 
   vec4 position = jitterVertexPosition(worldPosition);
 
-  #if defined(DEPTH_ONLY)
-    v_texcoord0 = vec2(0.0, 0.0);
-    v_color0 = vec4(0.0, 0.0, 0.0, 0.0);
-  #else
+  #if !(defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY) || defined(INSTANCING))
+    vec4 edgeMap = fract(vec4(texcoord0.xy*128.0, texcoord0.xy*256.0));
+    edgeMap = 2.0*step(edgeMap, vec4_splat(0.5)) - 1.0;
+
+    nl_environment env = nlDetectEnvironment(FogColor.rgb, FogControl.xyz);
+    nl_skycolor skycol = nlSkyColors(env, FogColor.rgb);
+
+    float relativeDist = position.z/FogControl.z;
+
+    worldPosition.y = -worldPosition.y;
+    vec3 viewDir = normalize(worldPosition.xyz);
+
+    vec4 fogColor;
+    fogColor.rgb = nlRenderSky(skycol, env, viewDir, FogColor.rgb, ViewPositionAndTime.w);
+    fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogControl.xy);
+
+    if (env.nether) {
+      // blend fog with void color
+      fogColor.rgb = colorCorrectionInv(FogColor.rgb);
+    }
+
+    vec3 light = nlActorLighting(env, a_position, a_normal, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w);
+
     v_texcoord0 = texcoord0;
     v_color0 = a_color0;
+    v_fog = fogColor;
+    v_edgemap = edgeMap;
+    v_light = vec4(light, 1.0);
   #endif
 
-  vec4 edgeMap = fract(vec4(v_texcoord0.xy*128.0, v_texcoord0.xy*256.0));
-  edgeMap = 2.0*step(edgeMap, vec4_splat(0.5)) - 1.0;
-
-  // environment detections
-  bool end = detectEnd(FogColor.rgb, FogControl.xy);
-  bool nether = detectNether(FogColor.rgb, FogControl.xy);
-  bool underWater = detectUnderwater(FogColor.rgb, FogControl.xy);
-  float rainFactor = detectRain(FogControl.xyz);
-
-  vec3 zenithCol;
-  vec3 horizonCol;
-  vec3 horizonEdgeCol;
-  if (underWater) {
-    vec3 fogcol = getUnderwaterCol(FogColor.rgb);
-    zenithCol = fogcol;
-    horizonCol = fogcol;
-    horizonEdgeCol = fogcol;
-  } else if (end) {
-    zenithCol = getEndZenithCol();
-    horizonCol = getEndHorizonCol();
-    horizonEdgeCol = horizonCol;
-  } else {
-    vec3 fs = getSkyFactors(FogColor.rgb);
-    zenithCol = getZenithCol(rainFactor, FogColor.rgb, fs);
-    horizonCol = getHorizonCol(rainFactor, FogColor.rgb, fs);
-    horizonEdgeCol = getHorizonEdgeCol(horizonCol, rainFactor, FogColor.rgb);
-  }
-
-
-  float relativeDist = position.z/FogControl.z;
-
-  worldPosition.y = -worldPosition.y;
-  vec3 viewDir = normalize(worldPosition.xyz);
-
-  vec4 fogColor;
-  fogColor.rgb = nlRenderSky(horizonEdgeCol, horizonCol, zenithCol, viewDir, FogColor.rgb, ViewPositionAndTime.w, rainFactor, end, underWater, nether);
-  fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogControl.xy);
-
-  if (nether) {
-    // blend fog with void color
-    fogColor.rgb = colorCorrectionInv(FogColor.rgb);
-  }
-
-  vec3 light = nlActorLighting(a_position, a_normal, World, TileLightColor, OverlayColor, horizonEdgeCol, nether, underWater, end, ViewPositionAndTime.w);
-
-  v_fog = fogColor;
-  v_edgemap = edgeMap;
-  v_light = vec4(light, 1.0);
   gl_Position = position;
 }

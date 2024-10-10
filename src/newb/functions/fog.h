@@ -1,11 +1,8 @@
 #ifndef FOG_H
 #define FOG_H
 
-#include "tonemap.h"
-
 float nlRenderFogFade(float relativeDist, vec3 FOG_COLOR, vec2 FOG_CONTROL) {
   #if NL_FOG_TYPE == 0
-    // no fog
     return 0.0;
   #endif
 
@@ -44,7 +41,7 @@ float nlRenderGodRayIntensity(vec3 cPos, vec3 worldPos, float t, vec2 uv1, float
 
   // dawn/dusk mask
   vol *= clamp(3.0*(FOG_COLOR.r-FOG_COLOR.b), 0.0, 1.0);
-  
+
   vol = smoothstep(0.0, 0.1, vol);
   return vol;
 }

@@ -26,7 +26,7 @@ SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_MatTexture1);
 
 void main() {
-  #if DEPTH_ONLY
+  #if DEPTH_ONLY || INSTANCING
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     return;
   #elif DEPTH_ONLY_OPAQUE

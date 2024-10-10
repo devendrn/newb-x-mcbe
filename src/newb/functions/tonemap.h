@@ -44,14 +44,13 @@ vec3 colorCorrection(vec3 col) {
 
 // inv used in fogcolor for nether
 vec3 colorCorrectionInv(vec3 col) {
-
   #ifdef NL_TINT
     col /= NL_TINT;
   #endif
 
-  //#ifdef NL_SATURATION
-  //  col = mix(vec3_splat(dot(col,vec3(0.21, 0.71, 0.08))), col, NL_SATURATION);
-  //#endif
+  #ifdef NL_SATURATION
+    col = mix(vec3_splat(dot(col,vec3(0.21, 0.71, 0.08))), col, 1.0/NL_SATURATION);
+  #endif
 
   // incomplete
   // extended reinhard only

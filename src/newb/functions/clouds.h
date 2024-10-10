@@ -2,6 +2,7 @@
 #define CLOUDS_H
 
 #include "noise.h"
+#include "sky.h"
 
 // simple clouds 2D noise
 float cloudNoise2D(vec2 p, highp float t, float rain) {
@@ -22,7 +23,7 @@ float cloudNoise2D(vec2 p, highp float t, float rain) {
 }
 
 // simple clouds
-vec4 renderCloudsSimple(vec3 pos, highp float t, float rain, vec3 zenithCol, vec3 horizonCol, vec3 horizonEdgeCol) {
+vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain) {
   pos.xz *= NL_CLOUD1_SCALE;
 
   float cloudAlpha = cloudNoise2D(pos.xz, t, rain);
@@ -30,10 +31,10 @@ vec4 renderCloudsSimple(vec3 pos, highp float t, float rain, vec3 zenithCol, vec
 
   vec4 color = vec4(0.02,0.04,0.05,cloudAlpha);
 
-  color.rgb += horizonEdgeCol;
+  color.rgb += skycol.horizonEdge;
   color.rgb *= 1.0 - 0.5*cloudShadow*step(0.0, pos.y);
 
-  color.rgb += zenithCol*0.7;
+  color.rgb += skycol.zenith*0.7;
   color.rgb *= 1.0 - 0.4*rain;
 
   return color;

@@ -42,7 +42,7 @@ void lanternWave(
 void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
   // 1.21.0 (2048x1024) vanilla only
   // not meant to be used
-  
+
   // count texture atlas in left-to-right row wise order (64X32)
   // starts from 0
   int texN = 64*int(uv0.y*32.0) + int(uv0.x*64.0);
@@ -83,7 +83,7 @@ void nlWave(
 
   // texture atlas has 64x32 textures (uv0.xy division)
   float texPosY = fract(uv0.y*32.0);
-  
+
   // x and z distance from block center
   vec2 bPosC = abs(bPos.xz-0.5);
 

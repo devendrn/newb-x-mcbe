@@ -30,10 +30,7 @@ void main() {
   float t = ViewPositionAndTime.w;
   float rain = detectRain(FogAndDistanceControl.xyz);
 
-  vec3 fs = getSkyFactors(FogColor.rgb);
-  vec3 zenithCol = getZenithCol(rain, FogColor.rgb, fs);
-  vec3 horizonCol = getHorizonCol(rain, FogColor.rgb, fs);
-  vec3 horizonEdgeCol = getHorizonEdgeCol(horizonCol, rain, FogColor.rgb);
+  nl_skycolor skycol = nlOverworldSkyColors(rain, FogColor.rgb);
 
   vec3 pos = a_position;
   vec4 color;
@@ -42,7 +39,7 @@ void main() {
     pos.y *= (NL_CLOUD0_THICKNESS + rain*(NL_CLOUD0_RAIN_THICKNESS - NL_CLOUD0_THICKNESS));
     vec3 worldPos = mul(model, vec4(pos, 1.0)).xyz;
 
-    color.rgb = zenithCol + horizonEdgeCol*(0.5 + 0.5*a_position.y);
+    color.rgb = skycol.zenith + skycol.horizonEdge*(0.5 + 0.5*a_position.y);
     color.rgb *= 1.0 - 0.5*rain;
     color.rgb = colorCorrection(color.rgb);
     color.a = NL_CLOUD0_OPACITY * fog_fade(worldPos.xyz);
@@ -77,7 +74,7 @@ void main() {
       float len = length(worldPos.xz)*0.01;
       worldPos.y -= len*len*clamp(0.2*worldPos.y, -1.0, 1.0);
 
-      color = renderCloudsSimple(worldPos.xyz, t, rain, zenithCol, horizonCol, horizonEdgeCol);
+      color = renderCloudsSimple(skycol, worldPos.xyz, t, rain);
 
       // cloud depth
       worldPos.y -= NL_CLOUD1_DEPTH*color.a*3.3;
@@ -92,8 +89,8 @@ void main() {
       color.rgb = colorCorrection(color.rgb);
     #else
       v_fogColor = FogColor.rgb;
-      v_color2 = vec4(horizonEdgeCol, ViewPositionAndTime.w);
-      v_color1 = vec4(zenithCol, rain);
+      v_color2 = vec4(skycol.horizonEdge, ViewPositionAndTime.w);
+      v_color1 = vec4(skycol.zenith, rain);
       color = vec4(worldPos, fade);
     #endif 
   #endif
