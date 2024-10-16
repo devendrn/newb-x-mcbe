@@ -19,7 +19,7 @@ void main() {
     vec3 pos = a_position;
 
     // make sky curved
-    pos.y -= 0.4*a_color0.r*a_color0.r;
+    pos.y -= 0.5*a_color0.r*a_color0.r;
 
     v_underwaterRainTime.x = float(detectUnderwater(FogColor.rgb, FogAndDistanceControl.xy));
     v_underwaterRainTime.y = detectRain(FogAndDistanceControl.xyz);

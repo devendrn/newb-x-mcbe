@@ -29,7 +29,7 @@
 
 /* Color correction */
 #define NL_TONEMAP_TYPE 3            // 1:Exponential, 2:Reinhard, 3:Extended Reinhard, 4:ACES
-#define NL_CONTRAST 0.75             // 0.3 low ~ 2.0 high
+#define NL_GAMMA 1.33                // 0.3 low ~ 2.0 high
 //#define NL_EXPOSURE 1.3            // [toggle] 0.5 dark ~ 3.0 bright
 //#define NL_SATURATION 1.4          // [toggle] 0.0 grayscale ~ 4.0 super saturated
 //#define NL_TINT vec3(1.0,0.75,0.5) // [toggle] color overlay
@@ -59,7 +59,7 @@
 #define NL_END_TORCH_COL        vec3(1.0,0.52,0.18)
 
 /* Fog */
-#define NL_FOG_TYPE 2             // 0:no fog, 1:vanilla, 2:smoother vanilla
+#define NL_FOG 1.0                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
 #define NL_MIST_DENSITY 0.18      // 0.0 no mist ~ 1.0 misty
 #define NL_RAIN_MIST_OPACITY 0.12 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow
 #define NL_CLOUDY_FOG 0.1         // [toggle] 0.0 subtle - 0.8 dense fog clouds

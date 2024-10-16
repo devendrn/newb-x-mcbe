@@ -21,14 +21,13 @@ vec3 glowDetectC(sampler2D tex, vec2 uv) {
 
 vec3 nlGlow(sampler2D tex, vec2 uv, float shimmer) {
   vec3 glow = glowDetectC(tex, uv);
-
   #ifdef NL_GLOW_LEAK
     // glow leak is done by interpolating 8 surrounding pixels
     // c3 c4 c5
     // c2    c6
     // c1 c8 c7
-    const vec2 texSize = vec2(2048.0, 1024.0);
-    const vec2 offset = 1.0 / texSize;
+    vec2 texSize = vec2(textureSize(tex, 0));
+    vec2 offset = 1.0 / texSize;
 
     vec3 c1 = glowDetectC(tex, uv - offset);
     vec3 c2 = glowDetectC(tex, uv + offset*vec2(-1, 0));

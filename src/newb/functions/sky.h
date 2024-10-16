@@ -72,8 +72,7 @@ vec3 renderOverworldSky(nl_skycolor skycol, vec3 viewDir) {
   float h = 1.0-viewDir.y*viewDir.y;
   float hsq = h*h;
   if (viewDir.y < 0.0) {
-    hsq *= hsq*hsq;
-    hsq *= hsq;
+    hsq = 0.4 + 0.6*hsq*hsq;
   }
 
   // gradient 1  h^16

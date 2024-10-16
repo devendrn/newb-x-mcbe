@@ -21,7 +21,7 @@ vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {
 
   float r = 1.0-rain;
   r *= r;
-  
+
   return mix(vec3(0.65,0.65,0.75), clearTint, r*r);
 }
 
@@ -78,7 +78,7 @@ vec3 nlLighting(
 
     // shadow cast by simple cloud
     #ifdef NL_CLOUD_SHADOW
-      shadow *= 1.0 - cloudNoise2D(wPos.xz*NL_CLOUD1_SCALE, t, rainFactor);
+      shadow *= 1.0 - cloudNoise2D(wPos.xz*NL_CLOUD1_SCALE, t, env.rainFactor);
     #endif
 
     // direct light from top
@@ -104,7 +104,6 @@ vec3 nlLighting(
 }
 
 void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, highp float t, vec3 horizonCol) {
-  // soft caustic effect
   if (uv1.y < 0.9) {
     float caustics = disp(tiledCpos*vec3(1.0,0.1,1.0), t);
     caustics += (1.0 + sin(t + (cPos.x+cPos.z)*NL_CONST_PI_HALF));

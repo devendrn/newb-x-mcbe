@@ -36,7 +36,7 @@ vec4 nlRefl(
         float reflective = wetness*env.rainFactor*NL_GROUND_RAIN_WETNESS;
       #else
         float reflective = NL_GROUND_REFL;
-        if (!end && !nether) {
+        if (!env.end && !env.nether) {
           // only multiply with wetness in overworld
           reflective *= wetness;
         } 

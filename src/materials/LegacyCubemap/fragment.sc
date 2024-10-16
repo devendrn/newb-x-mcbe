@@ -23,10 +23,10 @@ void main() {
     skycol = nlOverworldSkyColors(env.rainFactor, v_fogColor.rgb);
   }
 
-  vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_fogColor, v_underwaterRainTime.z);
+  vec3 sky = nlRenderSky(skycol, env, -viewDir, v_fogColor, v_underwaterRainTime.z);
+  float fade = smoothstep(0.1, -0.3, viewDir.y);
 
-  float fade = clamp(-10.0*viewDir.y, 0.0, 1.0);
-  vec4 color = vec4(colorCorrection(skyColor), fade);
+  vec4 color = vec4(colorCorrection(sky), fade);
 
   diffuse = mix(color, diffuse, diffuse.a);
 

@@ -110,8 +110,9 @@ void main() {
 
   #ifdef NL_CLOUDY_FOG
     float fg = smoothstep(0.0, 1.0-NL_CLOUDY_FOG, relativeDist);
-    fg *= noise2D(4.0*viewDir.xz - 3.0*abs(viewDir.y) + 0.2*t);
-    fogColor.a += (1.0-fogColor.a)*fg;
+    fg *= sin(5.0*viewDir.y + 2.0*viewDir.x - 0.1*t);
+    fg *= sin(5.0*viewDir.y - 2.0*viewDir.x + viewDir.z + 0.1*t);
+    fogColor.a += (1.0-fogColor.a)*fg*fg;
   #endif
 
   float water = 0.0;

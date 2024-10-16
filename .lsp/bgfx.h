@@ -1,22 +1,22 @@
 // fake bgfx shader headers for clangd
 
-#define SWIZZLE_VEC2(x,y) \
-  float x,y; \
-  vec2 &x##x,&x##y,&y##x,&y##y; \
-  vec3 &x##x##x,&x##x##y,&x##y##x,&x##y##y,&y##x##x,&y##x##y,&y##y##x,&y##y##y; \
-  vec4 &x##x##x##x,&x##x##x##y,&x##x##y##x,&x##x##y##y,&x##y##x##x,&x##y##x##y,&x##y##y##x,&x##y##y##y,&y##x##x##x,&y##x##x##y,&y##x##y##x,&y##x##y##y,&y##y##x##x,&y##y##x##y,&y##y##y##x,&y##y##y##y;
+#define SWIZZLE_VEC2(t0,t1,x,y) \
+  t0 x,y; \
+  t1##2 &x##x,&x##y,&y##x,&y##y; \
+  t1##3 &x##x##x,&x##x##y,&x##y##x,&x##y##y,&y##x##x,&y##x##y,&y##y##x,&y##y##y; \
+  t1##4 &x##x##x##x,&x##x##x##y,&x##x##y##x,&x##x##y##y,&x##y##x##x,&x##y##x##y,&x##y##y##x,&x##y##y##y,&y##x##x##x,&y##x##x##y,&y##x##y##x,&y##x##y##y,&y##y##x##x,&y##y##x##y,&y##y##y##x,&y##y##y##y;
 
-#define SWIZZLE_VEC3(x,y,z) \
-  float x,y,z; \
-  vec2 x##x,x##y,x##z,y##x,y##y,y##z,z##x,z##y,z##z; \
-  vec3 &x##x##x,&x##x##y,&x##x##z,&x##y##x,&x##y##y,&x##y##z,&x##z##x,&x##z##y,&x##z##z,&y##x##x,&y##x##y,&y##x##z,&y##y##x,&y##y##y,&y##y##z,&y##z##x,&y##z##y,&y##z##z,&z##x##x,&z##x##y,&z##x##z,&z##y##x,&z##y##y,&z##y##z,&z##z##x,&z##z##y,&z##z##z; \
-  vec4 &x##x##x##x,&x##x##x##y,&x##x##x##z,&x##x##y##x,&x##x##y##y,&x##x##y##z,&x##x##z##x,&x##x##z##y,&x##x##z##z,&x##y##x##x,&x##y##x##y,&x##y##x##z,&x##y##y##x,&x##y##y##y,&x##y##y##z,&x##y##z##x,&x##y##z##y,&x##y##z##z,&x##z##x##x,&x##z##x##y,&x##z##x##z,&x##z##y##x,&x##z##y##y,&x##z##y##z,&x##z##z##x,&x##z##z##y,&x##z##z##z,&y##x##x##x,&y##x##x##y,&y##x##x##z,&y##x##y##x,&y##x##y##y,&y##x##y##z,&y##x##z##x,&y##x##z##y,&y##x##z##z,&y##y##x##x,&y##y##x##y,&y##y##x##z,&y##y##y##x,&y##y##y##y,&y##y##y##z,&y##y##z##x,&y##y##z##y,&y##y##z##z,&y##z##x##x,&y##z##x##y,&y##z##x##z,&y##z##y##x,&y##z##y##y,&y##z##y##z,&y##z##z##x,&y##z##z##y,&y##z##z##z,&z##x##x##x,&z##x##x##y,&z##x##x##z,&z##x##y##x,&z##x##y##y,&z##x##y##z,&z##x##z##x,&z##x##z##y,&z##x##z##z,&z##y##x##x,&z##y##x##y,&z##y##x##z,&z##y##y##x,&z##y##y##y,&z##y##y##z,&z##y##z##x,&z##y##z##y,&z##y##z##z,&z##z##x##x,&z##z##x##y,&z##z##x##z,&z##z##y##x,&z##z##y##y,&z##z##y##z,&z##z##z##x,&z##z##z##y,&z##z##z##z;
+#define SWIZZLE_VEC3(t0,t1,x,y,z) \
+  t0 x,y,z; \
+  t1##2 x##x,x##y,x##z,y##x,y##y,y##z,z##x,z##y,z##z; \
+  t1##3 &x##x##x,&x##x##y,&x##x##z,&x##y##x,&x##y##y,&x##y##z,&x##z##x,&x##z##y,&x##z##z,&y##x##x,&y##x##y,&y##x##z,&y##y##x,&y##y##y,&y##y##z,&y##z##x,&y##z##y,&y##z##z,&z##x##x,&z##x##y,&z##x##z,&z##y##x,&z##y##y,&z##y##z,&z##z##x,&z##z##y,&z##z##z; \
+  t1##4 &x##x##x##x,&x##x##x##y,&x##x##x##z,&x##x##y##x,&x##x##y##y,&x##x##y##z,&x##x##z##x,&x##x##z##y,&x##x##z##z,&x##y##x##x,&x##y##x##y,&x##y##x##z,&x##y##y##x,&x##y##y##y,&x##y##y##z,&x##y##z##x,&x##y##z##y,&x##y##z##z,&x##z##x##x,&x##z##x##y,&x##z##x##z,&x##z##y##x,&x##z##y##y,&x##z##y##z,&x##z##z##x,&x##z##z##y,&x##z##z##z,&y##x##x##x,&y##x##x##y,&y##x##x##z,&y##x##y##x,&y##x##y##y,&y##x##y##z,&y##x##z##x,&y##x##z##y,&y##x##z##z,&y##y##x##x,&y##y##x##y,&y##y##x##z,&y##y##y##x,&y##y##y##y,&y##y##y##z,&y##y##z##x,&y##y##z##y,&y##y##z##z,&y##z##x##x,&y##z##x##y,&y##z##x##z,&y##z##y##x,&y##z##y##y,&y##z##y##z,&y##z##z##x,&y##z##z##y,&y##z##z##z,&z##x##x##x,&z##x##x##y,&z##x##x##z,&z##x##y##x,&z##x##y##y,&z##x##y##z,&z##x##z##x,&z##x##z##y,&z##x##z##z,&z##y##x##x,&z##y##x##y,&z##y##x##z,&z##y##y##x,&z##y##y##y,&z##y##y##z,&z##y##z##x,&z##y##z##y,&z##y##z##z,&z##z##x##x,&z##z##x##y,&z##z##x##z,&z##z##y##x,&z##z##y##y,&z##z##y##z,&z##z##z##x,&z##z##z##y,&z##z##z##z;
 
-#define SWIZZLE_VEC4(x,y,z,w) \
-  float x,y,z,w; \
-  vec2 x##x,x##y,x##z,x##w,y##x,y##y,y##z,y##w,z##x,z##y,z##z,z##w,w##x,w##y,w##z,w##w; \
-  vec3 x##x##x,x##x##y,x##x##z,x##x##w,x##y##x,x##y##y,x##y##z,x##y##w,x##z##x,x##z##y,x##z##z,x##z##w,x##w##x,x##w##y,x##w##z,x##w##w,y##x##x,y##x##y,y##x##z,y##x##w,y##y##x,y##y##y,y##y##z,y##y##w,y##z##x,y##z##y,y##z##z,y##z##w,y##w##x,y##w##y,y##w##z,y##w##w,z##x##x,z##x##y,z##x##z,z##x##w,z##y##x,z##y##y,z##y##z,z##y##w,z##z##x,z##z##y,z##z##z,z##z##w,z##w##x,z##w##y,z##w##z,z##w##w,w##x##x,w##x##y,w##x##z,w##x##w,w##y##x,w##y##y,w##y##z,w##y##w,w##z##x,w##z##y,w##z##z,w##z##w,w##w##x,w##w##y,w##w##z,w##w##w; \
-  vec4 &x##x##x##x,&x##x##x##y,&x##x##x##z,&x##x##x##w,&x##x##y##x,&x##x##y##y,&x##x##y##z,&x##x##y##w,&x##x##z##x,&x##x##z##y,&x##x##z##z,&x##x##z##w,&x##x##w##x,&x##x##w##y,&x##x##w##z,&x##x##w##w,&x##y##x##x,&x##y##x##y,&x##y##x##z,&x##y##x##w,&x##y##y##x,&x##y##y##y,&x##y##y##z,&x##y##y##w,&x##y##z##x,&x##y##z##y,&x##y##z##z,&x##y##z##w,&x##y##w##x,&x##y##w##y,&x##y##w##z,&x##y##w##w,&x##z##x##x,&x##z##x##y,&x##z##x##z,&x##z##x##w,&x##z##y##x,&x##z##y##y,&x##z##y##z,&x##z##y##w,&x##z##z##x,&x##z##z##y,&x##z##z##z,&x##z##z##w,&x##z##w##x,&x##z##w##y,&x##z##w##z,&x##z##w##w,&x##w##x##x,&x##w##x##y,&x##w##x##z,&x##w##x##w,&x##w##y##x,&x##w##y##y,&x##w##y##z,&x##w##y##w,&x##w##z##x,&x##w##z##y,&x##w##z##z,&x##w##z##w,&x##w##w##x,&x##w##w##y,&x##w##w##z,&x##w##w##w,&y##x##x##x,&y##x##x##y,&y##x##x##z,&y##x##x##w,&y##x##y##x,&y##x##y##y,&y##x##y##z,&y##x##y##w,&y##x##z##x,&y##x##z##y,&y##x##z##z,&y##x##z##w,&y##x##w##x,&y##x##w##y,&y##x##w##z,&y##x##w##w,&y##y##x##x,&y##y##x##y,&y##y##x##z,&y##y##x##w,&y##y##y##x,&y##y##y##y,&y##y##y##z,&y##y##y##w,&y##y##z##x,&y##y##z##y,&y##y##z##z,&y##y##z##w,&y##y##w##x,&y##y##w##y,&y##y##w##z,&y##y##w##w,&y##z##x##x,&y##z##x##y,&y##z##x##z,&y##z##x##w,&y##z##y##x,&y##z##y##y,&y##z##y##z,&y##z##y##w,&y##z##z##x,&y##z##z##y,&y##z##z##z,&y##z##z##w,&y##z##w##x,&y##z##w##y,&y##z##w##z,&y##z##w##w,&y##w##x##x,&y##w##x##y,&y##w##x##z,&y##w##x##w,&y##w##y##x,&y##w##y##y,&y##w##y##z,&y##w##y##w,&y##w##z##x,&y##w##z##y,&y##w##z##z,&y##w##z##w,&y##w##w##x,&y##w##w##y,&y##w##w##z,&y##w##w##w,&z##x##x##x,&z##x##x##y,&z##x##x##z,&z##x##x##w,&z##x##y##x,&z##x##y##y,&z##x##y##z,&z##x##y##w,&z##x##z##x,&z##x##z##y,&z##x##z##z,&z##x##z##w,&z##x##w##x,&z##x##w##y,&z##x##w##z,&z##x##w##w,&z##y##x##x,&z##y##x##y,&z##y##x##z,&z##y##x##w,&z##y##y##x,&z##y##y##y,&z##y##y##z,&z##y##y##w,&z##y##z##x,&z##y##z##y,&z##y##z##z,&z##y##z##w,&z##y##w##x,&z##y##w##y,&z##y##w##z,&z##y##w##w,&z##z##x##x,&z##z##x##y,&z##z##x##z,&z##z##x##w,&z##z##y##x,&z##z##y##y,&z##z##y##z,&z##z##y##w,&z##z##z##x,&z##z##z##y,&z##z##z##z,&z##z##z##w,&z##z##w##x,&z##z##w##y,&z##z##w##z,&z##z##w##w,&z##w##x##x,&z##w##x##y,&z##w##x##z,&z##w##x##w,&z##w##y##x,&z##w##y##y,&z##w##y##z,&z##w##y##w,&z##w##z##x,&z##w##z##y,&z##w##z##z,&z##w##z##w,&z##w##w##x,&z##w##w##y,&z##w##w##z,&z##w##w##w,&w##x##x##x,&w##x##x##y,&w##x##x##z,&w##x##x##w,&w##x##y##x,&w##x##y##y,&w##x##y##z,&w##x##y##w,&w##x##z##x,&w##x##z##y,&w##x##z##z,&w##x##z##w,&w##x##w##x,&w##x##w##y,&w##x##w##z,&w##x##w##w,&w##y##x##x,&w##y##x##y,&w##y##x##z,&w##y##x##w,&w##y##y##x,&w##y##y##y,&w##y##y##z,&w##y##y##w,&w##y##z##x,&w##y##z##y,&w##y##z##z,&w##y##z##w,&w##y##w##x,&w##y##w##y,&w##y##w##z,&w##y##w##w,&w##z##x##x,&w##z##x##y,&w##z##x##z,&w##z##x##w,&w##z##y##x,&w##z##y##y,&w##z##y##z,&w##z##y##w,&w##z##z##x,&w##z##z##y,&w##z##z##z,&w##z##z##w,&w##z##w##x,&w##z##w##y,&w##z##w##z,&w##z##w##w,&w##w##x##x,&w##w##x##y,&w##w##x##z,&w##w##x##w,&w##w##y##x,&w##w##y##y,&w##w##y##z,&w##w##y##w,&w##w##z##x,&w##w##z##y,&w##w##z##z,&w##w##z##w,&w##w##w##x,&w##w##w##y,&w##w##w##z,&w##w##w##w; \
+#define SWIZZLE_VEC4(t0,t1,x,y,z,w) \
+  t0 x,y,z,w; \
+  t1##2 x##x,x##y,x##z,x##w,y##x,y##y,y##z,y##w,z##x,z##y,z##z,z##w,w##x,w##y,w##z,w##w; \
+  t1##3 x##x##x,x##x##y,x##x##z,x##x##w,x##y##x,x##y##y,x##y##z,x##y##w,x##z##x,x##z##y,x##z##z,x##z##w,x##w##x,x##w##y,x##w##z,x##w##w,y##x##x,y##x##y,y##x##z,y##x##w,y##y##x,y##y##y,y##y##z,y##y##w,y##z##x,y##z##y,y##z##z,y##z##w,y##w##x,y##w##y,y##w##z,y##w##w,z##x##x,z##x##y,z##x##z,z##x##w,z##y##x,z##y##y,z##y##z,z##y##w,z##z##x,z##z##y,z##z##z,z##z##w,z##w##x,z##w##y,z##w##z,z##w##w,w##x##x,w##x##y,w##x##z,w##x##w,w##y##x,w##y##y,w##y##z,w##y##w,w##z##x,w##z##y,w##z##z,w##z##w,w##w##x,w##w##y,w##w##z,w##w##w; \
+  t1##4 &x##x##x##x,&x##x##x##y,&x##x##x##z,&x##x##x##w,&x##x##y##x,&x##x##y##y,&x##x##y##z,&x##x##y##w,&x##x##z##x,&x##x##z##y,&x##x##z##z,&x##x##z##w,&x##x##w##x,&x##x##w##y,&x##x##w##z,&x##x##w##w,&x##y##x##x,&x##y##x##y,&x##y##x##z,&x##y##x##w,&x##y##y##x,&x##y##y##y,&x##y##y##z,&x##y##y##w,&x##y##z##x,&x##y##z##y,&x##y##z##z,&x##y##z##w,&x##y##w##x,&x##y##w##y,&x##y##w##z,&x##y##w##w,&x##z##x##x,&x##z##x##y,&x##z##x##z,&x##z##x##w,&x##z##y##x,&x##z##y##y,&x##z##y##z,&x##z##y##w,&x##z##z##x,&x##z##z##y,&x##z##z##z,&x##z##z##w,&x##z##w##x,&x##z##w##y,&x##z##w##z,&x##z##w##w,&x##w##x##x,&x##w##x##y,&x##w##x##z,&x##w##x##w,&x##w##y##x,&x##w##y##y,&x##w##y##z,&x##w##y##w,&x##w##z##x,&x##w##z##y,&x##w##z##z,&x##w##z##w,&x##w##w##x,&x##w##w##y,&x##w##w##z,&x##w##w##w,&y##x##x##x,&y##x##x##y,&y##x##x##z,&y##x##x##w,&y##x##y##x,&y##x##y##y,&y##x##y##z,&y##x##y##w,&y##x##z##x,&y##x##z##y,&y##x##z##z,&y##x##z##w,&y##x##w##x,&y##x##w##y,&y##x##w##z,&y##x##w##w,&y##y##x##x,&y##y##x##y,&y##y##x##z,&y##y##x##w,&y##y##y##x,&y##y##y##y,&y##y##y##z,&y##y##y##w,&y##y##z##x,&y##y##z##y,&y##y##z##z,&y##y##z##w,&y##y##w##x,&y##y##w##y,&y##y##w##z,&y##y##w##w,&y##z##x##x,&y##z##x##y,&y##z##x##z,&y##z##x##w,&y##z##y##x,&y##z##y##y,&y##z##y##z,&y##z##y##w,&y##z##z##x,&y##z##z##y,&y##z##z##z,&y##z##z##w,&y##z##w##x,&y##z##w##y,&y##z##w##z,&y##z##w##w,&y##w##x##x,&y##w##x##y,&y##w##x##z,&y##w##x##w,&y##w##y##x,&y##w##y##y,&y##w##y##z,&y##w##y##w,&y##w##z##x,&y##w##z##y,&y##w##z##z,&y##w##z##w,&y##w##w##x,&y##w##w##y,&y##w##w##z,&y##w##w##w,&z##x##x##x,&z##x##x##y,&z##x##x##z,&z##x##x##w,&z##x##y##x,&z##x##y##y,&z##x##y##z,&z##x##y##w,&z##x##z##x,&z##x##z##y,&z##x##z##z,&z##x##z##w,&z##x##w##x,&z##x##w##y,&z##x##w##z,&z##x##w##w,&z##y##x##x,&z##y##x##y,&z##y##x##z,&z##y##x##w,&z##y##y##x,&z##y##y##y,&z##y##y##z,&z##y##y##w,&z##y##z##x,&z##y##z##y,&z##y##z##z,&z##y##z##w,&z##y##w##x,&z##y##w##y,&z##y##w##z,&z##y##w##w,&z##z##x##x,&z##z##x##y,&z##z##x##z,&z##z##x##w,&z##z##y##x,&z##z##y##y,&z##z##y##z,&z##z##y##w,&z##z##z##x,&z##z##z##y,&z##z##z##z,&z##z##z##w,&z##z##w##x,&z##z##w##y,&z##z##w##z,&z##z##w##w,&z##w##x##x,&z##w##x##y,&z##w##x##z,&z##w##x##w,&z##w##y##x,&z##w##y##y,&z##w##y##z,&z##w##y##w,&z##w##z##x,&z##w##z##y,&z##w##z##z,&z##w##z##w,&z##w##w##x,&z##w##w##y,&z##w##w##z,&z##w##w##w,&w##x##x##x,&w##x##x##y,&w##x##x##z,&w##x##x##w,&w##x##y##x,&w##x##y##y,&w##x##y##z,&w##x##y##w,&w##x##z##x,&w##x##z##y,&w##x##z##z,&w##x##z##w,&w##x##w##x,&w##x##w##y,&w##x##w##z,&w##x##w##w,&w##y##x##x,&w##y##x##y,&w##y##x##z,&w##y##x##w,&w##y##y##x,&w##y##y##y,&w##y##y##z,&w##y##y##w,&w##y##z##x,&w##y##z##y,&w##y##z##z,&w##y##z##w,&w##y##w##x,&w##y##w##y,&w##y##w##z,&w##y##w##w,&w##z##x##x,&w##z##x##y,&w##z##x##z,&w##z##x##w,&w##z##y##x,&w##z##y##y,&w##z##y##z,&w##z##y##w,&w##z##z##x,&w##z##z##y,&w##z##z##z,&w##z##z##w,&w##z##w##x,&w##z##w##y,&w##z##w##z,&w##z##w##w,&w##w##x##x,&w##w##x##y,&w##w##x##z,&w##w##x##w,&w##w##y##x,&w##w##y##y,&w##w##y##z,&w##w##y##w,&w##w##z##x,&w##w##z##y,&w##w##z##z,&w##w##z##w,&w##w##w##x,&w##w##w##y,&w##w##w##z,&w##w##w##w; \
 
 
 #define VEC_OPS(x) \
@@ -46,35 +46,41 @@
 struct vec2;
 struct vec3;
 struct vec4;
+struct ivec2;
+struct ivec3;
+struct ivec4;
+
 struct mat4;
 
 typedef struct vec2{
-  SWIZZLE_VEC2(x,y)
-  SWIZZLE_VEC2(u,v)
+  SWIZZLE_VEC2(float,vec,x,y)
+  SWIZZLE_VEC2(float,vec,u,v)
 
   vec2();
   vec2(float, float);
+  vec2(ivec2);
   vec2& operator = (vec2 *a);
   vec2& operator = (vec2 a);
   float operator[](unsigned int);
 } vec2;
 
 typedef struct vec3 {
-  SWIZZLE_VEC3(x,y,z)
-  SWIZZLE_VEC3(r,g,b)
+  SWIZZLE_VEC3(float,vec,x,y,z)
+  SWIZZLE_VEC3(float,vec,r,g,b)
 
   vec3();
   vec3(float, float, float);
   vec3(vec2, float);
   vec3(float, vec2);
+  vec3(ivec3);
   vec3& operator = (vec3 *a);
   vec3& operator = (vec3 a);
   float operator[](unsigned int);
 } vec3;
 
 typedef struct vec4 {
-  SWIZZLE_VEC4(x,y,z,w)
-  SWIZZLE_VEC4(r,g,b,a)
+  SWIZZLE_VEC4(float,vec,x,y,z,w)
+  SWIZZLE_VEC4(float,vec,r,g,b,a)
  
   vec4();
   vec4(float, float, float, float);
@@ -84,10 +90,55 @@ typedef struct vec4 {
   vec4(vec2, vec2);
   vec4(vec3, float);
   vec4(float, vec3);
+  vec4(ivec4);
   vec4& operator = (vec4 *a);
   vec4& operator = (vec4 a);
   float operator[](unsigned int);
 } vec4;
+
+typedef struct ivec2{
+  SWIZZLE_VEC2(int,ivec,x,y)
+  SWIZZLE_VEC2(int,ivec,u,v)
+
+  ivec2();
+  ivec2(int, int);
+  ivec2(vec2);
+  ivec2& operator = (ivec2 *a);
+  ivec2& operator = (ivec2 a);
+  int operator[](unsigned int);
+} ivec2;
+
+typedef struct ivec3 {
+  SWIZZLE_VEC3(int,ivec,x,y,z)
+  SWIZZLE_VEC3(int,ivec,r,g,b)
+
+  ivec3();
+  ivec3(int, int, int);
+  ivec3(ivec2, int);
+  ivec3(int, ivec2);
+  ivec3(vec3);
+  ivec3& operator = (ivec3 *a);
+  ivec3& operator = (ivec3 a);
+  int operator[](unsigned int);
+} ivec3;
+
+typedef struct ivec4 {
+  SWIZZLE_VEC4(int,ivec,x,y,z,w)
+  SWIZZLE_VEC4(int,ivec,r,g,b,a)
+ 
+  ivec4();
+  ivec4(int, int, int, int);
+  ivec4(ivec2, int, int);
+  ivec4(int, ivec2, int);
+  ivec4(int, int, ivec2);
+  ivec4(ivec2, ivec2);
+  ivec4(ivec3, int);
+  ivec4(int, ivec3);
+  ivec4(vec4);
+  ivec4& operator = (ivec4 *a);
+  ivec4& operator = (ivec4 a);
+  int operator[](unsigned int);
+} ivec4;
 
 typedef struct mat4 {
   vec4 operator[](unsigned int);
@@ -107,6 +158,7 @@ EMPTY_STRUCT(sampler2D)
 
 vec4 texture2D(sampler2D, vec2);
 vec4 texture2DLod(sampler2D, vec2, float);
+ivec2 textureSize(sampler2D, int);
 
 VEC_OPS(vec2)
 VEC_OPS(vec3)

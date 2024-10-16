@@ -41,7 +41,7 @@ void main() {
   diffuse.rgb *= light;
   diffuse.a *= lightingUV.y;
 
-  // diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
+  diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
 
   gl_FragColor = diffuse;
 }
