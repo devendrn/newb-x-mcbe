@@ -42,7 +42,7 @@ vec4 nlRefl(
         } 
 
         wetness *= puddles;
-        reflective = mix(reflective, wetness, rainFactor);
+        reflective = mix(reflective, wetness, env.rainFactor);
       #endif
 
       if (wPos.y < 0.0) {

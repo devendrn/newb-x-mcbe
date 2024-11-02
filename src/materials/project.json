@@ -17,11 +17,11 @@
     },
     "windows": {
       "macros": [],
-      "platforms": ["Direct3D_SM50", "Direct3D_SM65"]
+      "platforms": ["Direct3D_SM50"]
     },
     "merged": {
       "macros": [],
-      "platforms": ["ESSL_300", "Direct3D_SM65"]
+      "platforms": ["ESSL_300", "Direct3D_SM50"]
     }
   }
 }
