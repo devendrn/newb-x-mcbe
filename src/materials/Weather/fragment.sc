@@ -1,6 +1,7 @@
 $input v_color0, v_fog, v_occlusionHeight, v_occlusionUV, v_texcoord0, v_worldPos
 
 #include <bgfx_shader.sh>
+#include <newb/main.sh>
 
 uniform vec4 OcclusionHeightOffset;
 
@@ -42,6 +43,9 @@ void main() {
   diffuse.a *= lightingUV.y;
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
+  diffuse.rgb *= 4.4*diffuse.rgb;
+
+  diffuse.rgb = colorCorrection(diffuse.rgb);
 
   gl_FragColor = diffuse;
 }

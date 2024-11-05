@@ -36,7 +36,7 @@ vec3 colorCorrection(vec3 col) {
   #endif
 
   #ifdef NL_TINT
-    col *= NL_TINT;
+    col *= mix(NL_TINT_LOW, NL_TINT_HIGH, col);
   #endif
 
   return col;
@@ -45,7 +45,7 @@ vec3 colorCorrection(vec3 col) {
 // inv used in fogcolor for nether
 vec3 colorCorrectionInv(vec3 col) {
   #ifdef NL_TINT
-    col /= NL_TINT;
+    col /= mix(NL_TINT_LOW, NL_TINT_HIGH, col); // not accurate inverse
   #endif
 
   #ifdef NL_SATURATION
