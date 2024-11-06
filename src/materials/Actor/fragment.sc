@@ -73,9 +73,10 @@ void main() {
 
   // soft edge highlight
   vec2 len = min(abs(v_edgemap.xy),abs(v_edgemap.zw));
-  float ambient = max(len.x,len.y);
-  ambient = min(ambient*ambient,1.0);
-  albedo.rgb *= 0.65 + ambient*0.41;
+  len *= len;
+  len *= len;
+  float ambient = len.x + len.y*(1.0-len.x);
+  albedo.rgb *= NL_ACTOR_BRIGHTNESS + ambient*NL_ACTOR_EDGE_HIGHLIGHT;
 
   albedo.rgb = mix(albedo.rgb, v_fog.rgb, v_fog.a);
 
