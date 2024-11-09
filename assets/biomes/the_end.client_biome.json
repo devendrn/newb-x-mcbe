@@ -1,0 +1,13 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:client_biome": {
+    "description": {
+      "identifier": "the_end"
+    },
+    "components": {
+      "minecraft:fog_appearance": {
+        "fog_identifier": "newb:fog_the_end"
+      }
+    }
+  }
+}
