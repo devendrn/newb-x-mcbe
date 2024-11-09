@@ -115,7 +115,7 @@ void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, 
   #endif
 }
 
-vec3 nlActorLighting(nl_environment env, vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonEdgeCol, float t) {
+vec3 nlEntityLighting(nl_environment env, vec3 pos, vec4 normal, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonEdgeCol, float t) {
   float intensity;
   #ifdef FANCY
     vec3 N = normalize(mul(world, normal)).xyz;
@@ -148,6 +148,19 @@ vec3 nlActorLighting(nl_environment env, vec3 pos, vec4 normal, mat4 world, vec4
   }
 
   return light;
+}
+
+float nlEntityEdgeHighlight(vec4 edgemap) {
+  vec2 len = min(abs(edgemap.xy),abs(edgemap.zw));
+  len *= len;
+  len *= len;
+  float ambient = len.x + len.y*(1.0-len.x);
+  return NL_ENTITY_BRIGHTNESS + ambient*NL_ENTITY_EDGE_HIGHLIGHT;
+}
+
+vec4 nlEntityEdgeHighlightPreprocess(vec2 texcoord) {
+  vec4 edgeMap = fract(vec4(texcoord*128.0, texcoord*256.0));
+  return 2.0*step(edgeMap, vec4_splat(0.5)) - 1.0;
 }
 
 #endif

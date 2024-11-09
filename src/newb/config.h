@@ -167,9 +167,9 @@
 #define NL_GROUND_RAIN_PUDDLES 0.7 // 0.0 no puddles ~ 1.0 puddles
 //#define NL_GROUND_AURORA_REFL    // [toggle] aurora reflection on ground
 
-/* Actor */
-#define NL_ACTOR_BRIGHTNESS     0.65 // 0.1 dark ~ 1.6 bright
-#define NL_ACTOR_EDGE_HIGHLIGHT 0.41 // 0.0 no highlight ~ 1.6 bright highlight
+/* Entity (Actor, ItemInHand) */
+#define NL_ENTITY_BRIGHTNESS     0.65 // 0.1 dark ~ 1.6 bright
+#define NL_ENTITY_EDGE_HIGHLIGHT 0.41 // 0.0 no highlight ~ 1.6 bright highlight
 
 /*
   NEWB SHADER SUBPACK CONFIG

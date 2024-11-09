@@ -2,7 +2,6 @@ $input v_color0, v_fog, v_light, v_texcoord0, v_edgemap
 
 #include <bgfx_shader.sh>
 #include <MinecraftRenderer.Materials/ActorUtil.dragonh>
-#include <MinecraftRenderer.Materials/FogUtil.dragonh>
 #include <newb/main.sh>
 
 uniform vec4 ColorBased;
@@ -30,7 +29,7 @@ void main() {
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     return;
   #elif DEPTH_ONLY_OPAQUE
-    gl_FragColor = vec4(applyFog(vec3(1.0, 1.0, 1.0), v_fog.rgb, v_fog.a), 1.0);
+    gl_FragColor = vec4(mix(vec3_splat(1.0), v_fog.rgb, v_fog.a), 1.0);
     return;
   #endif
 
@@ -71,12 +70,7 @@ void main() {
     albedo = applyHudOpacity(albedo, HudOpacity.x);
   #endif
 
-  // soft edge highlight
-  vec2 len = min(abs(v_edgemap.xy),abs(v_edgemap.zw));
-  len *= len;
-  len *= len;
-  float ambient = len.x + len.y*(1.0-len.x);
-  albedo.rgb *= NL_ACTOR_BRIGHTNESS + ambient*NL_ACTOR_EDGE_HIGHLIGHT;
+  albedo.rgb *= nlEntityEdgeHighlight(v_edgemap);
 
   albedo.rgb = mix(albedo.rgb, v_fog.rgb, v_fog.a);
 
