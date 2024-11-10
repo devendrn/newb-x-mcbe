@@ -106,7 +106,7 @@ def run(args):
         if not os.path.exists(test_mat):
             progress.console.print("Downloading source materials")
             mat_filename = os.path.join(data_path, 'materials.zip')
-            _download_file(NS_DEV_RELEASE + "src-materials-1.21.23.zip", mat_filename)
+            _download_file(NS_DEV_RELEASE + "src-materials-1.21.30.zip", mat_filename)
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
             os.remove(mat_filename)

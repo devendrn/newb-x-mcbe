@@ -1,0 +1,42 @@
+{
+  "macro_overwrite": {
+    "flags": {
+      "Change_Color": {
+        "On": "CHANGE_COLOR",
+        "Multi": "CHANGE_COLOR_MULTI",
+        "Off": []
+      },
+      "Emissive": {
+        "Emissive": "EMISSIVE",
+        "EmissiveOnly": "EMISSIVE_ONLY",
+        "Off": []
+      },
+      "Fancy": {
+        "On": "FANCY",
+        "Off": []
+      },
+      "Instancing": {
+        "On": "INSTANCING",
+        "Off": []
+      },
+      "MaskedMultitexture": {
+        "On": "MASKED_MULTITEXTURE",
+        "Off": []
+      }
+    },
+    "passes": {
+      "AlphaTest": "ALPHA_TEST",
+      "DepthOnly": "DEPTH_ONLY",
+      "DepthOnlyOpaque": "DEPTH_ONLY_OPAQUE",
+      "Opaque": "OPAQUE",
+      "Transparent": "TRANSPARENT"
+    }
+  },
+  "file_overwrite": {
+    "default": {
+      "fragment": "fragment.sc",
+      "vertex": "vertex.sc",
+      "varying": "varying.def.sc"
+    }
+  }
+}
