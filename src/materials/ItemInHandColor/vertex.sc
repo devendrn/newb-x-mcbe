@@ -3,7 +3,7 @@ $input a_position, a_color0, a_texcoord0, a_indices, a_normal
   $input i_data0, i_data1, i_data2
 #endif
 
-$output v_color0, v_fog, v_light, v_texcoord0, v_edgemap
+$output v_color0, v_fog, v_light
 
 #include <bgfx_shader.sh>
 #include <MinecraftRenderer.Materials/TAAUtil.dragonh>
@@ -50,10 +50,8 @@ void main() {
 
     vec3 light = nlEntityLighting(env, a_position, a_normal, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w);
 
-    v_texcoord0 = texcoord0;
     v_color0 = a_color0;
     v_fog = fogColor;
-    v_edgemap = nlEntityEdgeHighlightPreprocess(texcoord0);
     v_light = vec4(light, 1.0);
   #endif
 

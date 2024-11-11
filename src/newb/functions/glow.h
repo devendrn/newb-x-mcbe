@@ -1,6 +1,8 @@
 #ifndef GLOW_H
 #define GLOW_H
 
+#include "sky.h"
+
 vec3 glowDetect(vec4 diffuse) {
   // Texture alpha: diffuse.a
   // 252/255 = max glow
@@ -71,6 +73,20 @@ float nlGlowShimmer(vec3 cPos, float t) {
   float d = dot(cPos, vec3(1.0,1.0,1.0));
   float shimmer = sin(1.57*d + 0.7854*sin(d + 0.1*t) + 0.8*t);
   return shimmer * shimmer;
+}
+
+vec4 nlGlint(vec4 light, vec4 layerUV, sampler2D glintTexture, vec4 glintColor, vec4 tileLightColor, vec4 albedo) {
+  float d = fract(dot(albedo.rgb, vec3_splat(4.0)));
+
+  vec4 tex1 = texture2D(glintTexture, fract(layerUV.xy+0.1*d)).rgbr;
+  vec4 tex2 = texture2D(glintTexture, fract(layerUV.zw+0.1*d)).rgbr;
+
+  vec4 glint = (tex1*tex1 + tex2*tex2) * tileLightColor * glintColor;
+
+  light.rgb = light.rgb*(1.0-0.4*glint.a) + 80.0*glint.rgb;
+  light.rgb += vec3(0.1,0.0,0.1) + 0.2*spectrum(sin(layerUV.x*9.42477 + 2.0*glint.a + d));
+
+  return light;
 }
 
 #endif

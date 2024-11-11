@@ -10,20 +10,10 @@ $output v_color0, v_fog, v_light, v_texcoord0, v_edgemap
 #include <MinecraftRenderer.Materials/TAAUtil.dragonh>
 #include <newb/main.sh>
 
-uniform vec4 ColorBased;
-uniform vec4 ChangeColor;
-uniform vec4 UseAlphaRewrite;
-uniform vec4 TintedAlphaTestEnabled;
-uniform vec4 MatColor;
 uniform vec4 OverlayColor;
 uniform vec4 TileLightColor;
-uniform vec4 MultiplicativeTintColor;
 uniform vec4 FogColor;
 uniform vec4 FogControl;
-uniform vec4 ActorFPEpsilon;
-uniform vec4 LightDiffuseColorAndIntensity;
-uniform vec4 LightWorldSpaceDirection;
-uniform vec4 HudOpacity;
 uniform vec4 UVAnimation;
 uniform mat4 Bones[8];
 uniform vec4 ViewPositionAndTime;
@@ -31,13 +21,11 @@ uniform vec4 ViewPositionAndTime;
 void main() {
   mat4 World = u_model[0];
 
-  //StandardTemplate_InvokeVertexPreprocessFunction
   World = mul(World, Bones[int(a_indices)]);
 
   vec2 texcoord0 = a_texcoord0;
   texcoord0 = applyUvAnimation(texcoord0, UVAnimation);
 
-  //StandardTemplate_VertSharedTransform
   vec3 worldPosition;
   #ifdef INSTANCING
     mat4 model = mtxFromCols(i_data0, i_data1, i_data2, vec4(0.0, 0.0, 0.0, 1.0));

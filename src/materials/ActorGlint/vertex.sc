@@ -3,7 +3,7 @@ $input a_position, a_color0, a_texcoord0, a_indices, a_normal
   $input i_data0, i_data1, i_data2
 #endif
 
-$output v_color0, v_fog, v_light, v_texcoord0, v_edgemap, v_layeruv
+$output v_color0, v_fog, v_light, v_texcoord0, v_edgemap, v_glintuv
 
 #include <bgfx_shader.sh>
 #include <MinecraftRenderer.Materials/DynamicUtil.dragonh>
@@ -11,20 +11,10 @@ $output v_color0, v_fog, v_light, v_texcoord0, v_edgemap, v_layeruv
 #include <MinecraftRenderer.Materials/GlintUtil.dragonh>
 #include <newb/main.sh>
 
-uniform vec4 ColorBased;
-uniform vec4 ChangeColor;
-uniform vec4 UseAlphaRewrite;
-uniform vec4 TintedAlphaTestEnabled;
-uniform vec4 MatColor;
 uniform vec4 OverlayColor;
 uniform vec4 TileLightColor;
-uniform vec4 MultiplicativeTintColor;
 uniform vec4 FogColor;
 uniform vec4 FogControl;
-uniform vec4 ActorFPEpsilon;
-uniform vec4 LightDiffuseColorAndIntensity;
-uniform vec4 LightWorldSpaceDirection;
-uniform vec4 HudOpacity;
 uniform vec4 UVAnimation;
 uniform vec4 UVScale;
 uniform mat4 Bones[8];
@@ -67,12 +57,12 @@ void main() {
 
     vec3 light = nlEntityLighting(env, a_position, a_normal, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w);
 
-    vec4 layeruv;
-    layeruv.xy = calculateLayerUV(texcoord0, UVAnimation.x, UVAnimation.z, UVScale.xy);
-    layeruv.zw = calculateLayerUV(texcoord0, UVAnimation.y, UVAnimation.w, UVScale.xy);
+    vec4 glintuv;
+    glintuv.xy = calculateLayerUV(texcoord0, UVAnimation.x, UVAnimation.z, UVScale.xy);
+    glintuv.zw = calculateLayerUV(texcoord0, UVAnimation.y, UVAnimation.w, UVScale.xy);
 
     v_texcoord0 = texcoord0;
-    v_layeruv = layeruv;
+    v_glintuv = glintuv;
     v_color0 = a_color0;
     v_fog = fogColor;
     v_edgemap = nlEntityEdgeHighlightPreprocess(texcoord0);
