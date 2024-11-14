@@ -22,7 +22,7 @@
 
   TYPES
   - Should be integer. options to choose will be mentioned there
-  - eg: #define NL_FOG_TYPE 2
+  - eg: #define NL_CLOUD_TYPE 2
 
   Remember to rebuild the shader after making changes.
 */
@@ -189,8 +189,7 @@
 #endif
 
 #ifdef NO_FOG
-  #undef NL_FOG_TYPE
-  #define NL_FOG_TYPE 0
+  #undef NL_FOG
 #endif
 
 #ifdef NO_WAVE
