@@ -8,7 +8,7 @@ uniform vec4 StarsColor;
 void main() {
 #ifndef INSTANCING
   vec3 pos = a_position;
-  vec3 worldPos = mul(u_model[0] * vec4(pos, 1.0)).xyz;
+  vec3 worldPos = mul(u_model[0], vec4(pos, 1.0)).xyz;
 
   vec4 color = a_color0;
   color.rgb *= 0.6 + 0.4*sin(2.0*pos);
