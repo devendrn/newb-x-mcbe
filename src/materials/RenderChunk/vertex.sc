@@ -36,7 +36,7 @@ void main() {
                  (boardPlane * (a_color0.x - 0.5));
     vec4 color = vec4(1.0,1.0,1.0,1.0);
   #else
-    vec3 modelCamPos = (ViewPositionAndTime.xyz - worldPos);
+    vec3 modelCamPos = ViewPositionAndTime.xyz - worldPos;
     float camDis = length(modelCamPos);
     vec3 viewDir = modelCamPos / camDis;
 
@@ -130,7 +130,6 @@ void main() {
   #endif
 
   vec4 pos = mul(u_viewProj, vec4(worldPos, 1.0));
-
   #ifdef NL_RAIN_MIST_OPACITY
     if (env.rainFactor > 0.0) {
       float humidAir = env.rainFactor*lit.y*lit.y*nlWindblow(pos.xyz, t);

@@ -90,7 +90,7 @@ vec3 renderOverworldSky(nl_skycolor skycol, vec3 viewDir) {
 
 // sunrise/sunset bloom
 vec3 getSunBloom(float viewDirX, vec3 horizonEdgeCol, vec3 FOG_COLOR) {
-  float factor = FOG_COLOR.r/length(FOG_COLOR);
+  float factor = FOG_COLOR.r/(0.01 + length(FOG_COLOR));
   factor *= factor;
   factor *= factor;
 
