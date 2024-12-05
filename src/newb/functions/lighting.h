@@ -5,6 +5,7 @@
 #include "sky.h"
 #include "constants.h"
 #include "noise.h"
+#include "clouds.h"
 
 // sunlight tinting
 vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {
@@ -78,7 +79,7 @@ vec3 nlLighting(
 
     // shadow cast by simple cloud
     #ifdef NL_CLOUD_SHADOW
-      shadow *= 1.0 - cloudNoise2D(wPos.xz*NL_CLOUD1_SCALE, t, env.rainFactor);
+      shadow *= smoothstep(0.6, 0.1, cloudNoise2D(2.0*wPos.xz*NL_CLOUD1_SCALE, t, env.rainFactor));
     #endif
 
     // direct light from top

@@ -4,17 +4,12 @@
 #include "constants.h"
 
 // hash function for noise (for highp only)
-highp float rand(highp vec2 n) {
+float rand(highp vec2 n) {
   return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
-// rand with transition
-float randt(vec2 n, vec2 t) {
-  return smoothstep(t.x, t.y, rand(n));
-}
-
 // 1D noise - used in plants,lantern wave
-highp float noise1D(highp float x) {
+float noise1D(highp float x) {
   float x0 = floor(x);
   float t0 = x-x0;
   t0 *= t0*(3.0-2.0*t0);
