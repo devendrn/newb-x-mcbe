@@ -46,17 +46,14 @@ vec4 nlRefl(
       #endif
 
       if (wPos.y < 0.0) {
-        wetRefl.rgb = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t, -wPos.y);
+        wetRefl.rgb = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t);
         wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
 
         #if defined(NL_GROUND_AURORA_REFL) && defined(NL_AURORA) && defined (NL_GROUND_REFL)
-          vec2 parallax = viewDir.xz/viewDir.y;
-          vec2 projectedPos = wPos.xz - parallax*100.0;
-          float fade = clamp(2.0 - 0.004*length(projectedPos), 0.0, 1.0);
-          //projectedPos += fade*parallax;
-
-          vec4 aurora = renderAurora(projectedPos.xyy, t, env.rainFactor, skycol.horizonEdge);
-          wetRefl.rgb += 2.0*aurora.rgb*aurora.a*fade;
+          vec2 cloudPos = -(120.0-wPos.y)*viewDir.xz/viewDir.y;
+          float fade = clamp(2.0 - 0.005*length(cloudPos), 0.0, 1.0);
+          vec4 aurora = renderAurora(cloudPos.xyy, t, env.rainFactor, skycol.horizonEdge);
+          wetRefl.rgb += aurora.rgb*aurora.a*fade;
         #endif
 
         // torch light

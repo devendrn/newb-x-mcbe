@@ -263,7 +263,7 @@ F_TF_TF(distance)
 F_TF_TF(dot)
 TF_TF(normalize)
 TF_TF_TF_TF(faceforward)
-TF_TF(reflect)
+TF_TF_TF(reflect)
 
 vec3 cross(vec3, vec3);
 

@@ -19,85 +19,67 @@ vec4 nlWater(
   float fractCposY, vec3 FOG_COLOR, vec2 lit, highp float t, float camDist, vec3 torchColor
 ) {
 
-  float cosR;
-  float bump = NL_WATER_BUMP;
-  vec3 waterRefl;
-
-  if (fractCposY > 0.0) { // reflection for top plane
-    // bump map
-    bump *= disp(tiledCpos, t) + 0.12*sin(t*2.0 + dot(cPos, vec3_splat(NL_CONST_PI_HALF)));
-
-    // calculate cosine of incidence angle and apply water bump
-    cosR = abs(viewDir.y);
-    cosR = mix(cosR, 1.0-cosR*cosR, bump);
-    viewDir.y = cosR;
-
-    // sky reflection
-    waterRefl = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t, -wPos.y);
-
-    // cloud and aurora reflection
-    #if defined(NL_WATER_CLOUD_REFLECTION)
-      if (wPos.y < 0.0) {
-        vec2 parallax = viewDir.xz/viewDir.y;
-        vec2 projectedPos = wPos.xz - parallax*100.0*(1.0-bump);
-        float fade = clamp(2.0 - 0.004*length(projectedPos), 0.0, 1.0);
-        //projectedPos += fade*parallax;
-
-        #ifdef NL_AURORA
-          vec4 aurora = renderAurora(projectedPos.xyy, t, env.rainFactor, FOG_COLOR);
-          waterRefl += 2.0*aurora.rgb*aurora.a*fade;
-        #endif
-
-        #if NL_CLOUD_TYPE == 1
-          vec4 clouds = renderCloudsSimple(skycol, projectedPos.xyy, t, env.rainFactor);
-          waterRefl = mix(waterRefl, 1.5*clouds.rgb, clouds.a*fade);
-        #endif
-      }
-    #endif
-
-    // torch light reflection
-    waterRefl += torchColor*NL_TORCH_INTENSITY*(lit.x*lit.x + lit.x)*bump*10.0;
-
-    #ifdef NL_WATER_REFL_MASK
-    float mask = 0.15+0.08*sin(viewDir.x*12.0 + 31.4*bump);
-    waterRefl *= 0.3+0.7*smoothstep(mask,0.2+mask,viewDir.y);
-    #endif
-
-    if (fractCposY>0.8 || fractCposY<0.9) { // flat plane
-      waterRefl *= 1.0 - clamp(wPos.y, 0.0, 0.66);
+  vec2 bump = vec2(disp(tiledCpos, t, NL_WATER_WAVE_SPEED), disp(tiledCpos, t+1.8, NL_WATER_WAVE_SPEED)) - 0.5;
+  vec3 nrm;
+  if (fractCposY > 0.0) { // top plane
+    nrm.xz = bump*NL_WATER_BUMP;
+    nrm.y = -1.0;
+    /*if (fractCposY>0.8 || fractCposY<0.9) { // flat plane
     } else { // slanted plane and highly slanted plane
-      waterRefl *= 0.1*sin(t*2.0+cPos.y*12.566) + (fractCposY > 0.9 ? 0.2 : 0.4);
-    }
+    }*/
   } else { // reflection for side plane
-    bump *= 0.5 + 0.5*sin(1.5*t + dot(cPos, vec3_splat(NL_CONST_PI_HALF)));
-
-    cosR = max(sqrt(dot(viewDir.xz, viewDir.xz)), step(wPos.y, 0.5));
-    cosR += (1.0-cosR*cosR)*bump;
-
-    waterRefl = skycol.zenith;
+    bump *= 0.5 + 0.5*sin(3.0*t*NL_WATER_WAVE_SPEED + cPos.y*NL_CONST_PI_HALF);
+    nrm.xz = normalize(viewDir.xz) + bump.y*(1.0-viewDir.xz*viewDir.xz)*NL_WATER_BUMP;
+    nrm.y = bump.x*NL_WATER_BUMP;
   }
+  nrm = normalize(nrm);
+
+  float cosR = dot(nrm, viewDir);
+  viewDir = viewDir - 2.0*cosR*nrm ; // reflect(viewDir, nrm)
+
+  vec3 waterRefl = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t);
+
+  #if defined(NL_WATER_CLOUD_REFLECTION)
+    if (viewDir.y < 0.0) {
+      vec2 cloudPos = (120.0-wPos.y)*viewDir.xz/viewDir.y;
+      float fade = clamp(2.0 - 0.005*length(cloudPos), 0.0, 1.0);
+
+      #ifdef NL_AURORA
+        vec4 aurora = renderAurora(cloudPos.xyy, t, env.rainFactor, FOG_COLOR);
+        waterRefl += aurora.rgb*aurora.a*fade;
+      #endif
+
+      #if NL_CLOUD_TYPE == 1
+        vec4 clouds = renderCloudsSimple(skycol, cloudPos.xyy, t, env.rainFactor);
+        waterRefl = mix(waterRefl, clouds.rgb, clouds.a*fade);
+      #endif
+    }
+  #endif
+
+  // torch light reflection
+  float tc = 0.5+0.5*sin(16.0*viewDir.x)*sin(16.0*viewDir.z);
+  waterRefl += torchColor*NL_TORCH_INTENSITY*lit.x*tc*tc;
 
   // mask sky reflection under shade
   if (!env.end) {
     waterRefl *= 0.05 + lit.y*1.14;
   }
 
-  float fresnel = calculateFresnel(cosR, 0.03);
+  #ifdef NL_WATER_REFL_MASK
+    float mask = 0.05+0.05*sin(viewDir.x*12.0)*sin(viewDir.z*6.0);
+    waterRefl *= smoothstep(mask-0.2,mask+0.13,viewDir.y*viewDir.y);
+  #endif
+
+  cosR = abs(cosR);
+  float fresnel = calculateFresnel(cosR, 0.07);
   float opacity = 1.0-cosR;
 
   color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.8*fresnel);
-
-  #ifdef NL_WATER_FOG_FADE
-    color.a *= NL_WATER_TRANSPARENCY;
-  #else
-    color.a = COLOR.a*NL_WATER_TRANSPARENCY;
-  #endif
-
-  color.a += (1.0-color.a)*opacity*opacity;
+  color.a = mix(COLOR.a*NL_WATER_TRANSPARENCY, 1.0, opacity*opacity);
 
   #ifdef NL_WATER_WAVE
-    if(camDist < 14.0) {
-      wPos.y -= bump;
+    if (camDist < 14.0) {
+      wPos.y -= 0.5*(bump.x+0.5)*NL_WATER_BUMP;
     }
   #endif
 

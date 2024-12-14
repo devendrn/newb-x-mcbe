@@ -161,15 +161,16 @@ vec3 nlRenderSky(nl_skycolor skycol, nl_environment env, vec3 viewDir, vec3 FOG_
 }
 
 // sky reflection on plane
-vec3 getSkyRefl(nl_skycolor skycol, nl_environment env, vec3 viewDir, vec3 FOG_COLOR, float t, float h) {
-  viewDir.y = -viewDir.y;
+vec3 getSkyRefl(nl_skycolor skycol, nl_environment env, vec3 viewDir, vec3 FOG_COLOR, float t) {
   vec3 refl = nlRenderSky(skycol, env, viewDir, FOG_COLOR, t);
 
   if (!(env.underwater || env.nether)) {
     float specular = smoothstep(0.7, 0.0, abs(viewDir.z));
-    specular *= 2.0*max(FOG_COLOR.r-FOG_COLOR.b, 0.0);
     specular *= specular*viewDir.x;
-    refl += skycol.horizonEdge * specular * specular;
+    specular *= specular;
+    specular += specular*specular*specular*specular;
+    specular *= max(FOG_COLOR.r-FOG_COLOR.b, 0.0);
+    refl += 5.0 * skycol.horizonEdge * specular * specular;
   }
 
   return refl;
