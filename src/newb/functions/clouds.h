@@ -38,10 +38,10 @@ vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain)
 // rounded clouds
 
 // rounded clouds 3D density map
-float cloudDf(vec3 pos, float rain, float boxiness) {
+float cloudDf(vec3 pos, float rain, vec2 boxiness) {
   boxiness *= 0.999;
   vec2 p0 = floor(pos.xz);
-  vec2 u = max((pos.xz-p0-boxiness)/(1.0-boxiness), 0.0);
+  vec2 u = max((pos.xz-p0-boxiness.x)/(1.0-boxiness.x), 0.0);
   u *= u*(3.0 - 2.0*u);
 
   vec4 r = vec4(rand(p0), rand(p0+vec2(1.0,0.0)), rand(p0+vec2(1.0,1.0)), rand(p0+vec2(0.0,1.0)));
@@ -50,7 +50,7 @@ float cloudDf(vec3 pos, float rain, float boxiness) {
   float n = mix(mix(r.x,r.y,u.x), mix(r.w,r.z,u.x), u.y);
 
   // round y
-  n *= 1.0 - 1.9*smoothstep(boxiness, 2.0 - boxiness, 2.0*abs(pos.y-0.5));
+  n *= 1.0 - 1.5*smoothstep(boxiness.y, 2.0 - boxiness.y, 2.0*abs(pos.y-0.5));
 
   n = max(1.25*(n-0.2), 0.0); // smoothstep(0.2, 1.0, n)
   n *= n*(3.0 - 2.0*n);
@@ -60,7 +60,7 @@ float cloudDf(vec3 pos, float rain, float boxiness) {
 vec4 renderClouds(
     vec3 vDir, vec3 vPos, float rain, float time, vec3 horizonCol, vec3 zenithCol,
     const int steps, const float thickness, const float thickness_rain, const float speed,
-    const vec2 scale, const float density, const float boxiness
+    const vec2 scale, const float density, const vec2 boxiness
 ) {
   float height = 7.0*mix(thickness, thickness_rain, rain);
   float stepsf = float(steps);
@@ -94,7 +94,7 @@ vec4 renderClouds(
   }
 
   vec4 col = vec4(zenithCol + horizonCol, d.x);
-  col.rgb += dot(col.rgb,vec3(0.3,0.4,0.3))*d.y*d.y;
+  col.rgb += dot(col.rgb, vec3(0.3,0.4,0.3))*d.y*d.y;
   col.rgb *= 1.0 - 0.8*rain;
   return col;
 }
