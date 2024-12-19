@@ -159,6 +159,12 @@
 #define NL_SHOOTING_STAR_PERIOD 6.0 // 0.4 fast ~ 12.0 slow (12 secs)
 #define NL_SHOOTING_STAR_DELAY 64.0 // 0.0 no delay ~ 100.0 long time (100 secs)
 
+/* Galaxy */
+//#define NL_GALAXY_STARS 2.0           // [toggle] 0.1 dim - 4.0 bright
+#define NL_GALAXY_VIBRANCE 0.7          // 0.0 white - 1.0 colorful
+#define NL_GALAXY_SPEED 0.03            // 0.01 slow motion - 0.2 fast motion
+#define NL_GALAXY_DAY_VISIBILITY 0.0    // 0.0 invisible - 1.0 visible
+
 /* Chunk loading slide in animation */
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
 

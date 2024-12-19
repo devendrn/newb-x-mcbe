@@ -51,6 +51,8 @@ struct ivec3;
 struct ivec4;
 
 struct mat4;
+struct mat3;
+struct mat2;
 
 typedef struct vec2{
   SWIZZLE_VEC2(float,vec,x,y)
@@ -166,7 +168,7 @@ VEC_OPS(vec4)
 
 inline vec4 operator*(mat4, vec4);
 inline vec3 operator*(mat3, vec3);
-inline vec3 operator*(mat2, vec2);
+inline vec2 operator*(mat2, vec2);
 
 #define TF_TF(x) \
   float x(float); \
@@ -271,6 +273,8 @@ TF_TF(dFdy)
 TF_TF(dFdx)
 
 vec4 mul(mat4, vec4);
+vec3 mul(mat3, vec3);
+vec2 mul(mat2, vec2);
 
 vec2 vec2_splat(float);
 vec3 vec3_splat(float);
