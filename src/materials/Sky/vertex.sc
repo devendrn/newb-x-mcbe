@@ -16,18 +16,18 @@
 
 void main() {
   #ifndef INSTANCING
-    vec3 pos = a_position;
-
-    // make sky curved
-    pos.y -= 0.5*a_color0.r*a_color0.r;
-
     v_underwaterRainTime.x = float(detectUnderwater(FogColor.rgb, FogAndDistanceControl.xy));
     v_underwaterRainTime.y = detectRain(FogAndDistanceControl.xyz);
     v_underwaterRainTime.z = ViewPositionAndTime.w;
 
+    // background quad
+    vec4 pos = vec4(a_position.xzy, 1.0);
+    pos.xy = 2.0*clamp(pos.xy, -0.5, 0.5);
+
     v_fogColor = FogColor.rgb;
-    v_worldPos = mul(u_model[0], vec4(pos, 1.0)).xyz;
-    gl_Position = mul(u_modelViewProj, vec4(pos, 1.0));
+    v_worldPos = mul(u_invViewProj, pos).xyz;
+
+    gl_Position = pos;
   #else
     gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
   #endif
