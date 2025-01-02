@@ -2,10 +2,11 @@ $input a_color0, a_position, a_texcoord0
 #ifdef INSTANCING
   $input i_data1, i_data2, i_data3
 #endif
-$output v_color0, v_fog, v_occlusionHeight, v_occlusionUV, v_texcoord0, v_worldPos
+$output v_fog, v_occlusionUVHeight, v_texcoord0, v_texcoord1
 
 #include <bgfx_shader.sh>
 #include <MinecraftRenderer.Materials/FogUtil.dragonh>
+#include <newb/config.h>
 
 uniform vec4 Dimensions;
 uniform vec4 ViewPosition;
@@ -34,21 +35,21 @@ void main() {
     texcoord.x += spriteSelector * UVOffsetAndScale.z;
   #endif
 
-  bool isRain = UVOffsetAndScale.x < 0.0001;
-  vec3 velocity = Velocity.xyz;
-  if (isRain) {
-    velocity.x *= 4.0;
-  }
-
   const vec3 PARTICLE_BOX = vec3(30.0, 30.0, 30.0);
   vec3 worldSpacePos = mod(a_position + PositionBaseOffset.xyz, PARTICLE_BOX); // should this be fmod?
   worldSpacePos += PositionForwardOffset.xyz - 0.5*PARTICLE_BOX;
+
+  bool isRain = (UVOffsetAndScale.w > 3.8*UVOffsetAndScale.z) && Dimensions.x < 0.1;
+  vec3 velocity = Velocity.xyz;
+  vec2 dimensions = NL_WEATHER_PARTICLE_SIZE*Dimensions.xy;
+
   if (isRain) {
-    worldSpacePos.xz -= worldSpacePos.y*velocity.xz;
+    velocity.x *= NL_WEATHER_RAIN_SLANT;
+    worldSpacePos.x -= worldSpacePos.y*velocity.x;
   }
 
   vec3 worldSpacePosBottom = worldSpacePos;
-  vec3 worldSpacePosTop = worldSpacePosBottom + velocity*Dimensions.y;
+  vec3 worldSpacePosTop = worldSpacePosBottom + velocity*dimensions.y;
 
   vec4 screenSpacePosBottom = mul(u_modelViewProj, vec4(worldSpacePosBottom, 1.0));
   vec4 screenSpacePosTop = mul(u_modelViewProj, vec4(worldSpacePosTop, 1.0));
@@ -57,7 +58,7 @@ void main() {
   vec2 screenSpaceRightDirection = normalize(vec2(-screenSpaceUpDirection.y, screenSpaceUpDirection.x));
 
   vec4 pos = mix(screenSpacePosTop, screenSpacePosBottom, a_texcoord0.y);
-  pos.xy += (0.5 - a_texcoord0.x) * screenSpaceRightDirection * Dimensions.x;
+  pos.xy += (0.5 - a_texcoord0.x) * screenSpaceRightDirection * dimensions.x;
 
   vec2 occlusionUV = 0.5 + (worldSpacePos.xz + ViewPosition.xz) / 64.0;
   float occlusionHeight = (worldSpacePos.y + ViewPosition.y - 0.5) / 255.0;
@@ -65,11 +66,9 @@ void main() {
   float fogIntensity = calculateFogIntensity(pos.z, FogAndDistanceControl.z, FogAndDistanceControl.x, FogAndDistanceControl.y);
 
   v_fog = vec4(FogColor.rgb, fogIntensity);
-  v_color0 = a_color0;
-  v_occlusionHeight = occlusionHeight;
-  v_occlusionUV = occlusionUV;
+  v_occlusionUVHeight = vec3(occlusionUV, occlusionHeight);
   v_texcoord0 = texcoord;
-  v_worldPos = worldPos;
+  v_texcoord1 = a_texcoord0;
 
   gl_Position = pos;
 }

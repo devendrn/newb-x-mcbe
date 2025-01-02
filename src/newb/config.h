@@ -185,6 +185,12 @@
 #define NL_ENTITY_BRIGHTNESS     0.65 // 0.1 dark ~ 1.6 bright
 #define NL_ENTITY_EDGE_HIGHLIGHT 0.41 // 0.0 no highlight ~ 1.6 bright highlight
 
+/* Weather particles */
+#define NL_WEATHER_SPECK 0.6         // [toggle] 0.0 vanilla texture ~ 1.0 soft speck
+#define NL_WEATHER_RAIN_SLANT 4.0    // 1.0 minimal ~ 8.0 violent
+#define NL_WEATHER_PARTICLE_SIZE 1.0 // 0.5 tiny ~ 4.0 large
+
+
 /*
   NEWB SHADER SUBPACK CONFIG
   This part contains custom configuration options for each subpack.
