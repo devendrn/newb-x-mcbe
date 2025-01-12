@@ -19,7 +19,7 @@ vec4 nlWater(
   float fractCposY, vec3 FOG_COLOR, vec2 lit, highp float t, float camDist, vec3 torchColor
 ) {
 
-  vec2 bump = vec2(disp(tiledCpos, t, NL_WATER_WAVE_SPEED), disp(tiledCpos, t+1.8, NL_WATER_WAVE_SPEED)) - 0.5;
+  vec2 bump = vec2(disp(tiledCpos, NL_WATER_WAVE_SPEED*t), disp(tiledCpos, NL_WATER_WAVE_SPEED*(t+1.8))) - 0.5;
   vec3 nrm;
   if (fractCposY > 0.0) { // top plane
     nrm.xz = bump*NL_WATER_BUMP;

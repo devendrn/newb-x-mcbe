@@ -24,9 +24,9 @@ float fastRand(vec2 n){
 }
 
 // water displacement map (also used by caustic)
-float disp(vec3 pos, float t, float s) {
-  float n = sin(8.0*NL_CONST_PI_HALF*(pos.x+pos.y*pos.z) + 0.7*s*t);
-  pos.y += s*t + 0.8*n;
+float disp(vec3 pos, float t) {
+  float n = sin(8.0*NL_CONST_PI_HALF*(pos.x+pos.y*pos.z) + 0.7*t);
+  pos.y += t + 0.8*n;
   float p = floor(pos.y);
   return (0.8+0.2*n) * mix(fastRand(pos.xz+p), fastRand(pos.xz+p+1.0), pos.y - p);
 }

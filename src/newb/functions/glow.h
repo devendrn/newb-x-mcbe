@@ -63,17 +63,20 @@ vec3 nlGlow(sampler2D tex, vec2 uv, float shimmer) {
   #endif
 
   #ifdef NL_GLOW_SHIMMER
-    glow *= (0.3 + 0.9*shimmer);
+    glow *= shimmer;
   #endif
 
   return glow * NL_GLOW_TEX;
 }
 
+#ifdef NL_GLOW_SHIMMER
 float nlGlowShimmer(vec3 cPos, float t) {
-  float d = dot(cPos, vec3(1.0,1.0,1.0));
-  float shimmer = sin(1.57*d + 0.7854*sin(d + 0.1*t) + 0.8*t);
-  return shimmer * shimmer;
+  float shimmer = sin(0.7*dot(cPos, vec3(1.0, 1.0, 1.0)) - NL_GLOW_SHIMMER_SPEED*t);
+  shimmer = sin(1.2*shimmer + 0.7*dot(cPos, vec3(-1.0, -1.0, 1.0)));
+  shimmer *= shimmer;
+  return mix(1.0, shimmer*shimmer, NL_GLOW_SHIMMER);
 }
+#endif
 
 vec4 nlGlint(vec4 light, vec4 layerUV, sampler2D glintTexture, vec4 glintColor, vec4 tileLightColor, vec4 albedo) {
   float d = fract(dot(albedo.rgb, vec3_splat(4.0)));

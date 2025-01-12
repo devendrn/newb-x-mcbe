@@ -142,10 +142,10 @@ void main() {
 
   color.rgb *= light;
 
-  #if defined(NL_GLOW_SHIMMER) && !(defined(RENDER_AS_BILLBOARDS) || defined(OPAQUE))
+  #if defined(NL_GLOW_SHIMMER) && !(defined(RENDER_AS_BILLBOARDS) || defined(SEASONS))
     float shimmer = nlGlowShimmer(cPos, t);
   #else
-    float shimmer = 0.0;
+    float shimmer = 1.0;
   #endif
 
   v_extra = vec4(shade, worldPos.y, water, shimmer);
