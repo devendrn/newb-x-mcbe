@@ -176,14 +176,15 @@
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
 
 /* Sun/Moon */
-//#define NL_SUNMOON_ANGLE 45.0 // [toggle] 0.0 no tilt ~ 90.0 tilt of 90 degrees
-#define NL_SUNMOON_SIZE 1.0     // 0.3 tiny ~ 4.0 massive
+//#define NL_SUNMOON_ANGLE 45.0        // [toggle] 0.0 no tilt ~ 90.0 tilt of 90 degrees
+#define NL_SUNMOON_SIZE 1.0            // 0.3 tiny ~ 4.0 massive
+#define NL_SUNMOON_RAIN_VISIBILITY 0.5 // 0.0 invisible during rain ~ 1.0 always visible
 
 /* Fake godrays during sunrise/sunset */
 //#define NL_GODRAY 0.3 // [toggle] 0.1 subtle ~ 0.8 strong
 
 /* Sky reflection */
-//#define NL_GROUND_REFL 0.4       // [toggle] 0.2 slightly reflective ~ 1.0 fully reflect sky 
+//#define NL_GROUND_REFL 0.4       // [toggle] 0.2 slightly reflective ~ 1.0 fully reflect sky
 #define NL_GROUND_RAIN_WETNESS 1.0 // 0.0 no wetness ~ 1.0 fully wet blocks when raining
 #define NL_GROUND_RAIN_PUDDLES 0.7 // 0.0 no puddles ~ 1.0 puddles
 //#define NL_GROUND_AURORA_REFL    // [toggle] aurora reflection on ground
@@ -211,7 +212,7 @@
   eg: #undef OPTION_NAME
 
   Subpack names and flags are inside `pack_config.toml`.
-  Build tool will enable corresponding flags when compiling. 
+  Build tool will enable corresponding flags when compiling.
 */
 
 #ifdef NO_WAVE_NO_FOG
