@@ -92,12 +92,13 @@ void nlWave(
   bool isVines = (bPosC.x==0.453125 && bPos.z==0.0) || (bPosC.y==0.453125 && bPos.x==0.0);
   bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25);
   bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop);
+  bool isRedStone = COLOR.r > 0.25 && COLOR.r > 3.0*COLOR.g  && COLOR.b == 0.0;
 
   float windStrength = lit.y*(noise1D(t*0.36) + rainFactor*0.4);
 
   // darken farm plants bottom
   light *= isFarmPlant && !isTop ? 0.7 : 1.1;
-  if (isColored && !isTreeLeaves && uv0.y>0.375 && uv0.y<0.466) {
+  if (isColored && !isTreeLeaves && uv0.y>0.375 && uv0.y<0.466 && !isRedStone) {
     // make grass bottom more dark depending how deep it is
     light *= isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5);
   }
