@@ -76,10 +76,12 @@ void nlWave(
   vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, highp float t,
   bool isColored, float camDist, bool isTreeLeaves
 ) {
-
-  if (camDist > 13.0) {  // only wave nearby (better performance)
+  if (camDist > NL_WAVE_RANGE) {  // only wave nearby (better performance)
     return;
   }
+
+  float waveFade = 2.0*max((camDist/NL_WAVE_RANGE) - 0.5, 0.0);
+  waveFade *= waveFade;
 
   // texture atlas has 64x32 textures (uv0.xy division)
   float texPosY = fract(uv0.y*32.0);
@@ -94,13 +96,13 @@ void nlWave(
   bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop);
   bool isRedStone = COLOR.r > 0.25 && COLOR.r > 3.0*COLOR.g  && COLOR.b == 0.0;
 
-  float windStrength = lit.y*(noise1D(t*0.36) + rainFactor*0.4);
+  float windStrength = lit.y*(noise1D(t*0.36) + rainFactor*0.4)*(1.0-waveFade);
 
   // darken farm plants bottom
   light *= isFarmPlant && !isTop ? 0.7 : 1.1;
   if (isColored && !isTreeLeaves && uv0.y>0.375 && uv0.y<0.466 && !isRedStone) {
     // make grass bottom more dark depending how deep it is
-    light *= isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5);
+    light *= mix(isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5), 1.0, waveFade);
   }
 
   #ifdef NL_PLANTS_WAVE
