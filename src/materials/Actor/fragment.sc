@@ -63,7 +63,9 @@ void main() {
     albedo = applyHudOpacity(albedo, HudOpacity.x);
   #endif
 
-  albedo.rgb *= nlEntityEdgeHighlight(v_edgemap);
+  #ifdef NL_ENTITY_EDGE_HIGHLIGHT
+    albedo.rgb *= nlEntityEdgeHighlight(v_edgemap);
+  #endif
 
   albedo.rgb = mix(albedo.rgb, v_fog.rgb, v_fog.a);
 

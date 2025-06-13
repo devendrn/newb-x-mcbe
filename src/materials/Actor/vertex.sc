@@ -60,7 +60,11 @@ void main() {
     v_texcoord0 = texcoord0;
     v_color0 = a_color0;
     v_fog = fogColor;
-    v_edgemap = nlEntityEdgeHighlightPreprocess(texcoord0);
+    #ifdef NL_ENTITY_EDGE_HIGHLIGHT
+      v_edgemap = nlEntityEdgeHighlightPreprocess(texcoord0);
+    #else
+      v_edgemap = vec4_splat(0.0);
+    #endif
     v_light = vec4(light, 1.0);
   #endif
 

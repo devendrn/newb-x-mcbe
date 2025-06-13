@@ -152,11 +152,15 @@ vec3 nlEntityLighting(nl_environment env, vec3 pos, vec4 normal, mat4 world, vec
 }
 
 float nlEntityEdgeHighlight(vec4 edgemap) {
-  vec2 len = min(abs(edgemap.xy),abs(edgemap.zw));
-  len *= len;
-  len *= len;
-  float ambient = len.x + len.y*(1.0-len.x);
-  return NL_ENTITY_BRIGHTNESS + ambient*NL_ENTITY_EDGE_HIGHLIGHT;
+  #ifdef NL_ENTITY_EDGE_HIGHLIGHT
+    vec2 len = min(abs(edgemap.xy),abs(edgemap.zw));
+    len *= len;
+    len *= len;
+    float ambient = len.x + len.y*(1.0-len.x);
+    return NL_ENTITY_BRIGHTNESS + ambient*NL_ENTITY_EDGE_HIGHLIGHT;
+  #else
+    return 1.0;
+  #endif
 }
 
 vec4 nlEntityEdgeHighlightPreprocess(vec2 texcoord) {
