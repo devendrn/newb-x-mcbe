@@ -216,6 +216,19 @@
   Build tool will enable corresponding flags when compiling.
 */
 
+#ifdef LITE
+  #define NO_WAVE
+  #undef NL_GLOW_SHIMMER
+  #undef NL_LAVA_NOISE
+  #undef NL_WEATHER_SPECK
+  #undef NL_SHOOTING_STAR
+  #undef NL_WATER_CLOUD_REFLECTION
+  #undef NL_UNDERWATER_STREAKS
+  #undef NL_RAIN_MIST_OPACITY
+  #undef NL_CLOUDY_FOG
+  #undef NL_ENTITY_EDGE_HIGHLIGHT
+#endif
+
 #ifdef NO_WAVE_NO_FOG
   #define NO_WAVE
   #define NO_FOG
