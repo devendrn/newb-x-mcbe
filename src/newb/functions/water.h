@@ -39,7 +39,7 @@ vec4 nlWater(
 
   vec3 waterRefl = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t);
 
-  #if defined(NL_WATER_CLOUD_REFLECTION)
+  #if defined(NL_WATER_CLOUD_AURORA_REFLECTION)
     if (viewDir.y < 0.0) {
       vec2 cloudPos = (120.0-wPos.y)*viewDir.xz/viewDir.y;
       float fade = clamp(2.0 - 0.005*length(cloudPos), 0.0, 1.0);

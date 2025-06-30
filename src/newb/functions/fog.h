@@ -37,7 +37,7 @@ float nlRenderGodRayIntensity(vec3 cPos, vec3 worldPos, float t, vec2 uv1, float
   vol *= clamp(3.0*(FOG_COLOR.r-FOG_COLOR.b), 0.0, 1.0);
 
   vol = smoothstep(0.0, 0.1, vol);
-  return vol;
+  return clamp(vol, 0.0, 1.0);
 }
 
 #endif
