@@ -7,6 +7,8 @@
 #include "noise.h"
 #include "clouds.h"
 
+#define NL_CLOUD_PARAMS(x) NL_CLOUD2##x##STEPS, NL_CLOUD2##x##THICKNESS, NL_CLOUD2##x##RAIN_THICKNESS, NL_CLOUD2##x##VELOCITY, NL_CLOUD2##x##SCALE, NL_CLOUD2##x##DENSITY, NL_CLOUD2##x##SHAPE
+
 // sunlight tinting
 vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {
 
@@ -77,9 +79,29 @@ vec3 nlLighting(
     shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightFactor))*lit.y);
     shadow *= shade > 0.8 ? 1.0 : 0.8;
 
-    // shadow cast by simple cloud
+    // shadow cast by simple cloud and rounded cloud
     #ifdef NL_CLOUD_SHADOW
-      shadow *= smoothstep(0.6, 0.1, cloudNoise2D(2.0*wPos.xz*NL_CLOUD1_SCALE, t, env.rainFactor));
+      #if NL_CLOUD_TYPE == 2
+        float fade = clamp(2.0-2.0*length(wPos.xyz)*0.0022, 0.0, 1.0);
+        vec3 pos = vec4(wPos, fade).xyz;
+        pos.y = 0.0;
+        pos.xz = (2.0*NL_CLOUD2_SCALE)*(vec4(wPos, fade).xz + vec2(1.0,0.5)*(t*(NL_CLOUD2_VELOCITY*0.5)));
+        shadow *= 1.0-cloudDf(pos.xyz, env.rainFactor, NL_CLOUD2_SHAPE);
+        #ifdef NL_CLOUD2_MULTILAYER
+          vec3 v_dir = normalize(vec4(wPos, fade).xyz);
+          vec2 parallax = v_dir.xz / v_dir.y * 143.0;
+          vec3 offset_pos = vec4(wPos, fade).xyz;
+          offset_pos.xz += parallax;
+          
+          vec3 pos2 = offset_pos;
+          pos2.y = 0.0;
+          pos2.xz = 0.088*(vec4(wPos, fade).xz + vec2(1.0,0.5)*(t*(NL_CLOUD2_VELOCITY*0.5)));
+          pos2.xz += -1.0;
+          shadow *= 0.7*(1.0-cloudDf(pos2, env.rainFactor, NL_CLOUD2_LAYER2_SHAPE));
+        #endif
+      #elif NL_CLOUD_TYPE == 1
+        shadow *= smoothstep(0.6, 0.1, cloudNoise2D(2.0*wPos.xz*NL_CLOUD1_SCALE, t, env.rainFactor));
+      #endif
     #endif
 
     // direct light from top
