@@ -19,7 +19,7 @@ void main() {
     v_underwaterRainTimeDay.x = float(detectUnderwater(FogColor.rgb, FogAndDistanceControl.xy));
     v_underwaterRainTimeDay.y = detectRain(FogAndDistanceControl.xyz);
     v_underwaterRainTimeDay.z = ViewPositionAndTime.w;
-    v_underwaterRainTimeDay.w = min(dot(FogColor.rgb, vec3(0.5,0.7,0.5)), 1.0);
+    v_underwaterRainTimeDay.w = detectDayFactor(FogColor.rgb);
 
     // background quad
     vec4 pos = vec4(a_position.xzy, 1.0);

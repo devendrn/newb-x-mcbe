@@ -61,7 +61,7 @@ vec3 nlLighting(
   } else {
     // overworld lighting
 
-    float dayFactor = min(dot(FOG_COLOR.rgb, vec3(0.5,0.4,0.4))*(1.0 + 1.9*env.rainFactor), 1.0);
+    float dayFactor = min(dot(FOG_COLOR.rgb, vec3(0.5,0.4,0.4))*(1.0 + 1.9*env.rainFactor), 1.0); // use env.dayFactor here?
     float nightFactor = 1.0-dayFactor*dayFactor;
     float rainDim = min(FOG_COLOR.g, 0.25)*env.rainFactor;
     float lightIntensity = NL_SUN_INTENSITY*(1.0 - rainDim)*(1.0 + NL_NIGHT_BRIGHTNESS*nightFactor);
