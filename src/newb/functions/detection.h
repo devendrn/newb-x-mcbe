@@ -6,6 +6,7 @@ struct nl_environment {
   bool nether;
   bool underwater;
   float rainFactor;
+  float dayFactor;
 };
 
 bool detectEnd(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
@@ -44,12 +45,17 @@ float detectRain(vec3 FOG_CONTROL) {
   return val*val*(3.0 - 2.0*val);
 }
 
+float detectDayFactor(vec3 FOG_COLOR) {
+  return min(dot(FOG_COLOR, vec3(0.5,0.7,0.5)), 1.0);
+}
+
 nl_environment nlDetectEnvironment(vec3 FOG_COLOR, vec3 FOG_CONTROL) {
   nl_environment e;
   e.end = detectEnd(FOG_COLOR, FOG_CONTROL.xy);
   e.nether = detectNether(FOG_COLOR, FOG_CONTROL.xy);
   e.underwater = detectUnderwater(FOG_COLOR, FOG_CONTROL.xy);
   e.rainFactor = detectRain(FOG_CONTROL.xyz);
+  e.dayFactor = detectDayFactor(FOG_COLOR);
   return e;
 }
 

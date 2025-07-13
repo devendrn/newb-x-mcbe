@@ -73,7 +73,7 @@ void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
 
 void nlWave(
   inout vec3 worldPos, inout vec3 light, float rainFactor, vec2 uv1, vec2 lit,
-  vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, highp float t,
+  vec2 uv0, vec3 bPos, vec4 COLOR, vec3 cPos, vec3 tiledCpos, highp float t, sampler2D terrainTex,
   bool isColored, float camDist, bool isTreeLeaves
 ) {
   if (camDist > NL_WAVE_RANGE) {  // only wave nearby (better performance)
@@ -84,7 +84,7 @@ void nlWave(
   waveFade *= waveFade;
 
   // texture atlas has 64x32 textures (uv0.xy division)
-  float texPosY = fract(uv0.y*32.0);
+  float texPosY = fract(uv0.y*vec2(textureSize(terrainTex, 0)).y/32.0);
 
   // x and z distance from block center
   vec2 bPosC = abs(bPos.xz-0.5);
