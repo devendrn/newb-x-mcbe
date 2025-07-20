@@ -10,7 +10,7 @@ on:
       platform:
         description: 'platform'
         required: true
-        default: 'All'
+        default: 'Merged'
         type: choice
         options:
         - Android
