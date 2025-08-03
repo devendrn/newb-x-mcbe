@@ -133,7 +133,6 @@
 /* Rounded cloud settings */
 #define NL_CLOUD2_THICKNESS 2.1            // 0.5 slim ~ 5.0 fat
 #define NL_CLOUD2_RAIN_THICKNESS 2.5       // 0.5 slim ~ 5.0 fat
-#define NL_CLOUD2_STEPS 5                  // 3 low quality ~ 16 high quality
 #define NL_CLOUD2_SCALE vec2(0.033, 0.033) // 0.003 large ~ 0.3 tiny
 #define NL_CLOUD2_SHAPE vec2(0.5, 0.4)     // 0.0 round ~ 1.0 box vec2(horizontal shape, vertical shape)
 #define NL_CLOUD2_DENSITY 25.0             // 1.0 blurry ~ 100.0 sharp
@@ -142,7 +141,6 @@
 #define NL_CLOUD2_LAYER2_OFFSET 143.0           // 30.0 near ~ 300.0 very high
 #define NL_CLOUD2_LAYER2_THICKNESS 2.5          // 0.7 slim ~ 5.0 fat
 #define NL_CLOUD2_LAYER2_RAIN_THICKNESS 3.0     // 0.7 slim ~ 5.0 fat
-#define NL_CLOUD2_LAYER2_STEPS 3                // 3 low quality ~ 16 high quality
 #define NL_CLOUD2_LAYER2_SCALE vec2(0.03, 0.03) // 0.003 large ~ 0.3 tiny
 #define NL_CLOUD2_LAYER2_SHAPE vec2(0.5, 0.4)   // 0.0 round ~ 1.0 box vec2(horizontal shape, vertical shape)
 #define NL_CLOUD2_LAYER2_DENSITY 25.0           // 1.0 blurry ~ 100.0 sharp

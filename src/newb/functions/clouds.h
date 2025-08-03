@@ -57,13 +57,13 @@ float cloudDf(vec3 pos, float rain, vec2 boxiness) {
   return n;
 }
 
+
 vec4 renderCloudsRounded(
-    vec3 vDir, vec3 vPos, float rain, float time, vec3 horizonCol, vec3 zenithCol,
-    const int steps, const float thickness, const float thickness_rain, const float speed,
+    vec3 vDir, vec3 vPos, float rain, float time, vec3 horizonCol, vec3 zenithCol, const float thickness, const float thickness_rain, const float speed,
     const vec2 scale, const float density, const vec2 boxiness
 ) {
   float height = 7.0*mix(thickness, thickness_rain, rain);
-  float stepsf = float(steps);
+  float stepsf = 6.0;
 
   // scaled ray offset
   vec3 deltaP;
@@ -77,10 +77,11 @@ vec4 renderCloudsRounded(
   pos += deltaP;
 
   deltaP /= -stepsf;
+  pos += deltaP * hash(vPos.xz + time); // Displace Clouds' Step
 
   // alpha, gradient
   vec2 d = vec2(0.0,1.0);
-  for (int i=1; i<=steps; i++) {
+  for (int i=1; i<=int(stepsf); i++) {
     float m = cloudDf(pos, rain, boxiness);
     d.x += m;
     d.y = mix(d.y, pos.y, m);
@@ -143,20 +144,20 @@ vec4 renderClouds(vec2 p, float t, float rain, vec3 horizonCol, vec3 zenithCol, 
 
 // aurora is rendered on clouds layer
 #ifdef NL_AURORA
-vec4 renderAurora(vec3 p, float t, float rain, vec3 FOG_COLOR) {
-  t *= NL_AURORA_VELOCITY;
-  p.xz *= NL_AURORA_SCALE;
-  p.xz += 0.05*sin(p.x*4.0 + 20.0*t);
+  vec4 renderAurora(vec3 p, float t, float rain, vec3 FOG_COLOR) {
+    t *= NL_AURORA_VELOCITY;
+    p.xz *= NL_AURORA_SCALE;
+    p.xz += 0.05*sin(p.x*4.0 + 20.0*t);
 
-  float d0 = sin(p.x*0.1 + t + sin(p.z*0.2));
-  float d1 = sin(p.z*0.1 - t + sin(p.x*0.2));
-  float d2 = sin(p.z*0.1 + 1.0*sin(d0 + d1*2.0) + d1*2.0 + d0*1.0);
-  d0 *= d0; d1 *= d1; d2 *= d2;
-  d2 = d0/(1.0 + d2/NL_AURORA_WIDTH);
+    float d0 = sin(p.x*0.1 + t + sin(p.z*0.2));
+    float d1 = sin(p.z*0.1 - t + sin(p.x*0.2));
+    float d2 = sin(p.z*0.1 + 1.0*sin(d0 + d1*2.0) + d1*2.0 + d0*1.0);
+    d0 *= d0; d1 *= d1; d2 *= d2;
+    d2 = d0/(1.0 + d2/NL_AURORA_WIDTH);
 
-  float mask = (1.0-0.8*rain)*max(1.0 - 4.0*max(FOG_COLOR.b, FOG_COLOR.g), 0.0);
-  return vec4(NL_AURORA*mix(NL_AURORA_COL1,NL_AURORA_COL2,d1),1.0)*d2*mask;
-}
+    float mask = (1.0-0.8*rain)*max(1.0 - 4.0*max(FOG_COLOR.b, FOG_COLOR.g), 0.0);
+    return vec4(NL_AURORA*mix(NL_AURORA_COL1,NL_AURORA_COL2,d1),1.0)*d2*mask;
+  }
 #endif
 
 #endif
