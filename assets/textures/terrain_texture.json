@@ -1,0 +1,409 @@
+// Make sure to update this file if you add any other texture, 
+// so it is compatible with other texture packs.
+{
+    "texture_data": {
+        // [ textures/blocks/deepslate ]
+        // deepslate_copper_ore
+        "deepslate_copper_ore": {
+            "textures": "textures/blocks/deepslate/deepslate_copper_ore"
+        },
+        // deepslate_diamond_ore
+        "deepslate_diamond_ore": {
+            "textures": "textures/blocks/deepslate/deepslate_diamond_ore"
+        },
+        // deepslate_emerald_ore
+        "deepslate_emerald_ore": {
+            "textures": "textures/blocks/deepslate/deepslate_emerald_ore"
+        },
+        // deepslate_gold_ore
+        "deepslate_gold_ore": {
+            "textures": "textures/blocks/deepslate/deepslate_gold_ore"
+        },
+        // deepslate_iron_ore
+        "deepslate_iron_ore": {
+            "textures": "textures/blocks/deepslate/deepslate_iron_ore"
+        },
+        // deepslate_lapis_ore
+        "deepslate_lapis_ore": {
+            "textures": "textures/blocks/deepslate/deepslate_lapis_ore"
+        },
+        // deepslate_redstone_ore
+        "deepslate_redstone_ore": {
+            "textures": "textures/blocks/deepslate/deepslate_redstone_ore"
+        },
+
+
+        // [ textures/blocks/huge_fungus ]
+        // crimson_log_side
+        "crimson_log_side": {
+            "textures": "textures/blocks/huge_fungus/crimson_log_side"
+        },
+        // crimson_log_top
+        "crimson_log_top": {
+            "textures": "textures/blocks/huge_fungus/crimson_log_top"
+        },
+        // warped_stem_side
+        "warped_stem_side": {
+            "textures": "textures/blocks/huge_fungus/warped_stem_side"
+        },
+        // warped_stem_top
+        "warped_stem_top": {
+            "textures": "textures/blocks/huge_fungus/warped_stem_top"
+        },
+        
+
+        // [ textures/blocks ]
+        // amethyst_block
+        "amethyst_block": {
+            "textures": "textures/blocks/amethyst_block"
+        },
+        // amethyst_cluster
+        "amethyst_cluster": {
+            "textures": "textures/blocks/amethyst_cluster"
+        },
+        // ancient_debris_side
+        "ancient_debris_side": {
+            "textures": "textures/blocks/ancient_debris_side"
+        },
+        // ancient_debris_top
+        "ancient_debris_top": {
+            "textures": "textures/blocks/ancient_debris_top"
+        },
+        // blast_furnace_front_on
+        "blast_furnace": {
+            "textures": [
+                "textures/blocks/blast_furnace_front_on"
+            ]
+        },
+        "blast_furnace_front": {
+            "textures": [
+                "textures/blocks/blast_furnace_front_on"
+            ]
+        },
+        "blast_furnace_front_on": {
+            "textures": "textures/blocks/blast_furnace_front_on"
+        },
+        // budding_amethyst
+        "budding_amethyst": {
+            "textures": "textures/blocks/budding_amethyst"
+        },
+        // calibrated_sculk_sensor_amethyst
+        "calibrated_sculk_sensor_amethyst": {
+            "textures": "textures/blocks/calibrated_sculk_sensor_amethyst"
+        },
+        // calibrated_sculk_sensor_input_side
+        "calibrated_sculk_sensor_input_side": {
+            "textures": "textures/blocks/calibrated_sculk_sensor_input_side"
+        },
+        // calibrated_sculk_sensor_top
+        "calibrated_sculk_sensor_top": {
+            "textures": "textures/blocks/calibrated_sculk_sensor_top"
+        },
+        // cave_vines_body_berries
+        "cave_vines_body": {
+            "textures": [
+                "textures/blocks/cave_vines_body_berries"
+            ]
+        },
+        // cave_vines_head_berries
+        "cave_vines_head": {
+            "textures": [
+                "textures/blocks/cave_vines_head_berries"
+            ]
+        },
+        // comparator_on
+        "comparator_up": {
+            "textures": [
+                "textures/blocks/comparator_on"
+            ]
+        },
+        // copper_ore
+        "copper_ore": {
+            "textures": "textures/blocks/copper_ore"
+        },
+        // creaking_heart_side_active
+        "creaking_heart_side": {
+            "textures": [
+                "textures/blocks/creaking_heart_side_active"
+            ]
+        },
+        // creaking_heart_top_active
+        "creaking_heart_top": {
+            "textures": [
+                "textures/blocks/creaking_heart_top_active"
+            ]
+        },
+        // crimson_fungus
+        "nether_shroom_red": {
+            "textures": "textures/blocks/crimson_fungus"
+        },
+        // crying_obsidian
+        "crying_obsidian": {
+            "textures": "textures/blocks/crying_obsidian"
+        },
+        // diamond_ore
+        "diamond_ore": {
+            "textures": "textures/blocks/diamond_ore"
+        },
+        // emerald_ore
+        "emerald_ore": {
+            "textures": "textures/blocks/emerald_ore"
+        },
+        // enchanting_table_side
+        "enchanting_table_side": {
+            "textures": "textures/blocks/enchanting_table_side"
+        },
+        // enchanting_table_top
+        "enchanting_table_top": {
+            "textures": "textures/blocks/enchanting_table_top"
+        },
+        // eyeblossom_blooming
+        "open_eyeblossom_carried": {
+            "textures": [
+                "textures/blocks/eyeblossom_blooming"
+            ]
+        },
+        // eyeblossom_eyes_blooming
+        "open_eyeblossom": {
+            "textures": [
+                "textures/blocks/eyeblossom_eyes_blooming"
+            ]
+        },
+        // furnace_front_on
+        "furnace": {
+            "textures": [
+                "textures/blocks/furnace_front_on"
+            ]
+        },
+        "furnace_front": {
+            "textures": [
+                "textures/blocks/furnace_front_on"
+            ]
+        },
+        "furnace_front_on": {
+            "textures": "textures/blocks/furnace_front_on"
+        },
+        // gilded_blackstone
+        "gilded_blackstone": {
+            "textures": "textures/blocks/gilded_blackstone"
+        },
+        // glowstone
+        "glowstone": {
+            "textures": "textures/blocks/glowstone"
+        },
+        // gold_ore
+        "gold_ore": {
+            "textures": "textures/blocks/gold_ore"
+        },
+        // iron_ore
+        "iron_ore": {
+            "textures": "textures/blocks/iron_ore"
+        },
+        // lantern
+        "lantern": {
+            "textures": "textures/blocks/lantern"
+        },
+        // lapis_ore
+        "lapis_ore": {
+            "textures": "textures/blocks/lapis_ore"
+        },
+        // large_amethyst_bud
+        "large_amethyst_bud": {
+            "textures": "textures/blocks/large_amethyst_bud"
+        },
+        // magma
+        "magma": {
+            "textures": "textures/blocks/magma"
+        },
+        // medium_amethyst_bud
+        "medium_amethyst_bud": {
+            "textures": "textures/blocks/medium_amethyst_bud"
+        },
+        // nether_gold_ore
+        "nether_gold_ore": {
+            "textures": "textures/blocks/nether_gold_ore"
+        },
+        // observer_back_lit
+        "observer_south": {
+            "textures": [
+                "textures/blocks/observer_back_lit"
+            ]
+        },
+        // quartz_ore
+        "quartz_ore": {
+            "textures": "textures/blocks/quartz_ore"
+        },
+        // rail_activator_powered
+        "rail_activator_powered": {
+            "textures": "textures/blocks/rail_activator_powered"
+        },
+        // rail_detector_powered
+        "rail_detector_powered": {
+            "textures": "textures/blocks/rail_detector_powered"
+        },
+        // rail_golden_powered
+        "rail_golden_powered": {
+            "textures": "textures/blocks/rail_golden_powered"
+        },
+        // redstone_lamp_on
+        "redstone_lamp_on": {
+            "textures": "textures/blocks/redstone_lamp_on"
+        },
+        // redstone_ore
+        "redstone_ore": {
+            "textures": "textures/blocks/redstone_ore"
+        },
+        // redstone_torch_on
+        "comparator_torch": {
+            "textures": [
+                "textures/blocks/redstone_torch_on"
+            ]
+        },
+        "redstone_torch_on": {
+            "textures": "textures/blocks/redstone_torch_on"
+        },
+        // repeater_on
+        "repeater_up": {
+            "textures": [
+                "textures/blocks/repeater_on"
+            ]
+        },
+        // resin_clump
+        "resin_clump": {
+            "textures": "textures/blocks/resin_clump"
+        },
+        "resin_clump_carried": {
+            "textures": "textures/items/resin_clump"
+        },
+        
+        // No shortname found for "respawn_anchor_side"
+
+        // respawn_anchor_side2
+        // respawn_anchor_side3
+        // respawn_anchor_side4
+        "respawn_anchor_side": {
+            "textures": [
+                "textures/blocks/respawn_anchor_side1",
+                "textures/blocks/respawn_anchor_side2",
+                "textures/blocks/respawn_anchor_side3",
+                "textures/blocks/respawn_anchor_side4"
+            ]
+        },
+        // sculk
+        "sculk": {
+            "textures": "textures/blocks/sculk"
+        },
+        // sculk_catalyst_side
+        "sculk_catalyst_side": {
+            "textures": [
+                "textures/blocks/sculk_catalyst_side"
+            ]
+        },
+        // sculk_catalyst_top
+        // sculk_catalyst_top_bloom
+        "sculk_catalyst_top": {
+            "textures": [
+                "textures/blocks/sculk_catalyst_top",
+                "textures/blocks/sculk_catalyst_top_bloom"
+            ]
+        },
+        // sculk_shrieker_can_summon_inner_top
+        // sculk_shrieker_inner_top
+        "sculk_shrieker_inner_top": {
+            "textures": [
+                "textures/blocks/sculk_shrieker_can_summon_inner_top",
+                "textures/blocks/sculk_shrieker_inner_top"
+            ]
+        },
+        // sculk_shrieker_side
+        "sculk_shrieker_side": {
+            "textures": "textures/blocks/sculk_shrieker_side"
+        },
+        // sculk_vein
+        "sculk_vein": {
+            "textures": "textures/blocks/sculk_vein"
+        },
+        // small_amethyst_bud
+        "small_amethyst_bud": {
+            "textures": "textures/blocks/small_amethyst_bud"
+        },
+        // soul_lantern
+        "soul_lantern": {
+            "textures": "textures/blocks/soul_lantern"
+        },
+        "soul_lantern_carried": {
+            "textures": "textures/items/soul_lantern"
+        },
+        // soul_torch
+        "soul_torch": {
+            "textures": "textures/blocks/soul_torch"
+        },
+        // torchflower
+        "torchflower": {
+            "textures": "textures/blocks/torchflower"
+        },
+        // torchflower_crop_stage_1
+        "torchflower_crop": {
+            "textures": [
+                "textures/blocks/torchflower_crop_stage_1"
+            ]
+        },
+
+        // No shortname found for "trial_spawner_side"
+
+        // trial_spawner_side_active
+        // trial_spawner_side_active_ominous
+        "trial_spawner_side": {
+            "textures": [
+                "textures/blocks/trial_spawner_side_active",
+                "textures/blocks/trial_spawner_side_active_ominous"
+            ]
+        },
+
+        // No shortname found for "trial_spawner_top"
+
+        // trial_spawner_top_active
+        // trial_spawner_top_active_ominous
+        // trial_spawner_top_ejecting_reward
+        // trial_spawner_top_ejecting_reward_ominous
+        "trial_spawner_top": {
+            "textures": [
+                "textures/blocks/trial_spawner_top_active",
+                "textures/blocks/trial_spawner_top_active_ominous",
+                "textures/blocks/trial_spawner_top_ejecting_reward",
+                "textures/blocks/trial_spawner_top_ejecting_reward_ominous"
+            ]
+        },
+
+        // No shortname found for "trial_spawner_top_open"
+
+        // vault_front_ejecting
+        // vault_front_ejecting_ominous
+        // vault_front_off
+        // vault_front_off_ominous
+        // vault_front_on
+        // vault_front_on_ominous
+        "vault_front": {
+            "textures": [
+                "textures/blocks/vault_front_ejecting",
+                "textures/blocks/vault_front_ejecting_ominous",
+                "textures/blocks/vault_front_off",
+                "textures/blocks/vault_front_off_ominous",
+                "textures/blocks/vault_front_on",
+                "textures/blocks/vault_front_on_ominous"
+            ]
+        },
+        // vault_side_on
+        // vault_side_on_ominous
+        "vault_side": {
+            "textures": [
+                "textures/blocks/vault_side_on",
+                "textures/blocks/vault_side_on_ominous"
+            ]
+        },
+        // warped_fungus
+        "nether_shroom_blue": {
+            "textures": "textures/blocks/warped_fungus"
+        }
+    }
+}
