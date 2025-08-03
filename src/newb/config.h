@@ -204,6 +204,9 @@
 //#define NL_LAVA_NOISE_BUMP 0.2 // [toggle] 0.1 subtle ~ 0.8 massive waves
 #define NL_LAVA_NOISE_SPEED 0.02 // 0.0 still ~ 0.1 fast
 
+/* Screen effects */
+//#define NL_VIGNETTE // [toggle] darkens screen corners
+
 /*
   NEWB SHADER SUBPACK CONFIG
   This part contains custom configuration options for each subpack.
