@@ -29,7 +29,7 @@ void main() {
   diffuse.rgb *= 0.4 + 3.1*diffuse.rgb;
   diffuse = mix(sky, diffuse, diffuse.a);
 
-  diffuse.rgb = colorCorrection(diffuse.rgb);
+diffuse.rgb = colorCorrection(diffuse.rgb,gl_FragCoord.xy,u_viewRect.zw);
 
   gl_FragColor = diffuse;
 }
