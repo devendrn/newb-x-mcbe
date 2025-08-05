@@ -46,7 +46,8 @@ void main() {
       color.a *= smoothstep(0.0, 0.7, vDir.y);
     #endif
 
-    color.rgb = colorCorrection(color.rgb);
+   color.rgb = colorCorrection(color.rgb,gl_FragCoord.xy,u_viewRect.zw);
+
   #endif
 
   gl_FragColor = color;
