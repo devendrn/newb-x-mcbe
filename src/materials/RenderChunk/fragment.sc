@@ -59,12 +59,6 @@ void main() {
     }
   }
 
-#ifdef NL_VIGNETTE
-vec2 screenuv = gl_FragCoord.xy / u_viewRect.zw;
-float dist = distance(screenuv, vec2(0.5,0.5));
-float vignette = pow(1.0 - smoothstep(0.25, 0.8, dist), 1.8);
-diffuse.rgb *= vignette;
-#endif
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
 
