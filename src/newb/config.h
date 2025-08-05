@@ -205,7 +205,7 @@
 #define NL_LAVA_NOISE_SPEED 0.02 // 0.0 still ~ 0.1 fast
 
 /* Screen effects */
-#define NL_VIGNETTE // [toggle] darkens screen corners
+//#define NL_VIGNETTE // [toggle] darkens screen corners
 
 /*
   NEWB SHADER SUBPACK CONFIG
