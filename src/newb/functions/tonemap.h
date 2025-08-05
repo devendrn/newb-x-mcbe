@@ -39,6 +39,13 @@ vec3 colorCorrection(vec3 col) {
     col *= mix(NL_TINT_LOW, NL_TINT_HIGH, col);
   #endif
 
+#ifdef NL_VIGNETTE
+vec2 screenuv = gl_FragCoord.xy / u_viewRect.zw;
+float dist = distance(screenuv, vec2(0.5,0.5));
+float vignette = pow(1.0 - smoothstep(0.25, 0.8, dist), 1.8);
+col *= vignette;
+#endif
+
   return col;
 }
 
