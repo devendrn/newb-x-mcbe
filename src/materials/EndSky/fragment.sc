@@ -17,7 +17,7 @@ void main() {
     vec3 color = renderEndSky(getEndHorizonCol(), getEndZenithCol(), normalize(v_posTime.xyz), v_posTime.w);
     color += 2.8*diffuse.rgb; // stars
 
-    color = colorCorrection(color);
+ color = colorCorrection(color,gl_FragCoord.xy,u_viewRect.zw);
 
     gl_FragColor = vec4(color, 1.0);
   #else
