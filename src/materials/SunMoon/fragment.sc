@@ -18,7 +18,7 @@ void main() {
     color.rgb *= 4.4*color.rgb;
     float tr = 1.0 - SunMoonColor.a;
     color.a *= 1.0 - (1.0-NL_SUNMOON_RAIN_VISIBILITY)*tr*tr;
-    color.rgb = colorCorrection(color.rgb);
+  color.rgb = colorCorrection(color.rgb,gl_FragCoord.xy,u_viewRect.zw);
     gl_FragColor = color;
   #else
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
