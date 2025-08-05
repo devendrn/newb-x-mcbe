@@ -1,7 +1,7 @@
 #ifndef TONEMAP_H
 #define TONEMAP_H
 
-vec3 colorCorrection(vec3 col) {
+vec3 colorCorrection(vec3 col,vec2 screenpos, vec2 screensize) {
   #ifdef NL_EXPOSURE
     col *= NL_EXPOSURE;
   #endif
@@ -40,7 +40,7 @@ vec3 colorCorrection(vec3 col) {
   #endif
 
 #ifdef NL_VIGNETTE
-vec2 screenuv = gl_FragCoord.xy / u_viewRect.zw;
+vec2 screenuv = screenpos / screensize;
 float dist = distance(screenuv, vec2(0.5,0.5));
 float vignette = pow(1.0 - smoothstep(0.25, 0.8, dist), 1.8);
 col *= vignette;
