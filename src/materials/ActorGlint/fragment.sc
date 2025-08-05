@@ -66,7 +66,7 @@ void main() {
 
   albedo.rgb = mix(albedo.rgb, v_fog.rgb, v_fog.a);
 
-colorCorrection(albedo.rgb,gl_FragCoord.xy,u_viewRect.zw);
+albedo.rgb = colorCorrection(albedo.rgb,gl_FragCoord.xy,u_viewRect.zw);
 
   gl_FragColor = albedo;
 }
