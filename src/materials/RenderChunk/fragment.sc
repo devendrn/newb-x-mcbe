@@ -62,7 +62,6 @@ void main() {
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
 
-  diffuse.rgb = colorCorrection(diffuse.rgb);
-
+diffuse.rgb = colorCorrection(diffuse.rgb,gl_FragCoord.xy,u_viewRect.zw);
   gl_FragColor = diffuse;
 }
