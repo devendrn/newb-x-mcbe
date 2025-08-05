@@ -34,8 +34,7 @@ void main() {
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, v_fogColor, env, v_underwaterRainTime.z);
     #endif
 
-    skyColor = colorCorrection(skyColor);
-
+skyColor = colorCorrection(skyColor,gl_FragCoord.xy,u_viewRect.zw);
     gl_FragColor = vec4(skyColor, 1.0);
   #else
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
