@@ -45,7 +45,7 @@ void main() {
       color.rgb = skycol.zenith + skycol.horizonEdge;
       color.rgb += dot(color.rgb, vec3(0.3,0.4,0.3))*a_position.y;
       color.rgb *= 1.0 - 0.8*rain;
-      color.rgb = colorCorrection(color.rgb,vec2(0.0,0.0),vec2(0.0,0.0));
+  
       color.a = NL_CLOUD0_OPACITY * fog_fade(worldPos.xyz);
 
       // clouds.png has two non-overlaping layers:
@@ -89,7 +89,7 @@ void main() {
         #endif
 
         color.a *= fade;
-        color.rgb = colorCorrection(color.rgb,vec2(0.0,0.0),vec2(0.0,0.0));
+  
       #else // NL_CLOUD_TYPE 2
         v_fogColor = FogColor.rgb;
         v_color1 = vec4(skycol.zenith, rain);
