@@ -1,0 +1,18 @@
+{
+  "name": "NoiseTexture",
+  "reg1": 10,
+  "reg2": 10,
+  "type": "texture2D",
+  "precision": "lowp",
+  "access": "readonly",
+  "texture_format": "",
+  "default_texture": "",
+  "unordered_access": false,
+  "always_one": 1,
+  "unknown_string": "textures/newb/noise_texture",
+  "sampler_state": {
+    "filter": "Bilinear",
+    "wrapping": "Repeat"
+  },
+  "custom_type_info": {}
+}

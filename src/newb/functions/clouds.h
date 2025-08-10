@@ -16,8 +16,8 @@ float cloudNoise2D(vec2 p, highp float t, float rain) {
   vec2 v = 1.0-u;
 
   float n = mix(
-    mix(rand(p0),rand(p0+vec2(1.0,0.0)), u.x),
-    mix(rand(p0+vec2(0.0,1.0)),rand(p0+vec2(1.0,1.0)), u.x),
+    mix(rand(p0), rand(p0+vec2(1.0,0.0)), u.x),
+    mix(rand(p0+vec2(0.0,1.0)), rand(p0+vec2(1.0,1.0)), u.x),
     u.y
   );
   n *= 0.5 + 0.5*sin(p.x*0.6 - 0.5*t)*sin(p.y*0.6 + 0.8*t);
@@ -38,14 +38,19 @@ vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain)
 // rounded clouds
 
 // rounded clouds 3D density map
-float cloudDf(vec3 pos, float rain, vec2 boxiness) {
+float cloudDf(sampler2D cloudTex, vec3 pos, float rain, vec2 boxiness) {
   boxiness *= 0.999;
   vec2 p0 = floor(pos.xz);
   vec2 u = max((pos.xz-p0-boxiness.x)/(1.0-boxiness.x), 0.0);
   u *= u*(3.0 - 2.0*u);
 
-  vec4 r = vec4(rand(p0), rand(p0+vec2(1.0,0.0)), rand(p0+vec2(1.0,1.0)), rand(p0+vec2(0.0,1.0)));
-  r = smoothstep(0.1001+0.2*rain, 0.1+0.2*rain*rain, r); // rain transition
+  vec4 r = vec4(
+    texture2DLod(cloudTex, (p0*0.01), 0).r, 
+    texture2DLod(cloudTex, (p0+vec2(1.0,0.0))*0.01, 0).r, 
+    texture2DLod(cloudTex, (p0+vec2(1.0,1.0))*0.01, 0).r, 
+    texture2DLod(cloudTex, (p0+vec2(0.0,1.0))*0.01, 0).r
+  );
+  r = smoothstep(0.8-0.8*rain, 1.0-0.8*rain*rain, r); // rain transition
 
   float n = mix(mix(r.x,r.y,u.x), mix(r.w,r.z,u.x), u.y);
 
@@ -58,7 +63,7 @@ float cloudDf(vec3 pos, float rain, vec2 boxiness) {
 }
 
 vec4 renderCloudsRounded(
-    vec3 vDir, vec3 vPos, float rain, float time, vec3 horizonCol, vec3 zenithCol,
+    sampler2D cloudTex, vec3 vDir, vec3 vPos, float rain, float time, vec3 horizonCol, vec3 zenithCol,
     const int steps, const float thickness, const float thickness_rain, const float speed,
     const vec2 scale, const float density, const vec2 boxiness
 ) {
@@ -81,7 +86,7 @@ vec4 renderCloudsRounded(
   // alpha, gradient
   vec2 d = vec2(0.0,1.0);
   for (int i=1; i<=steps; i++) {
-    float m = cloudDf(pos, rain, boxiness);
+    float m = cloudDf(cloudTex, pos, rain, boxiness);
     d.x += m;
     d.y = mix(d.y, pos.y, m);
     pos += deltaP;
@@ -101,10 +106,10 @@ vec4 renderCloudsRounded(
 
 float cloudsNoiseVr(vec2 p, float t) {
   float n = fastVoronoi2(p + t, 1.8);
-  n *= fastVoronoi2(3.0*p + t, 1.5);
+  n *= fastVoronoi2(3.0*p + t, 0.7);
   n *= fastVoronoi2(9.0*p + t, 0.4);
-  n *= fastVoronoi2(27.0*p + t, 0.1);
-  //n *= fastVoronoi2(82.0*pos + t, 0.02); // more quality
+  n *= fastVoronoi2(16.0*p + t, 0.2);
+  //n *= fastVoronoi2(65.0*p + t, 0.02); // more quality
   return n*n;
 }
 
