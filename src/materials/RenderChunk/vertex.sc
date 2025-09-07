@@ -6,6 +6,7 @@ $output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
+#define a_texcoord1 vec2(fract(a_texcoord1.x15.9375),floor(a_texcoord1.x15.9375)*0.0625)
 
 uniform vec4 RenderChunkFogAlpha;
 uniform vec4 FogAndDistanceControl;
