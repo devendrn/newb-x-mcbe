@@ -77,6 +77,10 @@ vec4 renderCloudsRounded(
   pos += deltaP;
 
   deltaP /= -stepsf;
+  #ifdef NL_CLOUD2_DITHERING
+    // dithered cloud step
+    pos += deltaP * hash(vPos.xz + time);
+  #endif
 
   // alpha, gradient
   vec2 d = vec2(0.0,1.0);

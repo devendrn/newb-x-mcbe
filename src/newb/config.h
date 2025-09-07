@@ -131,6 +131,7 @@
 #define NL_CLOUD1_OPACITY 0.9              // 0.0 invisible ~ 1.0 opaque
 
 /* Rounded cloud settings */
+#define NL_CLOUD2_DITHERING                // [toggle] enable dithering to reduce visible steps/cuts
 #define NL_CLOUD2_THICKNESS 2.1            // 0.5 slim ~ 5.0 fat
 #define NL_CLOUD2_RAIN_THICKNESS 2.5       // 0.5 slim ~ 5.0 fat
 #define NL_CLOUD2_STEPS 5                  // 3 low quality ~ 16 high quality

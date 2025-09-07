@@ -80,4 +80,11 @@ float fastVoronoi2(vec2 pos, float f) {
   return 1.0-f*min(p.x+p.y, p.z+p.w);
 }
 
+// Used in rounded clouds to displace steps/cuts
+float hash(vec2 p) {
+  p = fract(p*vec2(123.45, 678.12));
+  p += dot(p, p + 50.0);
+  return fract(p.x*p.y);
+}
+
 #endif
