@@ -40,7 +40,7 @@ jobs:
         .\build.bat pack -p windows -v ${{ inputs.subversion }} --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-windows
+        name: Newb Glow Windows
         path: ./build/pack-windows
   android:
     runs-on: ubuntu-latest
@@ -62,7 +62,7 @@ jobs:
         ./build.sh pack -p android -v ${{ inputs.subversion }} --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-android
+        name: Newb Glow Android
         path: ./build/pack-android
   ios:
     runs-on: ubuntu-latest
@@ -86,7 +86,7 @@ jobs:
         ./build.sh pack -p ios -v ${{ inputs.subversion }} --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-ios
+        name: Newb Glow IOS
         path: ./build/pack-ios
   merged:
     runs-on: windows-2022
@@ -108,5 +108,5 @@ jobs:
         .\build.bat pack -p merged -v ${{ inputs.subversion }} --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-merged
+        name: Newb Glow Merged
         path: ./build/pack-merged
