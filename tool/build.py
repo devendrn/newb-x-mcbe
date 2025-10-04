@@ -46,9 +46,9 @@ def run(args):
     with status:
         try:
             lp.compile(
-                os.path.join('src', 'materials'),
-                [args.p],
-                output_path,
+                project_path=os.path.join('src', 'materials'),
+                profiles=[args.p],
+                output_folder=output_path,
                 material_patterns=materials_pattern,
                 shaderc_path=shaderc_path,
                 defines=[MacroDefine.from_string(args.s)] if args.s else []

@@ -94,9 +94,9 @@ def _build(status: Status, profile: str, subpack: str, materials: [str], output_
 
     try:
         lp.compile(
-            os.path.join('src', 'materials'),
-            [profile],
-            output_path,
+            project_path=os.path.join('src', 'materials'),
+            profiles=[profile],
+            output_folder=output_path,
             material_patterns=material_patterns,
             shaderc_path=SHADERC_PATH,
             defines=[subpack_define]
