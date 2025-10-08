@@ -114,6 +114,9 @@ options:
   -s S                  subpack config to use (eg: NO_WAVE)
 ```
 
+> [!TIP]
+> `merged` compiles materials with all platforms combined. So the same compiled material works on supported platforms. This may make build take longer and increase material size.
+
 ### Compile and build full shader pack
 ```
 ./build.sh pack
