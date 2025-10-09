@@ -55,8 +55,9 @@ void main() {
   vec3 bPos = fract(cPos);
   vec3 tiledCpos = fract(cPos*0.0625);
 
-  float uvx16 = a_texcoord1.x*16.0;
-  vec2 uv1 = vec2(fract(uvx16), floor(uvx16)*0.0625);
+  // 0-255 = first 4 bits for y, remaining for x
+  float uvx16 = a_texcoord1.x * 15.9375; // 255/16
+  vec2 uv1 = vec2(fract(uvx16), floor(uvx16)*0.0625); // (a&15, a>>4)
 
   vec2 lit = uv1*uv1;
 
