@@ -72,7 +72,7 @@ No wave effects
 
 #[[subpack]]
 #define = "LITE"
-#materials = ["Sky", "RenderChunk", "Actor", "ActorGlint", "EndSky", "Clouds", "SunMoon", "Weather", "ItemInHandTextured", "ItemInHandColor", "ItemInHandColorGlint", "Stars"]
+#materials = ["Actor", "ActorGlint", "Clouds", "EndSky", "ItemInHandColor", "ItemInHandColorGlint", "ItemInHandTextured", "LegacyCubemap", "RenderChunk", "Sky", "Stars", "SunMoon", "Weather"]
 #description = '''
 #Many effects disabled. A bit lighter!
 #'''
