@@ -1,0 +1,12 @@
+{
+		"uniform_overrides": {
+			"WeatherID": "BUILTIN_MinecraftWeatherID",
+			"Day": "BUILTIN_MinecraftDay",
+			"DimensionID": "BUILTIN_MinecraftDimensionID",
+			"TimeOfDay": "BUILTIN_MinecraftTimeOfDay",
+			"WeatherID": "BUILTIN_MinecraftWeatherID",
+			"SunDirection": "BUILTIN_MinecraftSunDirection",
+			"CloudColor": "BUILTIN_MinecraftCloudColor",
+			"FogColor": "BUILTIN_MinecraftFogColor"
+		}
+}

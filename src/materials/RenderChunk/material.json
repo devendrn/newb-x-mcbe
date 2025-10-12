@@ -1,0 +1,22 @@
+{
+		"uniform_overrides": {
+			"WeatherID": "BUILTIN_MinecraftWeatherID",
+			"BiomeID": "BUILTIN_MinecraftBiomeID",
+			"CloudHeight": "BUILTIN_MinecraftCloudHeight",
+			"Day": "BUILTIN_MinecraftDay",
+			"DimensionID": "BUILTIN_MinecraftDimensionID",
+			"LocalClientID": "BUILTIN_MinecraftLocalClientID",
+			"MoonPhase": "BUILTIN_MinecraftMoonPhase",
+			"RenderDistance": "BUILTIN_MinecraftRenderDistance",
+			"TimeOfDay": "BUILTIN_MinecraftTimeOfDay",
+			"ElapsedFrameTime": "BUILTIN_MinecraftElapsedFrameTime",
+			"WeatherID": "BUILTIN_MinecraftWeatherID",
+			"CameraFacingDirection": "BUILTIN_MinecraftCameraFacingDirection",
+			"CameraPosition": "BUILTIN_MinecraftCameraPosition",
+			"LastCameraFacingDirection": "BUILTIN_MinecraftLastCameraFacingDirection",
+			"LastCameraPosition": "BUILTIN_MinecraftLastCameraPosition",
+			"SunDirection": "BUILTIN_MinecraftSunDirection",
+			"CloudColor": "BUILTIN_MinecraftCloudColor",
+			"FogColor": "BUILTIN_MinecraftFogColor"
+		}
+}
