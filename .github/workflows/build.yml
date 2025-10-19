@@ -15,7 +15,7 @@ on:
         options:
         - Android
         - Windows
-        - IOS
+        - iOS
         - Merged
         - All
 
@@ -66,7 +66,7 @@ jobs:
         path: ./build/pack-android
   ios:
     runs-on: ubuntu-latest
-    if:  ${{ (github.event.inputs.platform == 'IOS') || (github.event.inputs.platform == 'All') }}
+    if:  ${{ (github.event.inputs.platform == 'iOS') || (github.event.inputs.platform == 'All') }}
     steps:
     - uses: actions/checkout@v4
       with:
