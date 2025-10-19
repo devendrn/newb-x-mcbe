@@ -55,7 +55,10 @@ void main() {
   vec3 bPos = fract(cPos);
   vec3 tiledCpos = fract(cPos*0.0625);
 
-  vec2 uv1 = a_texcoord1;
+  // 0-255 = first 4 bits for y, remaining for x
+  float uvx16 = a_texcoord1.x * 15.9375; // 255/16
+  vec2 uv1 = vec2(fract(uvx16), floor(uvx16)*0.0625); // (a&15, a>>4)
+
   vec2 lit = uv1*uv1;
 
   bool isColored = color.r != color.g || color.r != color.b;
@@ -165,7 +168,7 @@ void main() {
   v_extra = vec4(shade, worldPos.y, water, shimmer);
   v_refl = refl;
   v_texcoord0 = a_texcoord0;
-  v_lightmapUV = a_texcoord1;
+  v_lightmapUV = uv1;
   v_color0 = color;
   v_color1 = a_color0;
   v_fog = fogColor;
