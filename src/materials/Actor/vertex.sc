@@ -17,6 +17,9 @@ uniform vec4 FogControl;
 uniform vec4 UVAnimation;
 uniform mat4 Bones[8];
 uniform vec4 ViewPositionAndTime;
+uniform vec4 DimensionID;
+uniform vec4 TimeOfDay;
+uniform vec4 Day;
 
 void main() {
   mat4 World = u_model[0];
@@ -37,8 +40,7 @@ void main() {
   vec4 position = jitterVertexPosition(worldPosition);
 
   #if !(defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY) || defined(INSTANCING))
-
-    nl_environment env = nlDetectEnvironment(FogColor.rgb, FogControl.xyz);
+    nl_environment env = nlDetectEnvironment(DimensionID.x, TimeOfDay.x, Day.x, FogColor.rgb, FogControl.xyz);
     nl_skycolor skycol = nlSkyColors(env, FogColor.rgb);
 
     float relativeDist = position.z/FogControl.z;

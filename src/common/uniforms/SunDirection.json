@@ -1,0 +1,11 @@
+{
+  "name": "SunDirection",
+  "type": "vec4",
+  "count": 1,
+  "default": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+  ]
+}
