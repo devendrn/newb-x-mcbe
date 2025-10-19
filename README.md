@@ -74,8 +74,11 @@ Following methods are for [mcpelauncher-manifest](https://minecraft-linux.github
   - [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation) (Must be `v13.x.x`)
 
 ### Get source code
+> [!NOTE]
+> Source code contains symlinks. Symlinks may not work as intended on Windows.
+> Below command will always ensure that symlinks work as intended.
 ```
-git clone https://github.com/devendrn/newb-x-mcbe/
+git clone -c core.symlinks=true https://github.com/devendrn/newb-x-mcbe/
 cd newb-x-mcbe
 ```
 
