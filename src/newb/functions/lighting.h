@@ -3,7 +3,7 @@
 
 #include "detection.h"
 #include "sky.h"
-#include "constants.h"
+#include "utils.h"
 #include "noise.h"
 #include "clouds.h"
 
@@ -112,7 +112,7 @@ void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, 
   }
   light *= mix(normalize(horizonCol), vec3_splat(0.6), lit.y*0.6);
   #ifdef NL_UNDERWATER_WAVE
-    pos.xy += NL_UNDERWATER_WAVE*min(0.05*pos.z,0.6)*sin(t*1.2 + dot(cPos,vec3_splat(NL_CONST_PI_HALF)));
+    pos.xy += NL_UNDERWATER_WAVE*min(0.05*pos.z,0.6)*sin(t*1.2 + dot(cPos,vec3_splat(PI_HALF)));
   #endif
 }
 
@@ -170,7 +170,7 @@ vec4 nlEntityEdgeHighlightPreprocess(vec2 texcoord) {
 
 vec4 nlLavaNoise(vec3 tiledCpos, float t) {
   t *=  NL_LAVA_NOISE_SPEED;
-  vec3 p = NL_CONST_PI_HALF*tiledCpos;
+  vec3 p = PI_HALF*tiledCpos;
   float d = fastVoronoi2(4.3*tiledCpos.xz + t, 2.0);
   float n = sin(2.0*(p.x+p.y+p.z) + 1.7*sin(2.0*d + 4.0*(p.x-p.z)) + 4.0*t);
   n = 0.3*d*d +  0.7*n*n;

@@ -1,12 +1,16 @@
 #ifndef DETECTION_H
 #define DETECTION_H
 
+#include "utils.h"
+
 struct nl_environment {
   bool end;
   bool nether;
   bool underwater;
   float rainFactor;
   float dayFactor;
+  vec3 sunDir;
+  vec3 moonDir;
 };
 
 bool detectEnd(float DIMENSION_ID) {
@@ -37,14 +41,32 @@ float detectDayFactor(vec3 FOG_COLOR) {
   return min(dot(FOG_COLOR, vec3(0.5,0.7,0.5)), 1.0);
 }
 
+nl_environment calculateSunParams(nl_environment env, float TIME_OF_DAY, float DAY) {
+  float t = 2.0 * PI * TIME_OF_DAY;
+  vec3 sunDir = vec3(sin(t), cos(t), 0.0); 
+  vec3 moonDir = vec3(-sunDir.x, -sunDir.y, 0.0);
+  env.dayFactor = sunDir.y;
+
+  sunDir.yz = mul(rmat2(-degToRad(NL_SUN_PATH_TILT)), sunDir.yz);
+  sunDir.xz = mul(rmat2(degToRad(NL_SUN_PATH_YAW)), sunDir.xz);
+
+  moonDir.yz = mul(rmat2(-degToRad(NL_MOON_PATH_TILT)), moonDir.yz);
+  moonDir.xz = mul(rmat2(degToRad(NL_MOON_PATH_YAW)), moonDir.xz);
+
+  env.sunDir = sunDir;
+  env.moonDir = moonDir;
+
+  return env;
+}
+
 nl_environment nlDetectEnvironment(float DIMENSION_ID, float TIME_OF_DAY, float DAY, vec3 FOG_COLOR, vec3 FOG_CONTROL) {
-  nl_environment e;
-  e.end = detectEnd(DIMENSION_ID);
-  e.nether = detectNether(DIMENSION_ID, FOG_COLOR, FOG_CONTROL.xy);
-  e.underwater = detectUnderwater(FOG_COLOR, FOG_CONTROL.xy);
-  e.rainFactor = detectRain(FOG_CONTROL.xyz);
-  e.dayFactor = detectDayFactor(FOG_COLOR);
-  return e;
+  nl_environment env;
+  env.end = detectEnd(DIMENSION_ID);
+  env.nether = detectNether(DIMENSION_ID, FOG_COLOR, FOG_CONTROL.xy);
+  env.underwater = detectUnderwater(FOG_COLOR, FOG_CONTROL.xy);
+  env.rainFactor = detectRain(FOG_CONTROL.xyz);
+  env = calculateSunParams(env, TIME_OF_DAY, DAY);
+  return env;
 }
 
 #endif
