@@ -7,7 +7,6 @@ $output v_texcoord0
   #include <newb/config.h>
   #include <newb/functions/utils.h>
 
-  uniform vec4 SunDirection;
   uniform vec4 TimeOfDay;
   uniform vec4 Day;
 #endif
@@ -24,7 +23,8 @@ void main() {
     #else
       vec2 dir = vec2(model[3][0], model[3][1]);
     #endif
-    bool isSun = dot(SunDirection.xy, dir) > 0.0;
+    float st = 2.0*PI*TimeOfDay.x;
+    bool isSun = dot(vec2(cos(st), sin(st)), normalize(dir)) > 0.0;
 
     float dist = 300.0;
     float angle = 0.0;
@@ -43,12 +43,12 @@ void main() {
       tilt = degToRad( NL_MOON_PATH_TILT);
       yaw = degToRad(NL_MOON_PATH_YAW);
     }
-    pos.xz = mul(rmat2(angle + PI*TimeOfDay.x), pos.xz);
+    pos.xz = mul(rmat2(angle + 0.5*st), pos.xz);
 
     vec4 wpos = vec4(dist, 70.0*pos.xz, 1.0);
 
     // TODO: Combine these into single mat?
-    wpos.xy = mul(rmat2(2.0*PI*(TimeOfDay.x-0.25)), wpos.xy);
+    wpos.xy = mul(rmat2(st - 0.5*PI), wpos.xy);
     wpos.yz = mul(rmat2(tilt), wpos.yz);
     wpos.xz = mul(rmat2(yaw), wpos.xz);
 
