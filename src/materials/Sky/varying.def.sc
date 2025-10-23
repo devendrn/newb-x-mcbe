@@ -9,4 +9,4 @@ vec4 i_data3        : TEXCOORD5;
 
 vec3 v_fogColor                 : COLOR0;
 vec3 v_worldPos                 : COLOR1;
-vec4 v_underwaterRainTimeDay       : COLOR2;
+vec4 v_underwaterRainTimeDay    : COLOR2;

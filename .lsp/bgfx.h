@@ -292,3 +292,7 @@ uniform mat4 u_view;
 
 #define SAMPLER2D(_sampler, _reg) uniform sampler2D _sampler;
 
+mat2 mtxFromRows(vec2, vec2);
+mat3 mtxFromRows(vec3, vec3, vec3);
+mat2 mtxFromColumns(vec2, vec2);
+mat3 mtxFromColumns(vec3, vec3, vec3);

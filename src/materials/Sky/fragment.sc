@@ -6,6 +6,8 @@
 
 #ifndef INSTANCING
   #include <newb/main.sh>
+  uniform vec4 TimeOfDay;
+  uniform vec4 Day;
   uniform vec4 FogAndDistanceControl;
 #endif
 
@@ -19,13 +21,9 @@ void main() {
     env.underwater = v_underwaterRainTimeDay.x > 0.5;
     env.rainFactor = v_underwaterRainTimeDay.y;
     env.dayFactor = v_underwaterRainTimeDay.w;
+    env = calculateSunParams(env, TimeOfDay.x, Day.x);
 
-    nl_skycolor skycol;
-    if (env.underwater) {
-      skycol = nlUnderwaterSkyColors(env.rainFactor, v_fogColor.rgb);
-    } else {
-      skycol = nlOverworldSkyColors(env.rainFactor, v_fogColor.rgb);
-    }
+    nl_skycolor skycol = nlOverworldSkyColors(env, v_fogColor.rgb);
 
     vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_fogColor, v_underwaterRainTimeDay.z);
     #ifdef NL_SHOOTING_STAR

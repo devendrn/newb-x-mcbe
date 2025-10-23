@@ -1,7 +1,7 @@
 #ifndef NOISE_H
 #define NOISE_H
 
-#include "constants.h"
+#include "utils.h"
 
 // functions under [1] are from https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 
@@ -25,7 +25,7 @@ float fastRand(vec2 n){
 
 // water displacement map (also used by caustic)
 float disp(vec3 pos, float t) {
-  float n = sin(8.0*NL_CONST_PI_HALF*(pos.x+pos.y*pos.z) + 0.7*t);
+  float n = sin(8.0*PI_HALF*(pos.x+pos.y*pos.z) + 0.7*t);
   pos.y += t + 0.8*n;
   float p = floor(pos.y);
   return (0.8+0.2*n) * mix(fastRand(pos.xz+p), fastRand(pos.xz+p+1.0), pos.y - p);
