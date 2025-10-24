@@ -2,6 +2,7 @@
 #define NOISE_H
 
 #include "constants.h"
+SAMPLER2D_AUTOREG(s_NoiseTexture);
 
 // functions under [1] are from https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 
@@ -12,10 +13,7 @@ float rand(highp vec2 n) {
 
 // 1D noise - used in plants,lantern wave
 float noise1D(highp float x) {
-  float x0 = floor(x);
-  float t0 = x-x0;
-  t0 *= t0*(3.0-2.0*t0);
-  return mix(fract(sin(x0)*84.85), fract(sin(x0+1.0)*84.85), t0);
+  return texture2DLod(s_NoiseTexture, vec2_splat(x)*0.0001, 0).g;
 }
 
 // simpler rand for disp, puddles
@@ -31,53 +29,26 @@ float disp(vec3 pos, float t) {
   return (0.8+0.2*n) * mix(fastRand(pos.xz+p), fastRand(pos.xz+p+1.0), pos.y - p);
 }
 
-// [1]
 float noise2D(vec2 u) {
-  vec2 u0 = floor(u);
-  vec2 v = u-u0;
-  v *= v*(3.0 - 2.0*v);
-  float c0 = rand(u0);
-  float c1 = rand(u0+vec2(1.0, 0.0));
-  float c2 = rand(u0+vec2(1.0, 1.0));
-  float c3 = rand(u0+vec2(0.0, 1.0));
-  return mix(mix(c0, c3, v.y), mix(c1, c2, v.y), v.x);
+  return texture2DLod(s_NoiseTexture, u*0.01, 0).b;
 }
 
-vec4 mod289(vec4 x) {
-  return x - floor(x * (1.0 / 289.0)) * 289.0;
-}
+// 3D noise - used by galaxy
+float noise3D(vec3 p) {
+  vec3 w = abs(p);
+  w = w / (w.x + w.y + w.z);
 
-vec4 perm(vec4 x) {
-  return mod289(((x * 34.0) + 1.0) * x);
-}
+  vec3 n = vec3(
+    texture2DLod(s_NoiseTexture, p.yz*0.01, 0).b*w.x, 
+    texture2DLod(s_NoiseTexture, p.xz*0.01, 0).b*w.y, 
+    texture2DLod(s_NoiseTexture, p.xy*0.01, 0).b*w.z
+    );
 
-// [1] used by galaxy
-float noise3D(vec3 p){
-  vec3 a = floor(p);
-  vec3 d = p - a;
-  //d = d * d * (3.0 - 2.0 * d);
-
-  vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
-  vec4 k1 = perm(b.xyxy);
-  vec4 k2 = perm(k1.xyxy + b.zzww);
-
-  vec4 c = k2 + a.zzzz;
-  vec4 k3 = perm(c);
-  vec4 k4 = perm(c + 1.0);
-  vec4 o1 = fract(k3 / 41.0);
-  vec4 o2 = fract(k4 / 41.0);
-  vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
-  vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
-
-  return o4.y * d.y + o4.x * (1.0 - d.y);
+  return n.x + n.y + n.z;
 }
 
 float fastVoronoi2(vec2 pos, float f) {
-  vec4 p = pos.xyxy;
-  p.zw += p.wz*vec2(0.4,0.5);
-  p = fract(p) - 0.5;
-  p *= p;
-  return 1.0-f*min(p.x+p.y, p.z+p.w);
+  return 1.0-f*texture2DLod(s_NoiseTexture, pos.xy*0.1, 0).r;
 }
 
 #endif

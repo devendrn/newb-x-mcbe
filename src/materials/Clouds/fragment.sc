@@ -9,6 +9,8 @@ $input v_color0
 
 #define NL_CLOUD_PARAMS(x) NL_CLOUD2##x##STEPS, NL_CLOUD2##x##THICKNESS, NL_CLOUD2##x##RAIN_THICKNESS, NL_CLOUD2##x##VELOCITY, NL_CLOUD2##x##SCALE, NL_CLOUD2##x##DENSITY, NL_CLOUD2##x##SHAPE
 
+SAMPLER2D_AUTOREG(s_CloudTexture);
+
 void main() {
   vec4 color = v_color0;
 
@@ -16,13 +18,13 @@ void main() {
     vec3 vDir = normalize(v_color0.xyz);
 
     #if NL_CLOUD_TYPE == 2
-      color = renderCloudsRounded(vDir, v_color0.xyz, v_color1.w, v_color2.w, v_color2.rgb, v_color1.rgb, NL_CLOUD_PARAMS(_));
+      color = renderCloudsRounded(s_CloudTexture, vDir, v_color0.xyz, v_color1.w, v_color2.w, v_color2.rgb, v_color1.rgb, NL_CLOUD_PARAMS(_));
 
       #ifdef NL_CLOUD2_LAYER2
         vec2 parallax = vDir.xz / abs(vDir.y) * NL_CLOUD2_LAYER2_OFFSET;
         vec3 offsetPos = v_color0.xyz;
         offsetPos.xz += parallax;
-        vec4 color2 = renderCloudsRounded(vDir, offsetPos, v_color1.a, v_color2.a*2.0, v_color2.rgb, v_color1.rgb, NL_CLOUD_PARAMS(_LAYER2_));
+        vec4 color2 = renderCloudsRounded(s_CloudTexture, vDir, offsetPos, v_color1.a, v_color2.a*2.0, v_color2.rgb, v_color1.rgb, NL_CLOUD_PARAMS(_LAYER2_));
         color = mix(color2, color, 0.2 + 0.8*color.a);
       #endif
 

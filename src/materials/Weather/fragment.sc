@@ -60,6 +60,7 @@ void main() {
   diffuse.rgb = colorCorrection(diffuse.rgb);
 
   diffuse.a *= lightingUV.y*(1.0-v_fog.a);
+  diffuse.a *= NL_WEATHER_PARTICLE_OPACITY;
 
   gl_FragColor = diffuse;
 }

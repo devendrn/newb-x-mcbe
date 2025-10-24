@@ -175,7 +175,7 @@ vec4 nlLavaNoise(vec3 tiledCpos, float t) {
   float n = sin(2.0*(p.x+p.y+p.z) + 1.7*sin(2.0*d + 4.0*(p.x-p.z)) + 4.0*t);
   n = 0.3*d*d +  0.7*n*n;
   n *= n;
-  return vec4(mix(vec3(0.7, 0.4, 0.0), vec3_splat(1.5), n),n);
+  return vec4(mix(vec3(0.7, 0.4, 0.0), vec3_splat(1.2), n),n);
 }
 
 #endif
