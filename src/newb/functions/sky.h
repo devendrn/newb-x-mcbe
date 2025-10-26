@@ -121,8 +121,8 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   float mask = 0.5 + (0.5*viewDir.y/(0.4 + avy));
 
   vec2 g = 0.5 - 0.5*vec2(dot(env.sunDir, viewDir), dot(env.moonDir, viewDir));
-  g = 1.0-mix(sqrt(g), g, env.rainFactor);
-  vec2 g2 = g*g;
+  vec2 g1 = 1.0-mix(sqrt(g), g, env.rainFactor);
+  vec2 g2 = g1*g1;
   vec2 g4 = g2*g2;
   vec2 g8 = g4*g4;
   float mg8 = (g8.x+g8.y)*mask*(1.0-0.5*env.rainFactor);
@@ -153,6 +153,14 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
     source *= source;
     sky *= 1.0 + 15.0*source*(1.0-env.rainFactor);
   }
+
+  #ifdef NL_RAINBOW
+    float rainbowFade = 0.5 + 0.5*viewDir.y;
+    rainbowFade *= rainbowFade;
+    rainbowFade *= mix(NL_RAINBOW_CLEAR, NL_RAINBOW_RAIN, env.rainFactor);
+    rainbowFade *= 0.5+0.5*env.dayFactor;
+    sky += spectrum((g.x-0.75)*8.0)*rainbowFade*skyCol.horizon;
+  #endif
 
   return sky;
 }
@@ -190,9 +198,6 @@ vec3 nlRenderSky(nl_skycolor skycol, nl_environment env, vec3 viewDir, float t, 
     sky = renderEndSky(skycol.horizon, skycol.zenith, viewDir, t);
   } else {
     sky = renderOverworldSky(skycol, env, viewDir, isSkyPlane);
-    #ifdef NL_RAINBOW
-      sky += mix(NL_RAINBOW_CLEAR, NL_RAINBOW_RAIN, env.rainFactor)*spectrum((viewDir.z+0.6)*8.0)*max(viewDir.y, 0.0)*env.fogCol.g;
-    #endif
     #ifdef NL_UNDERWATER_STREAKS
       // if (env.underwater) {
       //   float a = atan2(viewDir.x, viewDir.z);

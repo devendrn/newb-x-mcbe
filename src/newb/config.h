@@ -90,9 +90,9 @@
 
 
 /* Rainbow */
-//#define NL_RAINBOW         // [toggle] enable rainbow in sky
-#define NL_RAINBOW_CLEAR 0.0 // 0.3 subtle ~ 1.7 bright during clear
-#define NL_RAINBOW_RAIN 1.0  // 0.5 subtle ~ 2.0 bright during rain
+#define NL_RAINBOW           // [toggle] enable rainbow in sky
+#define NL_RAINBOW_CLEAR 0.0 // 0.3 subtle ~ 1.0 bright during clear weather
+#define NL_RAINBOW_RAIN  0.4 // 0.3 subtle ~ 1.0 bright during rain weather
 
 /* Ore glow intensity */
 #define NL_GLOW_TEX 2.3           // 0.4 weak ~ 8.0 bright
