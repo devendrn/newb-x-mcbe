@@ -41,7 +41,7 @@ void main() {
 
   #if !(defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY) || defined(INSTANCING))
     nl_environment env = nlDetectEnvironment(DimensionID.x, TimeOfDay.x, Day.x, FogColor.rgb, FogControl.xyz);
-    nl_skycolor skycol = nlSkyColors(env, FogColor.rgb);
+    nl_skycolor skycol = nlSkyColors(env);
 
     float relativeDist = position.z/FogControl.z;
 
@@ -49,7 +49,7 @@ void main() {
     vec3 viewDir = normalize(worldPosition.xyz);
 
     vec4 fogColor;
-    fogColor.rgb = nlRenderSky(skycol, env, viewDir, FogColor.rgb, ViewPositionAndTime.w);
+    fogColor.rgb = nlRenderSky(skycol, env, viewDir, ViewPositionAndTime.w, false);
     fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogControl.xy);
 
     if (env.nether) {

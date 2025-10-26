@@ -75,7 +75,7 @@ void main() {
   #endif
 
   nl_environment env = nlDetectEnvironment(DimensionID.x, TimeOfDay.x, Day.x, FogColor.rgb, FogAndDistanceControl.xyz);
-  nl_skycolor skycol = nlSkyColors(env, FogColor.rgb);
+  nl_skycolor skycol = nlSkyColors(env);
 
   // time
   highp float t = ViewPositionAndTime.w;
@@ -104,7 +104,7 @@ void main() {
   relativeDist += RenderChunkFogAlpha.x;
 
   vec4 fogColor;
-  fogColor.rgb = nlRenderSky(skycol, env, viewDir, FogColor.rgb, t);
+  fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, false);
   fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy);
   #ifdef NL_GODRAY
     fogColor.a = mix(fogColor.a, 1.0, min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0));

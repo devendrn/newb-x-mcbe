@@ -37,7 +37,7 @@ vec4 nlWater(
   float cosR = dot(nrm, viewDir);
   viewDir = viewDir - 2.0*cosR*nrm ; // reflect(viewDir, nrm)
 
-  vec3 waterRefl = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t);
+  vec3 waterRefl = nlRenderSky(skycol, env, viewDir, t, false);
 
   #if defined(NL_WATER_CLOUD_AURORA_REFLECTION)
     if (viewDir.y < 0.0) {

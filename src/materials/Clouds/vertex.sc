@@ -15,6 +15,8 @@ $output v_color0
 uniform vec4 FogColor;
 uniform vec4 FogAndDistanceControl;
 uniform vec4 ViewPositionAndTime;
+uniform vec4 TimeOfDay;
+uniform vec4 Day;
 
 float fog_fade(vec3 wPos) {
   return clamp(2.0-length(wPos*vec3(0.005, 0.002, 0.005)), 0.0, 1.0);
@@ -30,7 +32,15 @@ void main() {
   float t = ViewPositionAndTime.w;
   float rain = detectRain(FogAndDistanceControl.xyz);
 
-  nl_skycolor skycol = nlOverworldSkyColors(rain, FogColor.rgb);
+  nl_environment env;
+  env.end = false;
+  env.nether = false;
+  env.underwater = false;
+  env.rainFactor = rain;
+  env.fogCol = FogColor.rgb;
+  env = calculateSunParams(env, TimeOfDay.x, Day.x);
+
+  nl_skycolor skycol = nlOverworldSkyColors(env);
   vec3 pos = a_position;
   vec3 worldPos;
 

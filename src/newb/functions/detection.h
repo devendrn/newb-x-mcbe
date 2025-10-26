@@ -11,6 +11,7 @@ struct nl_environment {
   float dayFactor;
   vec3 sunDir;
   vec3 moonDir;
+  vec3 fogCol;
 };
 
 bool detectEnd(float DIMENSION_ID) {
@@ -65,6 +66,7 @@ nl_environment nlDetectEnvironment(float DIMENSION_ID, float TIME_OF_DAY, float 
   env.nether = detectNether(DIMENSION_ID, FOG_COLOR, FOG_CONTROL.xy);
   env.underwater = detectUnderwater(FOG_COLOR, FOG_CONTROL.xy);
   env.rainFactor = detectRain(FOG_CONTROL.xyz);
+  env.fogCol = FOG_COLOR;
   env = calculateSunParams(env, TIME_OF_DAY, DAY);
   return env;
 }
