@@ -159,7 +159,7 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
     rainbowFade *= rainbowFade;
     rainbowFade *= mix(NL_RAINBOW_CLEAR, NL_RAINBOW_RAIN, env.rainFactor);
     rainbowFade *= 0.5+0.5*env.dayFactor;
-    sky += spectrum((g.x-0.75)*8.0)*rainbowFade*skyCol.horizon;
+    sky += spectrum(14.2*(0.85-g.x))*rainbowFade*skyCol.horizon;
   #endif
 
   return sky;
