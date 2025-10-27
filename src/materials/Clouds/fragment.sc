@@ -31,7 +31,7 @@ void main() {
       #endif
 
       #ifdef NL_AURORA
-        color += renderAurora(pos, v_color2.a, v_color1.a, v_fogColor)*(1.0-0.95*color.a);
+        color += renderAurora(cloudPos, v_color2.a, v_color1.a, v_fogColor)*(1.0-0.95*color.a);
       #endif
 
       color.a *= v_color0.a;
