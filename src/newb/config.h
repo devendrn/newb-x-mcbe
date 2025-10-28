@@ -69,21 +69,20 @@
 /* Sky */
 #define NL_SKY_VOID_FACTOR     0.5
 #define NL_SKY_VOID_DARKNESS   0.3
-#define NL_SKY_RAIN_MIX_FACTOR 0.8
+#define NL_SKY_RAIN_MIX_FACTOR 0.9
 
 /* Sky colors - zenith=top, horizon=bottom */
-#define NL_DAWN_ZENITH_COL   vec3(0.05,0.2,0.4)
-#define NL_DAWN_HORIZON_COL  vec3(1.5,0.2,0.2)
-#define NL_DAWN_EDGE_COL     vec3(1.0,0.4,0.4)
-#define NL_DAY_ZENITH_COL    vec3(0.15,0.45,1.0)
-#define NL_DAY_HORIZON_COL   vec3(0.53,0.83,0.93)
-#define NL_DAY_EDGE_COL      vec3(0.7,0.7,0.7)
-#define NL_NIGHT_ZENITH_COL  vec3(0.004,0.024,0.04)
-#define NL_NIGHT_HORIZON_COL vec3(0.01,0.03,0.05)
-#define NL_NIGHT_EDGE_COL    vec3(0.02,0.04,0.05)
-
-#define NL_RAIN_ZENITH_COL   vec3(0.85,0.9,1.0)
-#define NL_RAIN_HORIZON_COL  vec3(1.0,1.0,1.0)
+#define NL_DAWN_ZENITH_COL   vec3(0.1,0.4,0.7)
+#define NL_DAWN_HORIZON_COL  vec3(3.0,0.4,0.4)
+#define NL_DAWN_EDGE_COL     vec3(2.0,0.8,0.8)
+#define NL_DAY_ZENITH_COL    vec3(0.3,0.9,2.0)
+#define NL_DAY_HORIZON_COL   vec3(1.0,1.6,1.8)
+#define NL_DAY_EDGE_COL      vec3(1.44,1.56,1.62)
+#define NL_NIGHT_ZENITH_COL  vec3(0.008,0.048,0.08)
+#define NL_NIGHT_HORIZON_COL vec3(0.02,0.06,0.1)
+#define NL_NIGHT_EDGE_COL    vec3(0.04,0.08,0.1)
+#define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
+#define NL_RAIN_HORIZON_COL  vec3(0.6,0.6,0.6)
 
 #define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
 #define NL_END_HORIZON_COL   vec3(0.6,0.02,0.6)
