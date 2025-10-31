@@ -1,7 +1,7 @@
 #ifndef WATER_H
 #define WATER_H
 
-#include "constants.h"
+#include "utils.h"
 #include "detection.h"
 #include "sky.h"
 #include "clouds.h"
@@ -28,7 +28,7 @@ vec4 nlWater(
     } else { // slanted plane and highly slanted plane
     }*/
   } else { // reflection for side plane
-    bump *= 0.5 + 0.5*sin(3.0*t*NL_WATER_WAVE_SPEED + cPos.y*NL_CONST_PI_HALF);
+    bump *= 0.5 + 0.5*sin(3.0*t*NL_WATER_WAVE_SPEED + cPos.y*PI_HALF);
     nrm.xz = normalize(viewDir.xz) + bump.y*(1.0-viewDir.xz*viewDir.xz)*NL_WATER_BUMP;
     nrm.y = bump.x*NL_WATER_BUMP;
   }
@@ -37,7 +37,7 @@ vec4 nlWater(
   float cosR = dot(nrm, viewDir);
   viewDir = viewDir - 2.0*cosR*nrm ; // reflect(viewDir, nrm)
 
-  vec3 waterRefl = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t);
+  vec3 waterRefl = nlRenderSky(skycol, env, viewDir, t, false);
 
   #if defined(NL_WATER_CLOUD_AURORA_REFLECTION)
     if (viewDir.y < 0.0) {
@@ -58,7 +58,7 @@ vec4 nlWater(
 
   // torch light reflection
   float tc = 0.5+0.5*sin(16.0*viewDir.x)*sin(16.0*viewDir.z);
-  waterRefl += torchColor*NL_TORCH_INTENSITY*lit.x*tc*tc;
+  waterRefl += torchColor*NL_TORCHLIGHT_INTENSITY*lit.x*tc*tc;
 
   // mask sky reflection under shade
   if (!env.end) {

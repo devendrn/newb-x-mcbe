@@ -46,7 +46,7 @@ vec4 nlRefl(
       #endif
 
       if (wPos.y < 0.0) {
-        wetRefl.rgb = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t);
+        wetRefl.rgb = nlRenderSky(skycol, env, viewDir, t, false);
         wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
 
         #if defined(NL_GROUND_AURORA_REFL) && defined(NL_AURORA) && defined (NL_GROUND_REFL)
@@ -57,7 +57,7 @@ vec4 nlRefl(
         #endif
 
         // torch light
-        wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
+        wetRefl.rgb += torchColor*lit.x*NL_TORCHLIGHT_INTENSITY;
 
         // fade out before clip
         wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0);
