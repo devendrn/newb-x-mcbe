@@ -13,4 +13,6 @@ mat2 rmat2(float t) {
 
 float degToRad(float t) { return 0.0174533*t; }
 
+float luminance(vec3 x) { return dot(x, vec3(0.21, 0.71, 0.08)); }
+
 #endif

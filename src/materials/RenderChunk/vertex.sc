@@ -14,8 +14,10 @@ uniform vec4 FogColor;
 uniform vec4 DimensionID;
 uniform vec4 TimeOfDay;
 uniform vec4 Day;
+uniform vec4 CameraPosition;
 
 SAMPLER2D_AUTOREG(s_MatTexture);
+SAMPLER2D_AUTOREG(s_LightMapTexture);
 
 void main() {
   #ifdef INSTANCING
@@ -94,7 +96,7 @@ void main() {
   #endif
 
   vec3 torchColor; // modified by nl_lighting
-  vec3 light = nlLighting(skycol, env, worldPos, torchColor, a_color0.rgb, FogColor.rgb, uv1, lit, isTree, shade, t);
+  vec3 light = nlLighting(s_LightMapTexture, skycol, env, worldPos, torchColor, a_color0.rgb, uv1, lit, isTree, shade, t, FogAndDistanceControl.z, TimeOfDay.x, CameraPosition.xyz);
 
   #if defined(ALPHA_TEST) && (defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE)) && !defined(RENDER_AS_BILLBOARDS)
     nlWave(worldPos, light, env.rainFactor, uv1, lit, a_texcoord0, bPos, a_color0, cPos, tiledCpos, t, s_MatTexture, isColored, camDis, isTree);

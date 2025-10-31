@@ -2,7 +2,7 @@
   "base_profile": {
     "platforms": ["ESSL_300"],
     "merge_source": ["../../tool/data/materials"],
-    "include_patterns": [ "Actor", "ActorGlint", "Clouds", "EndSky", "ItemInHandColor", "ItemInHandColorGlint", "ItemInHandTextured", "Weather", "RenderChunk", "Sky", "Stars", "SunMoon" ],
+    "include_patterns": [ "Actor", "ActorGlint", "Clouds", "EndSky", "ItemInHandColor", "ItemInHandColorGlint", "ItemInHandTextured", "RenderChunk", "Sky", "Stars", "SunMoon", "Weather" ],
     "exclude_patterns": [".*", "_*"],
     "include_search_paths": ["../../src", "../../include"]
   },

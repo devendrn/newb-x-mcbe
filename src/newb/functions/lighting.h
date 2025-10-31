@@ -7,28 +7,20 @@
 #include "noise.h"
 #include "clouds.h"
 
-// sunlight tinting
-vec3 sunLightTint(float dayFactor, float rain, vec3 FOG_COLOR) {
-
-  float tintFactor = FOG_COLOR.g + 0.1*FOG_COLOR.r;
-  float noon = clamp((tintFactor-0.37)/0.45,0.0,1.0);
-  float morning = clamp((tintFactor-0.05)*3.125,0.0,1.0);
-
-  vec3 clearTint = mix(
-    mix(NL_NIGHT_SUN_COL, NL_MORNING_SUN_COL, morning),
-    mix(NL_MORNING_SUN_COL, NL_NOON_SUN_COL, noon),
-    dayFactor
-  );
-
-  float r = 1.0-rain;
-  r *= r;
-
-  return mix(vec3(0.65,0.65,0.75), clearTint, r*r);
+vec3 sunLightTint(float dayFactor, float rain) {
+  float nightFactor = step(dayFactor, 0.0);
+  float dawnFactor = 1.0-dayFactor*dayFactor;
+  dawnFactor *= dawnFactor*dawnFactor;
+  dawnFactor *= mix(1.0, dawnFactor*dawnFactor, nightFactor);
+  vec3 tint = mix(NL_NOON_SUNLIGHT_COL, NL_NIGHT_MOONLIGHT_COL, nightFactor);
+  tint = mix(tint, NL_DAWN_SUNLIGHT_COL, dawnFactor);
+  tint = mix(tint, vec3_splat(dot(tint, vec3_splat(0.33))), rain);
+  return tint;
 }
 
 vec3 nlLighting(
-  nl_skycolor skycol, nl_environment env, vec3 wPos, out vec3 torchColor, vec3 COLOR, vec3 FOG_COLOR,
-  vec2 uv1, vec2 lit, bool isTree, float shade, highp float t
+  sampler2D tex, nl_skycolor skycol, nl_environment env, vec3 wPos, out vec3 torchColor, vec3 COLOR,
+  vec2 uv1, vec2 lit, bool isTree, float shade, highp float t, float renderdistance, float TIME_OF_DAY, vec3 CAMERA_POS
 ) {
   // all of these will be multiplied by tex uv1 in frag so functions should be divided by uv1 here
 
@@ -44,54 +36,70 @@ vec3 nlLighting(
     torchColor = NL_OVERWORLD_TORCH_COL;
   }
 
-  float torchAttenuation = (NL_TORCH_INTENSITY*uv1.x)/(0.5-0.45*lit.x);
+  float torchAttenuation = (NL_TORCHLIGHT_INTENSITY*uv1.x)/(0.5-0.45*lit.x);
 
   #ifdef NL_BLINKING_TORCH
     torchAttenuation *= 1.0 - 0.19*noise1D(t*8.0);
   #endif
 
   vec3 torchLight = torchColor*torchAttenuation;
+  float gameBrightness = texture2D(tex, vec2_splat(0.0)).g;
+  float lum = 0.0;
 
   if (env.nether || env.end) {
     // nether & end lighting
 
     light = env.end ? NL_END_AMBIENT : NL_NETHER_AMBIENT;
+    light *= 0.2*gameBrightness;
 
-    light += skycol.horizon + torchLight*0.5;
+    lum = luminance(light);
+    light += skycol.horizon/(1.0+lum);
+
   } else {
     // overworld lighting
+    float nightFactor = step(env.dayFactor, 0.0);
+    float dawnFactor = 1.0-env.dayFactor*env.dayFactor;
+    dawnFactor *= dawnFactor*dawnFactor;
+    dawnFactor *= mix(1.0, dawnFactor*dawnFactor, nightFactor);
+    float nightIntensity = 1.0-(0.5+0.5*env.dayFactor);
+    nightIntensity *= nightIntensity;
 
-    float dayFactor = min(dot(FOG_COLOR.rgb, vec3(0.5,0.4,0.4))*(1.0 + 1.9*env.rainFactor), 1.0); // use env.dayFactor here?
-    float nightFactor = 1.0-dayFactor*dayFactor;
-    float rainDim = min(FOG_COLOR.g, 0.25)*env.rainFactor;
-    float lightIntensity = NL_SUN_INTENSITY*(1.0 - rainDim)*(1.0 + NL_NIGHT_BRIGHTNESS*nightFactor);
+    float sunLightAttenuation = clamp(0.5*(((2.0*step(TIME_OF_DAY, 0.5)-1.0)*(wPos.x*cos(NL_SUN_PATH_YAW)+wPos.y*sin(NL_SUN_PATH_YAW))/renderdistance) + 1.0), 0.0, 1.0);
+    sunLightAttenuation = mix(1.0, sunLightAttenuation*sunLightAttenuation, dawnFactor);
+    sunLightAttenuation *= 1.0-0.4*env.rainFactor;
 
-    // min ambient in caves
-    light = vec3_splat((1.35+NL_CAVE_BRIGHTNESS)*(1.0-uv1.x)*(1.0-uv1.y));
-
-    // sky ambient
-    light += mix(skycol.horizon, skycol.zenith, 0.5+uv1.y-0.5*lit.y)*(lit.y*(3.0-2.0*uv1.y)*(1.3 + (4.0*nightFactor) - rainDim));
-
-    // shadow cast by top light
+    // shadow cast by sun light
     float shadow = step(0.93, uv1.y);
-    shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightFactor))*lit.y);
+    shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightIntensity))*lit.y);
     shadow *= shade > 0.8 ? 1.0 : 0.8;
-
-    // shadow cast by simple cloud
     #ifdef NL_CLOUD_SHADOW
-      shadow *= smoothstep(0.6, 0.1, cloudNoise2D(2.0*wPos.xz*NL_CLOUD1_SCALE, t, env.rainFactor));
+      // shadow cast by simple clouds
+      vec3 mainLightDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
+      vec3 gPos = wPos + CAMERA_POS;
+      float cloudRelativeHeight = gPos.y-187.0;
+      vec2 projectionOffset = cloudRelativeHeight*mainLightDir.xz/mainLightDir.y;
+      vec2 projectedPos = gPos.xz + projectionOffset;
+      float cloudFade = smoothstep(1.0, 0.5, length(0.002*(wPos.xz + projectionOffset)));
+      cloudFade *= (1.0-dawnFactor*dawnFactor)*clamp(-0.12*(cloudRelativeHeight-7.0), 0.0, 1.0);
+      shadow *= smoothstep(0.6, 0.0, cloudNoise2D(projectedPos*NL_CLOUD1_SCALE, t, env.rainFactor)*cloudFade);
     #endif
 
     // direct light from top
-    float dirLight = shadow*(1.0-uv1.x*nightFactor)*lightIntensity;
-    light += dirLight*sunLightTint(dayFactor, env.rainFactor, FOG_COLOR);
+    light = (NL_SUNLIGHT_INTENSITY*shadow*sunLightAttenuation)*sunLightTint(env.dayFactor, env.rainFactor);
 
-    // extra indirect light
-    light += vec3_splat(0.3*lit.y*uv1.y*(1.2-shadow)*lightIntensity);
+    // sky ambient
+    lum = luminance(light);
+    light += (skycol.horizon + skycol.zenith)*(uv1.y/(1.0+lum));
 
-    // torch light
-    light += torchLight*(1.0-(max(shadow, 0.65*lit.y)*dayFactor*(1.0-0.3*env.rainFactor)));
   }
+
+  // torch light
+  lum = luminance(light);
+  light += torchLight/(1.0+lum);
+
+  // game min brightness
+  lum = luminance(light);
+  light += vec3_splat(gameBrightness*(1.5/(1.0+lum)));
 
   // darken at crevices
   light *= COLOR.g > 0.35 ? 1.0 : 0.8;
@@ -129,7 +137,7 @@ vec3 nlEntityLighting(nl_environment env, vec3 pos, vec4 normal, mat4 world, vec
     intensity = (0.7+0.3*abs(normal.y))*(0.9+0.1*abs(normal.x));
   #endif
 
-  intensity *= tileLightCol.b*tileLightCol.b*NL_SUN_INTENSITY*1.2;
+  intensity *= tileLightCol.b*tileLightCol.b*NL_SUNLIGHT_INTENSITY*1.2;
   intensity += overlayCol.a * 0.35;
 
   float factor = tileLightCol.b-tileLightCol.r;

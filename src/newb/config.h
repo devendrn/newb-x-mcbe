@@ -37,18 +37,16 @@
 #define NL_TINT_HIGH vec3(1.4,0.7,0.3) // color tint for light tone
 
 /* Terrain lighting */
-#define NL_SUN_INTENSITY 2.95   // 0.5 weak ~ 5.0 bright
-#define NL_TORCH_INTENSITY 1.0  // 0.5 weak ~ 3.0 bright
-#define NL_NIGHT_BRIGHTNESS 0.1 // 0.0 dark ~ 2.0 bright
-#define NL_CAVE_BRIGHTNESS 0.1  // 0.0 dark ~ 2.0 bright
-#define NL_SHADOW_INTENSITY 0.7 // 0.0 no shadow ~ 1.0 strong shadow
-//#define NL_BLINKING_TORCH     // [toggle] flickering light
-//#define NL_CLOUD_SHADOW       // [toggle] cloud shadow (simple clouds only)
+#define NL_SUNLIGHT_INTENSITY   3.3  // 1.0 weak ~ 5.0 bright
+#define NL_TORCHLIGHT_INTENSITY 1.0  // 0.5 weak ~ 3.0 bright
+#define NL_SHADOW_INTENSITY     0.7  // 0.0 no shadow ~ 1.0 strong shadow
+//#define NL_BLINKING_TORCH  // [toggle] flickering light
+#define NL_CLOUD_SHADOW      // [toggle] cloud shadow (simple clouds only)
 
 /* Sun/moon light color on terrain */
-#define NL_MORNING_SUN_COL vec3(1.0,0.45,0.14)
-#define NL_NOON_SUN_COL    vec3(1.0,0.75,0.57)
-#define NL_NIGHT_SUN_COL   vec3(0.5,0.64,1.00)
+#define NL_DAWN_SUNLIGHT_COL   vec3(1.0,0.4,0.1)
+#define NL_NOON_SUNLIGHT_COL   vec3(1.0,0.75,0.57)
+#define NL_NIGHT_MOONLIGHT_COL vec3(0.01,0.03,0.2)
 
 /* Ambient light on terrain (light that is added everywhere) */
 #define NL_NETHER_AMBIENT vec3(3.0,2.16,1.89)
@@ -267,11 +265,13 @@
 #ifdef ROUNDED_CLOUDS
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 2
+  #undef NL_CLOUD_SHADOW // TODO: Cloud shadow for rounded, realistic clouds
 #endif
 
 #ifdef BOX_CLOUDS
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 0
+  #undef NL_CLOUD_SHADOW
 #endif
 
 #endif

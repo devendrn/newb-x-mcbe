@@ -57,7 +57,7 @@ vec4 nlRefl(
         #endif
 
         // torch light
-        wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
+        wetRefl.rgb += torchColor*lit.x*NL_TORCHLIGHT_INTENSITY;
 
         // fade out before clip
         wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0);

@@ -29,45 +29,6 @@ vec3 getEndHorizonCol() {
   return NL_END_HORIZON_COL;
 }
 
-// values used for getting sky colors
-vec3 getSkyFactors(vec3 FOG_COLOR) {
-  vec3 factors = vec3(
-    max(FOG_COLOR.r*0.6, max(FOG_COLOR.g, FOG_COLOR.b)), // intensity val
-    1.5*max(FOG_COLOR.r-FOG_COLOR.b, 0.0), // viewing sun
-    min(FOG_COLOR.g, 0.26) // rain brightness
-  );
-
-  factors.z *= factors.z;
-
-  return factors;
-}
-
-vec3 getZenithCol(float rainFactor, vec3 FOG_COLOR, vec3 fs) {
-  vec3 zenithCol = NL_NIGHT_ZENITH_COL*(1.0-FOG_COLOR.b);
-  zenithCol += NL_DAWN_ZENITH_COL*((0.7*fs.x*fs.x) + (0.4*fs.x) + fs.y);
-  zenithCol = mix(zenithCol, (0.7*fs.x*fs.x + 0.3*fs.x)*NL_DAY_ZENITH_COL, fs.x*fs.x);
-  zenithCol = mix(zenithCol*(1.0+0.5*rainFactor), NL_RAIN_ZENITH_COL*fs.z*13.2, rainFactor);
-
-  return zenithCol;
-}
-
-vec3 getHorizonCol(float rainFactor, vec3 FOG_COLOR, vec3 fs) {
-  vec3 horizonCol = NL_NIGHT_HORIZON_COL*(1.0-FOG_COLOR.b); 
-  horizonCol += NL_DAWN_HORIZON_COL*(((0.7*fs.x*fs.x) + (0.3*fs.x) + fs.y)*1.9); 
-  horizonCol = mix(horizonCol, 2.0*fs.x*NL_DAY_HORIZON_COL, fs.x*fs.x);
-  horizonCol = mix(horizonCol, NL_RAIN_HORIZON_COL*fs.z*19.6, rainFactor);
-
-  return horizonCol;
-}
-
-// tinting on horizon col
-vec3 getHorizonEdgeCol(vec3 horizonCol, float rainFactor, vec3 FOG_COLOR) {
-  float val = 2.1*(1.1-FOG_COLOR.b)*FOG_COLOR.g*(1.0-rainFactor);
-  horizonCol *= vec3_splat(1.0-val) + NL_DAWN_EDGE_COL*val;
-
-  return horizonCol;
-}
-
 nl_skycolor nlEndSkyColors(nl_environment env) {
   nl_skycolor s;
   s.zenith = getEndZenithCol();
