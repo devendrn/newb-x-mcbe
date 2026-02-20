@@ -1,6 +1,6 @@
 name = "Newb X Legacy"
 version = [0, 16, 0]
-min_supported_mc_version = [1, 21, 130]
+min_supported_mc_version = [1, 26, 0]
 description = '''
 §c%w
 §7- An enchanced vanilla shader for Minecraft!
