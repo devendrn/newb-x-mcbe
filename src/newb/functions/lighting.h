@@ -50,7 +50,7 @@ vec3 nlLighting(
     // nether & end lighting
 
     light = env.end ? NL_END_AMBIENT : NL_NETHER_AMBIENT;
-    light *= 0.2*gameBrightness;
+    light *= gameBrightness;
 
     lum = luminance(light);
     light += skycol.horizon/(1.0+lum);
@@ -98,8 +98,10 @@ vec3 nlLighting(
   light += torchLight/(1.0+lum);
 
   // game min brightness
-  lum = luminance(light);
-  light += vec3_splat(gameBrightness*(1.5/(1.0+lum)));
+  if (!(env.nether || env.end)) {
+    lum = luminance(light);
+    light += vec3_splat(gameBrightness*(1.5/(1.0+lum)));
+  }
 
   // darken at crevices
   light *= COLOR.g > 0.35 ? 1.0 : 0.8;
