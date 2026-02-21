@@ -13,6 +13,7 @@ from rich.progress import (
     TextColumn,
     TransferSpeedColumn,
 )
+from util import load_conf, save_conf, NS_DEV_MAT_SRC_URL, NS_DEV_SHADERC_URL_PREFIX
 
 done_event = Event()
 
@@ -48,19 +49,10 @@ def _download_file(url: str, path: str) -> None:
                 return
 
 
-NS_DEV_RELEASE = "https://github.com/devendrn/newb-shader/releases/download/dev/"
-
-
-def run(args):
-    arch = platform.machine()
-
-    data_path = os.path.join('tool', 'data')
-    mat_path = os.path.join(data_path, 'materials')
-
-    shaderc_url = NS_DEV_RELEASE + "shaderc-"
+def get_shaderc_url(data_path: str, os_name: str, arch: str):
+    shaderc_url = NS_DEV_SHADERC_URL_PREFIX
     shaderc_path = os.path.join(data_path, "shaderc")
 
-    os_name = platform.system()
     if os_name == 'Windows':
         shaderc_url += "win-x64.exe"
         shaderc_path += ".exe"
@@ -75,26 +67,54 @@ def run(args):
             shaderc_url += "android-arm"
         else:
             progress.console.print("No shaderc version found for", arch, style='red')
-            exit(1)
+            return None
 
-        # libc++_shared.so not found fix for termux
-        lib_path = "tool/lib"
-        if not os.path.exists(lib_path):
-            os.mkdir(lib_path)
-
-        termux_lib_file = "/data/data/com.termux/files/usr/lib/libc++_shared.so"
-        if os.path.exists(termux_lib_file) and not os.path.exists(lib_path + "/libc++_shared.so"):
-            progress.console.print("Adding termux fix for libc++_shared.so not found")
-            shutil.copyfile(termux_lib_file, lib_path + "/libc++_shared.so")
+        return (shaderc_url, shaderc_path)
     else:
-        print("Unable to determine platform!")
+        progress.console.print("Unable to determine platform", os_name, style='red')
+        return None
+
+
+def check_and_apply_termux_fix():
+    # libc++_shared.so not found fix for termux
+    lib_path = "tool/lib"
+    if not os.path.exists(lib_path):
+        os.mkdir(lib_path)
+
+    termux_lib_file = "/data/data/com.termux/files/usr/lib/libc++_shared.so"
+    if os.path.exists(termux_lib_file) and not os.path.exists(lib_path + "/libc++_shared.so"):
+        progress.console.print("Adding termux fix for libc++_shared.so not found")
+        shutil.copyfile(termux_lib_file, lib_path + "/libc++_shared.so")
+
+
+def run(args):
+    conf = load_conf()
+
+    os_name = platform.system()
+    arch = platform.machine()
+
+    data_path = os.path.join('tool', 'data')
+    mat_path = os.path.join(data_path, 'materials')
+
+    shaderc_details = get_shaderc_url(data_path, os_name, arch)
+    if shaderc_details is None:
         exit(1)
+    shaderc_url, shaderc_path = shaderc_details
 
     if args.reset:
         shutil.rmtree(data_path)
 
     if not os.path.exists(data_path):
         os.mkdir(data_path)
+
+    if os_name == "Linux":
+        check_and_apply_termux_fix()
+
+    # compare with existing setup, remove if update is needed
+    if conf.get("shaderc_url") != shaderc_url and os.path.exists(shaderc_path):
+        os.remove(shaderc_path)
+    if conf.get("mat_src_url") != NS_DEV_MAT_SRC_URL:
+        shutil.rmtree(mat_path)
 
     with progress:
         if not os.path.exists(shaderc_path):
@@ -106,9 +126,17 @@ def run(args):
         if not os.path.exists(test_mat):
             progress.console.print("Downloading source materials")
             mat_filename = os.path.join(data_path, 'materials.zip')
-            _download_file(NS_DEV_RELEASE + "src-materials-1.26.0.zip", mat_filename)
+            _download_file(NS_DEV_MAT_SRC_URL, mat_filename)
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
             os.remove(mat_filename)
 
+    conf["arch"] = arch
+    conf["os_name"] = os_name
+    conf["mat_src_url"] = NS_DEV_MAT_SRC_URL
+    conf["shaderc_url"] = shaderc_url
+    conf["shaderc_url_prefix"] = NS_DEV_SHADERC_URL_PREFIX
+    save_conf(conf)
+
     progress.console.print("[bold green]All done!")
+
