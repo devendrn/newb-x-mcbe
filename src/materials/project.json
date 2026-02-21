@@ -21,7 +21,7 @@
     },
     "merged": {
       "macros": [],
-      "platforms": ["ESSL_300", "Direct3D_SM50"]
+      "platforms": ["ESSL_300", "Direct3D_SM50", "Metal"]
     }
   }
 }
