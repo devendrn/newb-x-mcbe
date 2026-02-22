@@ -7,8 +7,7 @@ if __name__ == '__main__':
                 ln = ln.strip().replace(" ", "").split("==")
                 ver = importlib.metadata.version(ln[0])
                 if parse_ver(ver) != parse_ver(ln[1]):
-                    print(f'Warning! Using incompatible version {
-                          ver} of "{ln[0]}" instead of {ln[1]}')
+                    print(f'Warning! Using incompatible version {ver} of "{ln[0]}" instead of {ln[1]}')
         from cli import main
         main()
     except importlib.metadata.PackageNotFoundError as e:
