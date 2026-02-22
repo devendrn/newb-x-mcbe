@@ -56,12 +56,8 @@ def get_shaderc_url(data_path: str, os_name: str, arch: str):
     if os_name == 'Windows':
         shaderc_url += "win-x64.exe"
         shaderc_path += ".exe"
-        return (shaderc_url, shaderc_path)
-        
     elif os_name == "Darwin":
         shaderc_url += "osx-x64"
-        return (shaderc_url, shaderc_path)
-
     elif os_name == "Linux":
         if arch == 'x86_64':
             shaderc_url += "linux-x64"
@@ -72,11 +68,10 @@ def get_shaderc_url(data_path: str, os_name: str, arch: str):
         else:
             progress.console.print("No shaderc version found for", arch, style='red')
             return None
-
-        return (shaderc_url, shaderc_path)
     else:
         progress.console.print("Unable to determine platform", os_name, style='red')
         return None
+    return (shaderc_url, shaderc_path)
 
 
 def check_and_apply_termux_fix():
