@@ -105,6 +105,8 @@ def run(args):
 
     if not os.path.exists(data_path):
         os.mkdir(data_path)
+    if not os.path.exists(mat_path):
+        os.mkdir(mat_path)
 
     if os_name == "Linux":
         check_and_apply_termux_fix()
