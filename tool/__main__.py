@@ -17,7 +17,7 @@ if __name__ == '__main__':
                         print(f'Warning! Using incompatible version {ver} of "{pkg[0]}" instead of {pkg[1]} or higher')
         from cli import main
         main()
-    except importlib.metadata.PackageNotFoundError as e:
+    except (importlib.metadata.PackageNotFoundError, ModuleNotFoundError) as e:
         print(f'Module "{e.name}" not found!')
         print('\nDid you run `python -m pip install -r requirements.txt`?\n')
         exit(1)
