@@ -15,11 +15,10 @@ SRC_MATERIALS_EG_PATH = os.path.join('tool', 'data', 'materials', 'Sky.material.
 
 def print_styled_error(console: Console, log: str):
     log = log.strip().split('\n')
-    for line in log[:-2]:
+    for line in log:
         split_line = line.split()
         style = 'dim'
         if not split_line:
-            print('')
             continue
         if split_line[0] == "Command:":
             style = 'dim'
@@ -27,7 +26,6 @@ def print_styled_error(console: Console, log: str):
             style = 'red'
         elif split_line[0] in ["Error:", ">>>", "cpp:"]:
             style = 'bold red'
-
         console.print(line, style=style)
 
 
