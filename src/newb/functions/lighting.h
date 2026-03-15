@@ -126,17 +126,22 @@ void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, 
 
 vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 normal, vec3 wPos, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonEdgeCol, float t, float TIME_OF_DAY, float renderdistance) {
   float l = tileLightCol.b;
+  float tl = tileLightCol.r;
   float lum;
   vec3 light;
   if (env.nether || env.end) {
+    tl = max(tl-0.6, 0.0);
+    tl *= 21.0*tl;
+
     // nether & end lighting
     light = env.end ? NL_END_AMBIENT : NL_NETHER_AMBIENT;
-    light *= tileLightCol.b; // lets clamp this for max value in darkness?
+    light *= min(tileLightCol.b, 0.25);
 
     lum = luminance(light);
     light += skycol.horizon/(1.0+lum);
-
   } else {
+    tl = max(tl-0.08, 0.0);
+    tl *= 4.0*tl;
 
     float nightFactor = step(env.dayFactor, 0.0);
     float dawnFactor = 1.0-env.dayFactor*env.dayFactor;
@@ -170,8 +175,7 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
   } else {
     torchColor = NL_OVERWORLD_TORCH_COL;
   }
-  float tl = max(tileLightCol.r-0.07, 0.0);
-  tl *= 4.0*tl;
+
   lum = luminance(light);
   light += torchColor*(smoothstep(0.1, 0.0, tileLightCol.b-tileLightCol.r)*NL_TORCHLIGHT_INTENSITY*tl/(1.0+lum));
 
