@@ -160,6 +160,7 @@
         // eyeblossom_blooming
         "open_eyeblossom_carried": {
             "textures": [
+                "textures/blocks/eyeblossom_stem_blooming", // For stem to appear (doesn't exist in resource pack) (must be the first in array)
                 "textures/blocks/eyeblossom_blooming"
             ]
         },
