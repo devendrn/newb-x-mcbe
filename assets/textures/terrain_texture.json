@@ -72,11 +72,15 @@
         // blast_furnace_front_on
         "blast_furnace": {
             "textures": [
-                "textures/blocks/blast_furnace_front_on"
+                "textures/blocks/blast_furnace_front_off", // (doesn't exist in resource pack)
+                "textures/blocks/blast_furnace_front_on",
+                "textures/blocks/blast_furnace_side", // (doesn't exist in resource pack)
+                "textures/blocks/blast_furnace_top" // (doesn't exist in resource pack)
             ]
         },
         "blast_furnace_front": {
             "textures": [
+                "textures/blocks/blast_furnace_front_off", // (doesn't exist in resource pack)
                 "textures/blocks/blast_furnace_front_on"
             ]
         },
@@ -102,18 +106,21 @@
         // cave_vines_body_berries
         "cave_vines_body": {
             "textures": [
+                "textures/blocks/cave_vines_body", // (doesn't exist in resource pack)
                 "textures/blocks/cave_vines_body_berries"
             ]
         },
         // cave_vines_head_berries
         "cave_vines_head": {
             "textures": [
+                "textures/blocks/cave_vines_head", // (doesn't exist in resource pack)
                 "textures/blocks/cave_vines_head_berries"
             ]
         },
         // comparator_on
         "comparator_up": {
             "textures": [
+                "textures/blocks/comparator_off", // (doesn't exist in resource pack)
                 "textures/blocks/comparator_on"
             ]
         },
@@ -130,6 +137,8 @@
         // creaking_heart_top_active
         "creaking_heart_top": {
             "textures": [
+                "textures/blocks/creaking_heart_side_inactive", // (doesn't exist in resource pack)
+                "textures/blocks/creaking_heart_side_dormant", // (doesn't exist in resource pack)
                 "textures/blocks/creaking_heart_top_active"
             ]
         },
@@ -167,17 +176,22 @@
         // eyeblossom_eyes_blooming
         "open_eyeblossom": {
             "textures": [
+                "textures/blocks/eyeblossom_stem_blooming", // (doesn't exist in resource pack)
                 "textures/blocks/eyeblossom_eyes_blooming"
             ]
         },
         // furnace_front_on
         "furnace": {
             "textures": [
-                "textures/blocks/furnace_front_on"
+                "textures/blocks/furnace_front_off", // (doesn't exist in resource pack)
+                "textures/blocks/furnace_front_on",
+                "textures/blocks/furnace_side", // (doesn't exist in resource pack)
+                "textures/blocks/furnace_top" // (doesn't exist in resource pack)
             ]
         },
         "furnace_front": {
             "textures": [
+                "textures/blocks/furnace_front_off", // (doesn't exist in resource pack)
                 "textures/blocks/furnace_front_on"
             ]
         },
@@ -227,6 +241,7 @@
         // observer_back_lit
         "observer_south": {
             "textures": [
+                "textures/blocks/observer_back", // (doesn't exist in resource pack)
                 "textures/blocks/observer_back_lit"
             ]
         },
@@ -257,6 +272,7 @@
         // redstone_torch_on
         "comparator_torch": {
             "textures": [
+                "textures/blocks/redstone_torch_off", // (doesn't exist in resource pack)
                 "textures/blocks/redstone_torch_on"
             ]
         },
@@ -266,6 +282,7 @@
         // repeater_on
         "repeater_up": {
             "textures": [
+                "textures/blocks/repeater_off", // (doesn't exist in resource pack)
                 "textures/blocks/repeater_on"
             ]
         },
@@ -284,6 +301,7 @@
         // respawn_anchor_side4
         "respawn_anchor_side": {
             "textures": [
+                "textures/blocks/respawn_anchor_side0", // (doesn't exist in resource pack)
                 "textures/blocks/respawn_anchor_side1",
                 "textures/blocks/respawn_anchor_side2",
                 "textures/blocks/respawn_anchor_side3",
@@ -297,7 +315,8 @@
         // sculk_catalyst_side
         "sculk_catalyst_side": {
             "textures": [
-                "textures/blocks/sculk_catalyst_side"
+                "textures/blocks/sculk_catalyst_side",
+                "textures/blocks/sculk_catalyst_side_bloom" // (doesn't exist in resource pack)
             ]
         },
         // sculk_catalyst_top
@@ -312,8 +331,8 @@
         // sculk_shrieker_inner_top
         "sculk_shrieker_inner_top": {
             "textures": [
-                "textures/blocks/sculk_shrieker_can_summon_inner_top",
-                "textures/blocks/sculk_shrieker_inner_top"
+                "textures/blocks/sculk_shrieker_inner_top",
+                "textures/blocks/sculk_shrieker_can_summon_inner_top"
             ]
         },
         // sculk_shrieker_side
@@ -346,6 +365,7 @@
         // torchflower_crop_stage_1
         "torchflower_crop": {
             "textures": [
+                "textures/blocks/torchflower_crop_stage_0", // (doesn't exist in resource pack)
                 "textures/blocks/torchflower_crop_stage_1"
             ]
         },
@@ -356,8 +376,18 @@
         // trial_spawner_side_active_ominous
         "trial_spawner_side": {
             "textures": [
+                "textures/blocks/trial_spawner_side_inactive", // (doesn't exist in resource pack)
                 "textures/blocks/trial_spawner_side_active",
-                "textures/blocks/trial_spawner_side_active_ominous"
+                "textures/blocks/trial_spawner_side_active",
+                "textures/blocks/trial_spawner_side_active",
+                "textures/blocks/trial_spawner_side_active",
+                "textures/blocks/trial_spawner_side_inactive", // (doesn't exist in resource pack)
+                "textures/blocks/trial_spawner_side_inactive_ominous", // (doesn't exist in resource pack)
+                "textures/blocks/trial_spawner_side_active_ominous",
+                "textures/blocks/trial_spawner_side_active_ominous",
+                "textures/blocks/trial_spawner_side_active_ominous",
+                "textures/blocks/trial_spawner_side_active_ominous",
+                "textures/blocks/trial_spawner_side_inactive_ominous" // (doesn't exist in resource pack)
             ]
         },
 
@@ -369,10 +399,18 @@
         // trial_spawner_top_ejecting_reward_ominous
         "trial_spawner_top": {
             "textures": [
+                "textures/blocks/trial_spawner_top_inactive", // (doesn't exist in resource pack)
                 "textures/blocks/trial_spawner_top_active",
-                "textures/blocks/trial_spawner_top_active_ominous",
+                "textures/blocks/trial_spawner_top_active",
                 "textures/blocks/trial_spawner_top_ejecting_reward",
-                "textures/blocks/trial_spawner_top_ejecting_reward_ominous"
+                "textures/blocks/trial_spawner_top_ejecting_reward",
+                "textures/blocks/trial_spawner_top_inactive", // (doesn't exist in resource pack)
+                "textures/blocks/trial_spawner_top_inactive_ominous", // (doesn't exist in resource pack)
+                "textures/blocks/trial_spawner_top_active_ominous",
+                "textures/blocks/trial_spawner_top_active_ominous",
+                "textures/blocks/trial_spawner_top_ejecting_reward_ominous",
+                "textures/blocks/trial_spawner_top_ejecting_reward_ominous",
+                "textures/blocks/trial_spawner_top_inactive_ominous" // (doesn't exist in resource pack)
             ]
         },
 
@@ -386,19 +424,27 @@
         // vault_front_on_ominous
         "vault_front": {
             "textures": [
-                "textures/blocks/vault_front_ejecting",
-                "textures/blocks/vault_front_ejecting_ominous",
                 "textures/blocks/vault_front_off",
-                "textures/blocks/vault_front_off_ominous",
                 "textures/blocks/vault_front_on",
-                "textures/blocks/vault_front_on_ominous"
+                "textures/blocks/vault_front_ejecting",
+                "textures/blocks/vault_front_ejecting",
+                "textures/blocks/vault_front_off_ominous",
+                "textures/blocks/vault_front_on_ominous",
+                "textures/blocks/vault_front_ejecting_ominous",
+                "textures/blocks/vault_front_ejecting_ominous"
             ]
         },
         // vault_side_on
         // vault_side_on_ominous
         "vault_side": {
             "textures": [
+                "textures/blocks/vault_side_off", // (doesn't exist in resource pack)
                 "textures/blocks/vault_side_on",
+                "textures/blocks/vault_side_on",
+                "textures/blocks/vault_side_on",
+                "textures/blocks/vault_side_off_ominous", // (doesn't exist in resource pack)
+                "textures/blocks/vault_side_on_ominous",
+                "textures/blocks/vault_side_on_ominous",
                 "textures/blocks/vault_side_on_ominous"
             ]
         },
