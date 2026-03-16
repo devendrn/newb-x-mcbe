@@ -66,6 +66,11 @@ def run(args):
         shaderc_path += ".exe"
     elif os_name == "Darwin":
         shaderc_url += "osx-x64"
+    elif os_name == "Android":
+        if arch in ['aarch64']:
+            shaderc_url += "android-arm64"
+        elif arch in ['armv8l', 'armv8l']:
+            shaderc_url += "android-arm"
     elif os_name == "Linux":
         if arch == 'x86_64':
             shaderc_url += "linux-x64"
@@ -106,7 +111,7 @@ def run(args):
         if not os.path.exists(test_mat):
             progress.console.print("Downloading source materials")
             mat_filename = os.path.join(data_path, 'materials.zip')
-            _download_file(NS_DEV_RELEASE + "src-materials-1.21.30.zip", mat_filename)
+            _download_file(NS_DEV_RELEASE + "src-materials-1.26.0.zip", mat_filename)
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
             os.remove(mat_filename)
