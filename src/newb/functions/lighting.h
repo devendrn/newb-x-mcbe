@@ -98,7 +98,7 @@ vec3 nlLighting(
   // game min brightness
   if (!(env.nether || env.end)) {
     lum = luminance(light);
-    light += vec3_splat(gameBrightness*(1.5/(1.0+lum)));
+    light += vec3_splat(gameBrightness*(NL_MIN_LIGHTING_BOOST/(1.0+lum)));
   }
 
   // darken at crevices
@@ -183,7 +183,7 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
   lum = luminance(light);
   if (!(env.nether || env.end)) {
     lum = luminance(light);
-    light += vec3_splat(min(tileLightCol.r, 0.15)*(1.5/(1.0+lum)));
+    light += vec3_splat(min(tileLightCol.r, 0.15)*(NL_MIN_LIGHTING_BOOST/(1.0+lum)));
   }
 
   if (env.underwater) {
