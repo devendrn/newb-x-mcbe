@@ -66,6 +66,14 @@ def run(args):
         shaderc_path += ".exe"
     elif os_name == "Darwin":
         shaderc_url += "osx-x64"
+    elif os_name == "Android":
+        if arch in ['aarch64']:
+            shaderc_url += "android-arm64"
+        elif arch in ['armv8l', 'armv8l']:
+            shaderc_url += "android-arm"
+        else:
+            progress.console.print("No shaderc version found for", arch, style='red')
+            exit(1)
     elif os_name == "Linux":
         if arch == 'x86_64':
             shaderc_url += "linux-x64"
