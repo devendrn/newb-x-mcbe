@@ -76,11 +76,7 @@ def run(args):
             exit(1)
     elif os_name == "Linux":
         if arch == 'x86_64':
-            shaderc_url += "linux-x64"
-        elif arch in ['aarch64']:
-            shaderc_url += "android-arm64"
-        elif arch in ['armv8l', 'armv8l']:
-            shaderc_url += "android-arm"
+            shaderc_url += "linux-x64" 
         else:
             progress.console.print("No shaderc version found for", arch, style='red')
             exit(1)
