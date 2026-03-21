@@ -23,6 +23,7 @@ uniform vec4 RenderDistance;
 uniform vec4 DimensionID;
 uniform vec4 TimeOfDay;
 uniform vec4 Day;
+uniform vec4 CameraPosition;
 
 void main() {
   mat4 World = u_model[0];
@@ -47,8 +48,8 @@ void main() {
 
     float relativeDist = position.z/FogControl.z;
 
-    worldPosition.y = -worldPosition.y;
     vec3 viewDir = normalize(worldPosition.xyz);
+    viewDir.y = -viewDir.y;
 
     vec4 fogColor;
     fogColor.rgb = nlRenderSky(skycol, env, viewDir, ViewPositionAndTime.w, false);
@@ -59,7 +60,7 @@ void main() {
       fogColor.rgb = colorCorrectionInv(FogColor.rgb);
     }
 
-    vec3 light = nlEntityLighting(skycol, env, a_position, a_normal, worldPosition.xyz, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w, TimeOfDay.x, RenderDistance.x);
+    vec3 light = nlEntityLighting(skycol, env, a_position, a_normal, worldPosition.xyz, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w, TimeOfDay.x, RenderDistance.x, CameraPosition.xyz);
 
     vec4 glintuv;
     glintuv.xy = calculateLayerUV(texcoord0, UVAnimation.x, UVAnimation.z, UVScale.xy);

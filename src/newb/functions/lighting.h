@@ -124,7 +124,7 @@ void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, 
   #endif
 }
 
-vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 normal, vec3 wPos, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonEdgeCol, float t, float TIME_OF_DAY, float renderdistance) {
+vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 normal, vec3 wPos, mat4 world, vec4 tileLightCol, vec4 overlayCol, vec3 horizonEdgeCol, float t, float TIME_OF_DAY, float renderdistance, vec3 CAMERA_POS) {
   float l = tileLightCol.b;
   float tl = tileLightCol.r;
   float lum;
@@ -187,7 +187,10 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
   }
 
   if (env.underwater) {
-    light *= mix(normalize(skycol.horizon), vec3_splat(0.6), tileLightCol.b*0.6);
+    vec3 gPos = wPos + CAMERA_POS;
+    float caustics = 0.2 + 0.2*sin(dot(gPos, vec3(1.8, 2.4, 2.1)) + 0.8*t);
+    light += 0.8*NL_UNDERWATER_BRIGHTNESS + NL_CAUSTIC_INTENSITY*caustics*(0.1 + tl);
+    light *= mix(normalize(skycol.horizon), vec3_splat(0.5), tileLightCol.b*0.2);
   }
 
   lum = luminance(light);
