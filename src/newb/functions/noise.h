@@ -6,8 +6,9 @@
 // functions under [1] are from https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 
 // [1] hash function for noise (for highp only)
+// update rand func - fix clouds bug
 float rand(highp vec2 n) {
-  return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+  return fract(sin(dot(abs(n), vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
 // 1D noise - used in plants,lantern wave
