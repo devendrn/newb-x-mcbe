@@ -1,11 +1,14 @@
 #ifndef INSTANCING
-  $input v_fogColor, v_worldPos, v_underwaterRainTimeDay
+  $input v_worldPos, v_underwaterRainTimeDay
 #endif
 
 #include <bgfx_shader.sh>
 
 #ifndef INSTANCING
   #include <newb/main.sh>
+  uniform vec4 TimeOfDay;
+  uniform vec4 Day;
+  uniform vec4 FogColor;
   uniform vec4 FogAndDistanceControl;
 #endif
 
@@ -19,20 +22,17 @@ void main() {
     env.underwater = v_underwaterRainTimeDay.x > 0.5;
     env.rainFactor = v_underwaterRainTimeDay.y;
     env.dayFactor = v_underwaterRainTimeDay.w;
+    env.fogCol = FogColor.rgb;
+    env = calculateSunParams(env, TimeOfDay.x, Day.x);
 
-    nl_skycolor skycol;
-    if (env.underwater) {
-      skycol = nlUnderwaterSkyColors(env.rainFactor, v_fogColor.rgb);
-    } else {
-      skycol = nlOverworldSkyColors(env.rainFactor, v_fogColor.rgb);
-    }
+    nl_skycolor skycol = nlOverworldSkyColors(env);
 
-    vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_fogColor, v_underwaterRainTimeDay.z);
+    vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true);
     #ifdef NL_SHOOTING_STAR
-      skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, v_fogColor, v_underwaterRainTimeDay.z);
+      skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z);
     #endif
     #ifdef NL_GALAXY_STARS
-      skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, v_fogColor, env, v_underwaterRainTimeDay.z);
+      skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif
 
     skyColor = colorCorrection(skyColor);

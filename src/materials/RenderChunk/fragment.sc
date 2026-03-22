@@ -30,11 +30,6 @@ void main() {
 
   diffuse.rgb *= diffuse.rgb;
 
-  vec3 lightTint = texture2D(s_LightMapTexture, v_lightmapUV).rgb;
-  lightTint = mix(lightTint.bbb, lightTint*lightTint, 0.35 + 0.65*v_lightmapUV.y*v_lightmapUV.y*v_lightmapUV.y);
-
-  color.rgb *= lightTint;
-
   #if defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS))
     if (v_extra.b > 0.9) {
       diffuse.rgb = vec3_splat(1.0 - NL_WATER_TEX_OPACITY*(1.0 - diffuse.b*1.8));

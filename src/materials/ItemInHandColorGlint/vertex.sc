@@ -16,11 +16,13 @@ uniform vec4 OverlayColor;
 uniform vec4 TileLightIntensity;
 uniform vec4 TileLightColor;
 uniform vec4 ViewPositionAndTime;
+uniform vec4 RenderDistance;
 uniform vec4 UVAnimation;
 uniform vec4 UVScale;
 uniform vec4 DimensionID;
 uniform vec4 TimeOfDay;
 uniform vec4 Day;
+uniform vec4 CameraPosition;
 
 void main() {
   mat4 World = u_model[0];
@@ -38,15 +40,15 @@ void main() {
 
   #if !(defined(DEPTH_ONLY) || defined(INSTANCING))
     nl_environment env = nlDetectEnvironment(DimensionID.x, TimeOfDay.x, Day.x, FogColor.rgb, FogControl.xyz);
-    nl_skycolor skycol = nlSkyColors(env, FogColor.rgb);
+    nl_skycolor skycol = nlSkyColors(env);
 
     float relativeDist = position.z/FogControl.z;
 
-    wpos.y = -wpos.y;
     vec3 viewDir = normalize(wpos.xyz);
+    viewDir.y = -viewDir.y;
 
     vec4 fogColor;
-    fogColor.rgb = nlRenderSky(skycol, env, viewDir, FogColor.rgb, ViewPositionAndTime.w);
+    fogColor.rgb = nlRenderSky(skycol, env, viewDir, ViewPositionAndTime.w, false);
     fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogControl.xy);
 
     if (env.nether) {
@@ -54,7 +56,7 @@ void main() {
       fogColor.rgb = colorCorrectionInv(FogColor.rgb);
     }
 
-    vec3 light = nlEntityLighting(env, a_position, a_normal, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w);
+    vec3 light = nlEntityLighting(skycol, env, a_position, a_normal, wpos.xyz, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w, TimeOfDay.x, RenderDistance.x, CameraPosition.xyz);
 
     vec4 glintuv;
     glintuv.xy = calculateLayerUV(texcoord0, UVAnimation.x, UVAnimation.z, UVScale.xy);

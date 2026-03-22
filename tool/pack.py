@@ -2,21 +2,16 @@ import os
 import shutil
 import json
 import tomllib
-import platform
-from importlib import import_module
+from importlib import import_module, metadata
 from rich.console import Console
 from rich.status import Status
-from util import print_styled_error, get_materials_path, create_pack_manifest
+from util import print_styled_error, get_materials_path, create_pack_manifest, check_conf, SHADERC_PATH
 from lazurite.compiler.macro_define import MacroDefine
 from lazurite import util
 
 console = Console()
 status = console.status("[bold]")
 
-
-SHADERC_PATH = os.path.join('tool', 'data', 'shaderc')
-if platform == 'nt':
-    SHADERC_PATH += ".exe"
 
 _current_subpack = "default"
 _last_log = ""
@@ -112,9 +107,13 @@ def _build(status: Status, profile: str, subpack: str, materials: [str], output_
 def run(args):
     global _name
 
-    lp.print = _lp_print_override
+    conf = check_conf(console)
+    if conf is None:
+        exit(1)
 
-    console.print("  [bold green]Newb Pack Builder[/] \n  [dim]build tool: Lazurite\n", style="")
+    lp.print = _lp_print_override
+    laz_ver = metadata.version('lazurite')
+    console.print(f"  [bold green]Newb Pack Builder[/] \n  [dim cyan]build tool: Lazurite {laz_ver}\n", style="")
 
     with open('src/newb/pack_config.toml', 'rb') as f:
         try:

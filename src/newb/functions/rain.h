@@ -1,6 +1,7 @@
 #ifndef RAIN_H
 #define RAIN_H
 
+#include "clouds.h"
 #include "detection.h"
 #include "noise.h"
 #include "sky.h"
@@ -14,8 +15,8 @@ float nlWindblow(vec3 pos, float t){
 }
 
 vec4 nlRefl(
-  nl_skycolor skycol, nl_environment env, inout vec4 color, vec2 lit, vec3 tiledCpos, float camDist,
-  vec3 wPos, vec3 viewDir, vec3 torchColor, vec3 FOG_COLOR, float renderDist, highp float t
+  inout vec4 color, nl_skycolor skycol, nl_environment env, vec3 viewDir, vec3 wPos, vec3 tiledCpos,
+  vec3 CAMERA_POS, vec3 torchColor, vec2 lit, float camDist, float renderDist, highp float t
 ) {
   vec4 wetRefl = vec4(0.0,0.0,0.0,0.0);
 
@@ -46,21 +47,19 @@ vec4 nlRefl(
       #endif
 
       if (wPos.y < 0.0) {
-        wetRefl.rgb = getSkyRefl(skycol, env, viewDir, FOG_COLOR, t);
-        wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
+        viewDir.y = -viewDir.y;
+        wetRefl.rgb = nlRenderSky(skycol, env, viewDir, t, false);
 
-        #if defined(NL_GROUND_AURORA_REFL) && defined(NL_AURORA) && defined (NL_GROUND_REFL)
-          vec2 cloudPos = -(120.0-wPos.y)*viewDir.xz/viewDir.y;
-          float fade = clamp(2.0 - 0.005*length(cloudPos), 0.0, 1.0);
-          vec4 aurora = renderAurora(cloudPos.xyy, t, env.rainFactor, skycol.horizonEdge);
-          wetRefl.rgb += aurora.rgb*aurora.a*fade;
+        #ifdef NL_CLOUD_AURORA_REFLECTION
+          vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, viewDir, wPos, CAMERA_POS, t);
+          wetRefl.rgb = mix(wetRefl.rgb, cloudRefl.rgb, cloudRefl.a);
         #endif
 
         // torch light
-        wetRefl.rgb += torchColor*lit.x*NL_TORCH_INTENSITY;
+        wetRefl.rgb += torchColor*lit.x*NL_TORCHLIGHT_INTENSITY;
 
-        // fade out before clip
-        wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0);
+        wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
+        wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0); // fade out before clip
       }
     }
 

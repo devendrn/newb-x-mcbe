@@ -1,6 +1,8 @@
 #ifndef TONEMAP_H
 #define TONEMAP_H
 
+#include "utils.h"
+
 vec3 colorCorrection(vec3 col) {
   #ifdef NL_EXPOSURE
     col *= NL_EXPOSURE;
@@ -32,7 +34,7 @@ vec3 colorCorrection(vec3 col) {
   col = pow(col, vec3_splat(1.0/NL_GAMMA));
 
   #ifdef NL_SATURATION
-    col = mix(vec3_splat(dot(col,vec3(0.21, 0.71, 0.08))), col, NL_SATURATION);
+    col = mix(vec3_splat(luminance(col)), col, NL_SATURATION);
   #endif
 
   #ifdef NL_TINT

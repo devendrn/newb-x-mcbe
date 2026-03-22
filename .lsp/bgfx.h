@@ -161,6 +161,7 @@ EMPTY_STRUCT(sampler2D)
 vec4 texture2D(sampler2D, vec2);
 vec4 texture2DLod(sampler2D, vec2, float);
 ivec2 textureSize(sampler2D, int);
+vec4 texelFetch(sampler2D, ivec2, int);
 
 VEC_OPS(vec2)
 VEC_OPS(vec3)
@@ -292,3 +293,7 @@ uniform mat4 u_view;
 
 #define SAMPLER2D(_sampler, _reg) uniform sampler2D _sampler;
 
+mat2 mtxFromRows(vec2, vec2);
+mat3 mtxFromRows(vec3, vec3, vec3);
+mat2 mtxFromColumns(vec2, vec2);
+mat3 mtxFromColumns(vec3, vec3, vec3);

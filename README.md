@@ -1,6 +1,6 @@
 # Newb X Legacy
 
-**Newb X Legacy** is a RenderDragon successor to the legacy GLSL shader, [Newb Shader](https://github.com/devendrn/newb-shader-mcbe). It is an enhanced vanilla shader that focuses on being lightweight and having soft aesthetics. It supports Minecraft Bedrock 1.21+ (Windows/Android/iOS).
+**Newb X Legacy** is a RenderDragon successor to the legacy GLSL shader, [Newb Shader](https://github.com/devendrn/newb-shader-mcbe). It is an enhanced vanilla shader that focuses on being lightweight and having soft aesthetics. It supports Minecraft Bedrock 1.26+ (Windows/Android/iOS).
 
 <br>
 
@@ -60,8 +60,8 @@ This method is for [mcpelauncher-manifest](https://mcpelauncher.readthedocs.io/e
 - [Git](https://git-scm.com/)
 - [Python](https://www.python.org/) 3.11 or higher required
 - Python packages:
-  - [lazurite](https://veka0.github.io/lazurite/#installation) (Must be `v0.4.2`. Newer or older version may not be supported)
-  - [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation) (Must be `v13.x.x`)
+  - [lazurite](https://veka0.github.io/lazurite/#installation) (Must be `v0.8.3`. Newer or older version may not be supported)
+  - [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation) (Must be `v14.x.x`)
 
 ### Get source code
 ```

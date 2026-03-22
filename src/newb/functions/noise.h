@@ -1,7 +1,7 @@
 #ifndef NOISE_H
 #define NOISE_H
 
-#include "constants.h"
+#include "utils.h"
 
 // functions under [1] are from https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 
@@ -18,14 +18,14 @@ float noise1D(highp float x) {
   return mix(fract(sin(x0)*84.85), fract(sin(x0+1.0)*84.85), t0);
 }
 
-// simpler rand for disp, puddles
+// simpler rand
 float fastRand(vec2 n){
   return fract(37.45*sin(dot(n, vec2(4.36, 8.28))));
 }
 
-// water displacement map (also used by caustic)
+// used by caustic
 float disp(vec3 pos, float t) {
-  float n = sin(8.0*NL_CONST_PI_HALF*(pos.x+pos.y*pos.z) + 0.7*t);
+  float n = sin(8.0*PI_HALF*(pos.x+pos.y*pos.z) + 0.7*t);
   pos.y += t + 0.8*n;
   float p = floor(pos.y);
   return (0.8+0.2*n) * mix(fastRand(pos.xz+p), fastRand(pos.xz+p+1.0), pos.y - p);
@@ -78,6 +78,15 @@ float fastVoronoi2(vec2 pos, float f) {
   p = fract(p) - 0.5;
   p *= p;
   return 1.0-f*min(p.x+p.y, p.z+p.w);
+}
+
+float movingNoise2D(vec2 pos, float t, float f) {
+  vec2 tpos = 16.0*fract(pos/16.0);
+  float nf0 = fastVoronoi2(0.125*pos.xy, 12.0);
+  float nf2 = fastVoronoi2(0.04*pos.xy*vec2(0.5,1.0) + 0.5*nf0 + 0.05*t, 2.0);
+  float n0 = sin(1.5*nf0*nf0 + pos.x - sin(pos.y) + t);
+  float n1 = sin(0.05*(pos.x+pos.y) + 8.0*nf2 + 0.4*t);
+  return mix(n0*n0, n1*n1, f);
 }
 
 #endif
