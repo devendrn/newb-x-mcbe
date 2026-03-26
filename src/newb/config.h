@@ -275,4 +275,10 @@
   #undef NL_CLOUD_SHADOW
 #endif
 
+#ifdef REALISTIC_CLOUDS
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 3
+  #undef NL_CLOUD_SHADOW
+#endif
+
 #endif

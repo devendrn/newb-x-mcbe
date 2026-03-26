@@ -1,6 +1,6 @@
-name = "Newb X Legacy"
-version = [0, 16, 0]
-min_supported_mc_version = [1, 26, 0]
+name = "Newb Classic"
+version = [0, 16, 52]
+min_supported_mc_version = [1, 26, 10]
 description = '''
 §c%w
 §7- An enchanced vanilla shader for Minecraft!
@@ -14,7 +14,7 @@ materials = ["Sky", "RenderChunk", "Actor", "ActorGlint", "EndSky", "Clouds", "S
 
 [info] 
 copyright = '''
-Copyright © 2025 %a, and "Newb Shader" Contributors
+Copyright © 2026 %a, and "Newb Shader" Contributors
 
 This compiled "Newb Shader" resource pack (source code: https://github.com/devendrn/newb-x-mcbe under MIT License) is licensed under CC BY-ND 4.0 (https://creativecommons.org/licenses/by-nd/4.0/). Redistribute only unmodified copies with proper attribution to "Newb Shader" and variant creators (if any). Do not distribute derivatives.
 
@@ -27,6 +27,12 @@ credits = '''
 
 # subpacks are arranged in left to right order
 # right-most subpack is enabled by default
+[[subpack]]
+define = "REALISTIC_CLOUDS"
+materials = ["Clouds", "RenderChunk"]
+description = '''
+Realistic clouds
+'''
 
 [[subpack]]
 define = "ROUNDED_CLOUDS"
