@@ -60,8 +60,8 @@ def get_shaderc_url(data_path: str, os_name: str, arch: str):
         shaderc_url += "osx-x64"
     elif os_name == "Linux" or os_name == "Android":
         if arch == 'x86_64':
-            shaderc_url += "linux-x64" 
-        if arch in ['aarch64']:
+            shaderc_url += "linux-x64"
+        elif arch in ['aarch64']:
             shaderc_url += "android-arm64"
         elif arch in ['armv8l', 'armv8l']:
             shaderc_url += "android-arm"
