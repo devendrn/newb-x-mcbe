@@ -108,7 +108,7 @@ def run(args):
     if not os.path.exists(mat_path):
         os.mkdir(mat_path)
 
-    if os_name == "Linux":
+    if os_name == "Android":
         check_and_apply_termux_fix()
 
     # compare with existing setup, remove if update is needed
