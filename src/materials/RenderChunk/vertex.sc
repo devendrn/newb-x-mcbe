@@ -111,7 +111,7 @@ void main() {
   vec4 fogColor;
   fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
   fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy);
-  #ifdef NL_GODRAY
+  #if defined(NL_GODRAY) && defined(NL_FOG)
     fogColor.a = mix(fogColor.a, 1.0, min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0));
   #endif
 
@@ -120,7 +120,7 @@ void main() {
     fogColor.rgb = colorCorrectionInv(FogColor.rgb);
   }
 
-  #ifdef NL_CLOUDY_FOG
+  #if defined(NL_CLOUDY_FOG) && defined(NL_FOG)
     float fg = smoothstep(0.0, 1.0-NL_CLOUDY_FOG, relativeDist);
     fg *= sin(5.0*viewDir.y + 2.0*viewDir.x - 0.1*t);
     fg *= sin(5.0*viewDir.y - 2.0*viewDir.x + viewDir.z + 0.1*t);
@@ -142,7 +142,7 @@ void main() {
   #endif
 
   vec4 pos = mul(u_viewProj, vec4(worldPos, 1.0));
-  #ifdef NL_RAIN_MIST_OPACITY
+  #if defined(NL_RAIN_MIST_OPACITY) && defined(NL_FOG)
     if (env.rainFactor > 0.0) {
       float humidAir = env.rainFactor*lit.y*lit.y*nlWindblow(pos.xyz, t);
       fogColor.a = mix(fogColor.a, 1.0, humidAir*NL_RAIN_MIST_OPACITY);
