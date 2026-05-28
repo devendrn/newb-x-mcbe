@@ -65,7 +65,7 @@ This method is for [mcpelauncher-manifest](https://mcpelauncher.readthedocs.io/e
 
 ### Get source code
 ```
-git clone https://github.com/devendrn/newb-x-mcbe/
+git clone https://github.com/devendrn/newb-x-mcbe/ -c core.symlinks=true
 cd newb-x-mcbe
 ```
 
