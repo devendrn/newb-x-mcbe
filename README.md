@@ -17,40 +17,42 @@ You can download the shader pack from [release page](https://github.com/devendrn
 
 ### Android
 
-| **Using MB Loader APK (Recommended):** |
+| **Using MB Loader APP:** |
 |:-|
-| 1. Install [MB Loader APK](https://play.google.com/store/apps/details?id=io.bambosan.mbloader&pcampaignid=web_share) |
-| 2. Launch Minecraft from MB Loader APK. |
-| 2. Import the resource pack and activate it in global resources. |
-
-| **Using Patched Minecraft:** |
-|:-|
-| 1. Install [Patched Minecraft App](https://devendrn.github.io/renderdragon-shaders/shaders/installation/android#using-patch-app) |
+| 1. Install [MB Loader APP](https://play.google.com/store/apps/details?id=io.github.bambosan.mbloader) |
+| 2. Launch Minecraft from MB Loader. |
 | 2. Import the resource pack and activate it in global resources. |
 
 ### Windows
 
-| **Using BRD Mod (Recommended)** |
+| **Using BRD Mod** |
 |:-|
 | 1. Use [BetterRenderDragon](https://github.com/QYCottage/BetterRenderDragon/releases/latest) to enable MaterialBinLoader. |
 | 2. Import the resource pack and activate it in global resources. |
 
-| **Using Matject** |
-|:-|
-| 1. Follow this [guide](https://faizul726.github.io/matject/docs/guide-for-beginners) |
-
 ### Linux / Mac
-This method is for [mcpelauncher-manifest](https://mcpelauncher.readthedocs.io/en/latest/getting_started/index.html).
+This method is for [mcpelauncher-manifest](https://minecraft-linux.github.io/).
 
-| **Using mbl mod (Recommended): x86_64 arch** |
+| **Using MaterialBinLoader mod (Recommended): x86_64 arch** |
 |:-|
-| 1. Install [mcpelauncher-materialbinloader-mod](https://github.com/CrackedMatter/mcpelauncher-materialbinloader). |
+| 1. Install [mcpelauncher-materialbinloader-mod](https://github.com/CrackedMatter/mcpelauncher-materialbinloader/releases/latest). |
 | 2. Import the resource pack and activate it in global resources. |
 
 | **Using shaders mod: x86_64, x86, arm64, arm arch** |
 |:-|
 | 1. Download [mcpelauncher-shadersmod](https://github.com/GameParrot/mcpelauncher-shadersmod/releases/latest). |
 | 2. Follow this [guide](https://faizul726.github.io/guides/shadersmodinstallation) to setup. |
+
+
+### iOS
+It's somewhat difficult to use shaders on iOS. Not recommended for absolute beginners.
+
+| **Using Minecraft with Hynis** |
+|:-|
+| 1. Download Minecraft with Hynis IPA file from our [Discord Server](https://discord.com/invite/newb-community-844591537430069279). |
+| 2. Sideload it with your preferred sideloading tool. |
+| 3. Import the resource pack and activate it in global resources. |
+| **Links and detailed instructions can be found in our [Discord server](https://discord.com/invite/newb-community-844591537430069279).** You can also ask for help. |
 
 <br>
 
