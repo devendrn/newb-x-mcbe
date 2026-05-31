@@ -17,9 +17,9 @@ You can download the shader pack from [release page](https://github.com/devendrn
 
 ### Android
 
-| **Using MB Loader APP:** |
+| **Using MB Loader App** |
 |:-|
-| 1. Install [MB Loader APP](https://play.google.com/store/apps/details?id=io.github.bambosan.mbloader) |
+| 1. Install [MB Loader App](https://play.google.com/store/apps/details?id=io.github.bambosan.mbloader) |
 | 2. Launch Minecraft from MB Loader. |
 | 2. Import the resource pack and activate it in global resources. |
 
@@ -45,14 +45,13 @@ This method is for [mcpelauncher-manifest](https://minecraft-linux.github.io/).
 
 
 ### iOS
-It's somewhat difficult to use shaders on iOS. Not recommended for absolute beginners.
+Using shaders on iOS is not very straightforward and not recommended for beginners.
 
 | **Using Minecraft with Hynis** |
 |:-|
-| 1. Download Minecraft with Hynis IPA file from our [Discord Server](https://discord.com/invite/newb-community-844591537430069279). |
+| 1. Download Minecraft with Hynis IPA file from our [Discord server](https://discord.com/invite/newb-community-844591537430069279). |
 | 2. Sideload it with your preferred sideloading tool. |
 | 3. Import the resource pack and activate it in global resources. |
-| **Links and detailed instructions can be found in our [Discord server](https://discord.com/invite/newb-community-844591537430069279).** You can also ask for help. |
 
 <br>
 
