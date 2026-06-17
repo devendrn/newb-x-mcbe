@@ -61,6 +61,14 @@ void main() {
   vec3 bPos = fract(cPos);
   vec3 tiledCpos = fract(cPos*0.0625);
 
+  // bit 16 for dithering??
+  // bit 15-1 for texture mapping
+  // uvec2 a16 = uvec2(round(a_texcoord0 * 65535.0));
+  // vec2 uv0 = vec2((a16 & uvec2(32767u)) << uvec2(1)) / 65535.0;
+  // uv0 += (2.0*vec2((a16 & uvec2(32768u)) >> uvec2(15)) - 1.0) / 32768.0;
+  vec2 uv0 = 2.0*a_texcoord0.xy;
+  uv0 = fract(uv0) + ((floor(uv0)-0.5)/16384.0);
+
   // bit 16 for dithering / mask tint
   // bits 15-9 for ??
   // bits 8-5 for x, bits 4-1 for y
@@ -175,7 +183,7 @@ void main() {
 
   v_extra = vec4(shade, worldPos.y, water, shimmer);
   v_refl = refl;
-  v_texcoord0 = a_texcoord0;
+  v_texcoord0 = uv0;
   v_lightmapUV = uv1;
   v_color0 = color;
   v_color1 = a_color0;
