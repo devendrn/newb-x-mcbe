@@ -23,7 +23,8 @@ uniform vec4 CameraPosition;
 
 void main() {
   mat4 World = u_model[0];
-  vec2 texcoord0 = a_texcoord0;
+  vec2 uv0 = 2.0*a_texcoord0.xy;
+  uv0 = fract(uv0) + ((floor(uv0)-0.5)/16384.0);
   vec3 wpos;
 
   #ifdef INSTANCING
@@ -55,10 +56,10 @@ void main() {
 
     vec3 light = nlEntityLighting(skycol, env, a_position, a_normal, wpos.xyz, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w, TimeOfDay.x, RenderDistance.x, CameraPosition.xyz);
 
-    v_texcoord0 = texcoord0;
+    v_texcoord0 = uv0;
     v_color0 = a_color0;
     v_fog = fogColor;
-    v_edgemap = nlEntityEdgeHighlightPreprocess(texcoord0);
+    v_edgemap = nlEntityEdgeHighlightPreprocess(uv0);
     v_light = vec4(light, 1.0);
   #endif
 
