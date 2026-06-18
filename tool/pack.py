@@ -155,12 +155,12 @@ def run(args):
     patch_warning = "Only works with "
     if profile == 'android':
         patch_warning += "MB Loader"
+    if profile == 'ios':
+        patch_warning += "Minecraft with Hynis"
     elif profile == 'windows':
         patch_warning += "BetterRenderDragon"
     elif profile == 'merged':
-        patch_warning += "MB Loader (Android) or BetterRenderDragon (Windows)\nFor iOS, materials need to be installed manually for shader to work"
-    else:  # ios
-        patch_warning = "Materials need to be installed manually for shader to work"
+        patch_warning += "MB Loader (Android) or BetterRenderDragon (Windows) or Minecraft with Hynis (iOS)"
 
     pack_description = pack_description.replace("%w", patch_warning).replace("%v", "v" + pack_version + "-" + args.p)
     pack_config['description'] = pack_description
@@ -198,10 +198,6 @@ def run(args):
 
     status.stop()
 
-    is_ios = args.p == 'ios'
-    if is_ios:
-        pack_manifest.pop('subpacks')
-
     with open(os.path.join(pack_dir, 'manifest.json'), 'w') as f:
         json.dump(pack_manifest, f, indent=2)
 
@@ -216,8 +212,7 @@ def run(args):
             f.write(pack_credits)
 
     if not args.no_zip:
-        pack_archive = os.path.join('build', pack_acr_name + ('.zip' if is_ios else '.mcpack'))
+        pack_archive = os.path.join('build', pack_acr_name + '.mcpack')
         console.print("\n~ [bold]Archive pack\n ", pack_archive)
         shutil.make_archive(pack_dir, 'zip', pack_dir)
-        if not is_ios:
-            os.rename(pack_dir + '.zip', pack_archive)
+        os.rename(pack_dir + '.zip', pack_archive)
