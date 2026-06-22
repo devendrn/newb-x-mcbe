@@ -15,7 +15,7 @@ void lanternWave(
   bool isChain = bPosC.x==0.0625 && y6875;
 
   // fix for non-hanging lanterns waving top part (works only if texPosY is correct)
-  if (y5625 && (texPosY < 0.3 || (texPosY>0.55 && texPosY<0.69))) {
+  if (y5625 && (texPosY < 0.001 || (texPosY>0.43 && texPosY<0.93))) {
     isLantern = false;
   }
 
@@ -40,7 +40,7 @@ void lanternWave(
 
 #ifdef NL_EXTRA_PLANTS_WAVE
 void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
-  // 1.21.0 (2048x1024) vanilla only
+  // 1.26.31 (1024x512) vanilla only
   // not meant to be used
 
   // count texture atlas in left-to-right row wise order (64X32)
@@ -48,23 +48,25 @@ void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
   int texN = 64*int(uv0.y*32.0) + int(uv0.x*64.0);
 
   if ( // full
-    (texN==182) || // cherrry leaves
-    (texN>415 && texN<425) // tall flowers/plants bottom
+    (texN>184 && texN<187) || // cherrry leaves
+    (texN>452 && texN<462) // tall flowers/plants top
   ) {
     shouldWave = true;
   } else if ( // top only
-    (texN==187) || // cherry blossom sapling
-    (texN==1361) || // spore blossom petal
-    (texN>409 && texN<416) || // tall flowers/plants bottom
-    (texN>959 && texN<964) || // sweet berries bush
-    (texN>971 && texN<975) || // torch flowers
-    (texN==905) || // wither rose
-    (texN==1057)  // yellow dandelion
+    (texN==192) || // cherry blossom sapling
+    (texN==1013) || // spore blossom petal
+    (texN>445 && texN<453) || // tall flowers/plants bottom
+    (texN>1080 && texN<1085) || // sweet berries bush
+    (texN>1091 && texN<1095) || // torch flowers
+    (texN==1189) || // wither rose
+    (texN==389)  || // yellow dandelion
+    (texN==863)  || // red rose
+    (texN>531 && texN<534) // firefly bush
   ) {
     shouldWave = isTop;
   } else if ( // bottom only
-    (texN==524) || // hanging roots
-    (texN==23 || texN==465)  // azeala
+    (texN==612) || // hanging roots
+    (texN==23 || texN==549)  // azeala
   ) { 
     shouldWave = !isTop;
   }
@@ -84,7 +86,7 @@ void nlWave(
   waveFade *= waveFade;
 
   // texture atlas has 64x32 textures (uv0.xy division)
-  float texPosY = fract(uv0.y*vec2(textureSize(terrainTex, 0)).y/32.0);
+  float texPosY = fract(uv0.y*vec2(textureSize(terrainTex, 0)).y/16.0);
 
   // x and z distance from block center
   vec2 bPosC = abs(bPos.xz-0.5);
@@ -100,7 +102,7 @@ void nlWave(
 
   // darken farm plants bottom
   light *= isFarmPlant && !isTop ? 0.7 : 1.1;
-  if (isColored && !isTreeLeaves && uv0.y>0.375 && uv0.y<0.466 && !isRedStone) {
+  if (isColored && !isTreeLeaves && uv0.y>0.214 && uv0.y<0.502 && !isRedStone) {
     // make grass bottom more dark depending how deep it is
     light *= mix(isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5), 1.0, waveFade);
   }

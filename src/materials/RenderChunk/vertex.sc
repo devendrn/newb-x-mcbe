@@ -110,7 +110,7 @@ void main() {
   vec3 light = nlLighting(s_LightMapTexture, skycol, env, worldPos, torchColor, a_color0.rgb, uv1, lit, isTree, shade, t, FogAndDistanceControl.z, TimeOfDay.x, CameraPosition.xyz);
 
   #if defined(ALPHA_TEST) && (defined(NL_PLANTS_WAVE) || defined(NL_LANTERN_WAVE)) && !defined(RENDER_AS_BILLBOARDS)
-    nlWave(worldPos, light, env.rainFactor, uv1, lit, a_texcoord0, bPos, a_color0, cPos, tiledCpos, t, s_MatTexture, isColored, camDis, isTree);
+    nlWave(worldPos, light, env.rainFactor, uv1, lit, uv0, bPos, a_color0, cPos, tiledCpos, t, s_MatTexture, isColored, camDis, isTree);
   #endif
 
   // loading chunks
@@ -172,7 +172,7 @@ void main() {
   #ifdef NL_LAVA_NOISE
     bool isc = (a_color0.r+a_color0.g+a_color0.b) > 2.999;
     bool isb = bPos.y < 0.891 && bPos.y > 0.889;
-    if (isc && isb && (uv1.x > 0.81 && uv1.x < 0.876) && a_texcoord0.y > 0.45) {
+    if (isc && isb && (uv1.x > 0.81 && uv1.x < 0.876) && uv0.y > 0.5) {
       vec4 lava = nlLavaNoise(gPos, t);
       #ifdef NL_LAVA_NOISE_BUMP
         worldPos.y += NL_LAVA_NOISE_BUMP*lava.a;
