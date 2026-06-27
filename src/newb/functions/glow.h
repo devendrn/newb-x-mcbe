@@ -21,6 +21,13 @@ vec3 glowDetectC(sampler2D tex, vec2 uv) {
   return glowDetect(texture2DLod(tex, uv, 0.0));
 }
 
+vec3 glowDetectD(sampler2D tex, vec2 uv, vec2 offset, vec2 st) {
+  // edge fix. dont sample from outside bounds
+  offset *= step(offset*st, vec2_splat(0.0));
+
+  return glowDetectC(tex, uv+offset);
+}
+
 vec3 nlGlow(sampler2D tex, vec2 uv, float shimmer) {
   vec3 glow = glowDetectC(tex, uv);
   #ifdef NL_GLOW_LEAK
@@ -31,14 +38,19 @@ vec3 nlGlow(sampler2D tex, vec2 uv, float shimmer) {
     vec2 texSize = vec2(textureSize(tex, 0));
     vec2 offset = 1.0 / texSize;
 
-    vec3 c1 = glowDetectC(tex, uv - offset);
-    vec3 c2 = glowDetectC(tex, uv + offset*vec2(-1, 0));
-    vec3 c3 = glowDetectC(tex, uv + offset*vec2(-1, 1));
-    vec3 c4 = glowDetectC(tex, uv + offset*vec2( 0, 1));
-    vec3 c5 = glowDetectC(tex, uv + offset);
-    vec3 c6 = glowDetectC(tex, uv + offset*vec2( 1, 0));
-    vec3 c7 = glowDetectC(tex, uv + offset*vec2( 1,-1));
-    vec3 c8 = glowDetectC(tex, uv + offset*vec2( 0,-1));
+    // detect edge pixel and direction (assuming 64x32 texture atlas)
+    float boundSize = texSize.x/64.0;
+    vec2 st = boundSize*fract(64.0*uv*(texSize/texSize.x)) - 0.5*boundSize;
+    st = sign(st)*step(vec2_splat(0.5*boundSize-1.0), abs(st));
+
+    vec3 c1 = glowDetectD(tex, uv, offset*vec2(-1,-1), st);
+    vec3 c2 = glowDetectD(tex, uv, offset*vec2(-1, 0), st);
+    vec3 c3 = glowDetectD(tex, uv, offset*vec2(-1, 1), st);
+    vec3 c4 = glowDetectD(tex, uv, offset*vec2( 0, 1), st);
+    vec3 c5 = glowDetectD(tex, uv, offset*vec2( 1, 1), st);
+    vec3 c6 = glowDetectD(tex, uv, offset*vec2( 1, 0), st);
+    vec3 c7 = glowDetectD(tex, uv, offset*vec2( 1,-1), st);
+    vec3 c8 = glowDetectD(tex, uv, offset*vec2( 0,-1), st);
 
     vec2 p = uv * texSize;
     vec2 u = fract(p);
