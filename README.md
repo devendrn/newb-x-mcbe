@@ -25,10 +25,11 @@ You can download the shader pack from [release page](https://github.com/devendrn
 
 ### Windows
 
-| **Using BRD Mod** |
+| **Using Wyvern Loader** |
 |:-|
-| 1. Use [BetterRenderDragon](https://github.com/QYCottage/BetterRenderDragon/releases/latest) to enable MaterialBinLoader. |
-| 2. Import the resource pack and activate it in global resources. |
+| 1. Download and setup Wyvern from [here](https://github.com/mcbegamerxx954/wyvern_releases/releases/latest) |
+| 2. Open Minecraft then click 'Inject' in Wyvern |
+| 3. Import the resource pack and activate it in global resources. |
 
 ### Linux / Mac
 This method is for [mcpelauncher-manifest](https://minecraft-linux.github.io/).
