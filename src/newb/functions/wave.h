@@ -93,6 +93,7 @@ void nlWave(
 
   bool isTop = texPosY < 0.5;
   bool isPlants = COLOR.r/COLOR.g<1.9;
+  bool isLitter = distance(COLOR.rgb, vec3(0.63922, 0.45882, 0.27451)) < 0.05;
   bool isVines = (bPosC.x==0.453125 && bPos.z==0.0) || (bPosC.y==0.453125 && bPos.x==0.0);
   bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25);
   bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop);
@@ -102,7 +103,7 @@ void nlWave(
 
   // darken farm plants bottom
   light *= isFarmPlant && !isTop ? 0.7 : 1.1;
-  if (isColored && !isTreeLeaves && uv0.y>0.214 && uv0.y<0.502 && !isRedStone) {
+  if (isColored && !isTreeLeaves && uv0.y>0.214 && uv0.y<0.502 && !isRedStone && !isLitter) {
     // make grass bottom more dark depending how deep it is
     light *= mix(isTop ? 1.2 : 1.2 - 1.2*(bPos.y>0.0 ? 1.5-bPos.y : 0.5), 1.0, waveFade);
   }
