@@ -14,14 +14,26 @@ struct nl_environment {
   vec3 fogCol;
 };
 
-bool detectEnd(float DIMENSION_ID) {
-  return DIMENSION_ID == 2.0;
+bool detectEnd(vec3 FOG_COLOR) {
+  // custom fog color set in biomes_client.json to help in detection
+  return FOG_COLOR.r==FOG_COLOR.b && (FOG_COLOR.r-FOG_COLOR.g>0.24 || (FOG_COLOR.g==0.0 && FOG_COLOR.r>0.1));
 }
 
-bool detectNether(float DIMENSION_ID, vec3 FOG_COLOR, vec2 FOG_CONTROL) {
-  // also consider underlava as nether
+bool detectNether(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
+  // fogctrl.xy varies with renderdistance
+  // x range (0.03,0.14)
+
+  // reverse plotted relation (5,6,7,8,9,11,12,20,96 chunks data) with an accuracy of 0.02
+  float expectedFogX = 0.029 + (0.09*FOG_CONTROL.y*FOG_CONTROL.y);
+
+  // nether wastes, basalt delta, crimson forest, wrapped forest, soul sand valley
+  bool netherFogCtrl = (FOG_CONTROL.x<0.14  && abs(FOG_CONTROL.x-expectedFogX) < 0.02);
+  bool netherFogCol = (FOG_COLOR.r+FOG_COLOR.g)>0.0;
+
+  // consider underlava as nether
   bool underLava = FOG_CONTROL.x == 0.0 && FOG_COLOR.b == 0.0 && FOG_COLOR.g < 0.18 && FOG_COLOR.r-FOG_COLOR.g > 0.1;
-  return (DIMENSION_ID == 1.0) || underLava;
+
+  return (netherFogCtrl && netherFogCol) || underLava;
 }
 
 bool detectUnderwater(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
@@ -62,8 +74,8 @@ nl_environment calculateSunParams(nl_environment env, float TIME_OF_DAY, float D
 
 nl_environment nlDetectEnvironment(float DIMENSION_ID, float TIME_OF_DAY, float DAY, vec3 FOG_COLOR, vec3 FOG_CONTROL) {
   nl_environment env;
-  env.end = detectEnd(DIMENSION_ID);
-  env.nether = detectNether(DIMENSION_ID, FOG_COLOR, FOG_CONTROL.xy);
+  env.end = detectEnd(FOG_COLOR);
+  env.nether = detectNether(FOG_COLOR, FOG_CONTROL.xy);
   env.underwater = detectUnderwater(FOG_COLOR, FOG_CONTROL.xy);
   env.rainFactor = detectRain(FOG_CONTROL.xyz);
   env.fogCol = FOG_COLOR;
