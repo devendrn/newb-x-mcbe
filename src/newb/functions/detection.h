@@ -72,7 +72,7 @@ nl_environment calculateSunParams(nl_environment env, float TIME_OF_DAY, float D
   return env;
 }
 
-nl_environment nlDetectEnvironment(float DIMENSION_ID, float TIME_OF_DAY, float DAY, vec3 FOG_COLOR, vec3 FOG_CONTROL) {
+nl_environment nlDetectEnvironment(float TIME_OF_DAY, float DAY, vec3 FOG_COLOR, vec3 FOG_CONTROL) {
   nl_environment env;
   env.end = detectEnd(FOG_COLOR);
   env.nether = detectNether(FOG_COLOR, FOG_CONTROL.xy);
