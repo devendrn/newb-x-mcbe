@@ -1,7 +1,7 @@
 $input v_color0
 #include <newb/config.h>
 #if NL_CLOUD_TYPE >= 2
-  $input v_color1, v_color2, v_fogColor
+  $input v_color1, v_color2, v_nightFactor
 #endif
 
 #include <bgfx_shader.sh>
@@ -31,7 +31,7 @@ void main() {
       #endif
 
       #ifdef NL_AURORA
-        color += renderAurora(cloudPos, v_color2.a, v_color1.a, v_fogColor)*(1.0-0.95*color.a);
+        color += renderAurora(cloudPos, v_color2.a, v_color1.a, v_nightFactor)*(1.0-0.95*color.a);
       #endif
 
       color.a *= v_color0.a;
@@ -46,7 +46,7 @@ void main() {
 
       #ifdef NL_AURORA
         p.xy *= 34.7;
-        color += renderAurora(p.xyy, v_color2.w, v_color1.w, v_fogColor)*(1.0-0.95*color.a);
+        color += renderAurora(p.xyy, v_color2.w, v_color1.w, v_nightFactor)*(1.0-0.95*color.a);
       #endif
 
       color.a *= smoothstep(0.0, 0.7, vDir.y);

@@ -1,0 +1,190 @@
+[33m93274ff[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32m24.60[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/24.60[m[33m)[m Added terrain shadow for rounded clouds
+[33m6c1c7dd[m Remove leaf litter from grass shading (#93)
+[33m8873393[m Replace install method BRD with Wyvern (#92)
+[33md8a2990[m Add extra offset for texture edge mask for glow leak
+[33ma26b7ad[m Fix glow leak at edges from neighboring textures 26.31+ (#90)
+[33md608783[m Update weather particles for 26.31+ (#86)
+[33m759b8a7[m Update wave code for 26.31
+[33m72fb255[m Update pack_config.toml and pack.py for 1.26.30 and iOS (#88)
+[33ma040822[m Update iteminhandtextured tex mapping for v26.30+ (#87)
+[33me393163[m Update terrain texture mapping for v26.30+ (#87)
+[33m88cfb66[m Update README.md (#85)
+[33mf6ba19b[m Update README.md (#84)
+[33m32c81b4[m Disable cloud fog and rain mist blow effects for no fog subpack (#82)
+[33mf3545e2[m fix: condition for check_and_apply_termux_fix (#81)
+[33m7b5a6c3[m Fix typo in setup.py
+[33m30c5950[m PR requested by devendrn  (#80)
+[33mb7d2660[m Revamp shading (#52)
+[33me1c2162[m Update material download version to 1.21.111
+[33m057d44a[m Update material download version to 1.26.0
+[33md974377[m Fix shaderc URL assignment for Linux x86_64
+[33md7875d9[m Fix platform setup for Android
+[33m961ef4f[m Use new uniforms (#50)
+[33mbf3786d[m Fix lightmap calculation
+[33m037342f[m Fix light map issue for 1.21.100+ (#46 #47 #48)
+[33m360e78e[m fix: Make glowing blocks work properly with other RPs (#40)
+[33me28213d[m build.bat fix (again) and set default platform to Merged (#39)
+[33m4cbaeab[m fix: make build.bat CRLF again (#38)
+[33m3a3f546[m set CRLF line ending for .bat files (#36)
+[33mf56dc50[m Fix galaxy appearing during daytime (#35)
+[33mf9decc1[m build.bat: fix exit (#34)
+[33m1575a24[m Addition and some changes (#32)
+[33mb8b93a6[m build scripts: add python check (#33)
+[33m262a601[m Bump shader version to 16
+[33maa95f86[m Update README.md
+[33mcdff425[m Add lite subpack template
+[33maa0ec1c[m Make entity edge highlight toggleable
+[33m61021e5[m Make wave fade out smoothly with distance
+[33mdd39060[m Bump lazurite version
+[33me644614[m Fix redstone issue
+[33m3b25e97[m Some changes
+[33m92b60aa[m Add visibility option for SunMoon during rain
+[33m18aef0b[m Improve lava noise pattern
+[33m7eac1f5[m Add lava darken effect
+[33m6762d56[m Add new clouds
+[33mfd97310[m Update glow shimmer
+[33me3c6b01[m Fix incorrect viewdir for fade in chunks
+[33ma26d346[m Strip some textures
+[33mb139137[m Improve weather particles
+[33ma61a590[m Use sky as screen background
+[33me8f55eb[m Add galaxy to sky
+[33mbfe3631[m Update rounded clouds
+[33mdccfd07[m Update water
+[33m1283218[m Updated clouds
+[33m7690c07[m Revert contrast fix
+[33m8665b42[m Fix blindness effect causing shader to turn black
+[33m166edd9[m Update cloud config
+[33m583777e[m Update resource pack copyright
+[33m2e386db[m Fix tonemap issues with LegacyCubemap
+[33m38cffa1[m Fix typo
+[33mf922a22[m Some changes (#31)
+[33mabb0283[m Add issue templates
+[33m12da43c[m Update entities
+[33m3df0a2b[m Add ActorGlint, Stars
+[33ma00ae74[m Fix end detection for 1.21.40
+[33m12a1216[m Add ItemInHandTextured
+[33m9b63106[m Update actor edge highlight
+[33mfcd2cf3[m Update color correction
+[33mdf77130[m Some fixes
+[33m4cbe71d[m Some changes
+[33me5e57bb[m Some optimizations
+[33mbf10404[m Update build tool
+[33m91a6466[m Update build tool
+[33m31ebb37[m Normalize eol
+[33m096c738[m Update sky
+[33ma178e81[m Fix underwater particles
+[33m6988b73[m Add fake water refl mask
+[33m5926045[m Update tool
+[33m868f606[m Add weather material
+[33m8462643[m Add shooting star
+[33mca9db36[m Update README.md (#29)
+[33m08cbcf8[m Update box clouds
+[33m1f8b7bc[m Update to 1.21.20
+[33m6251d65[m Some changes
+[33m71442cb[m Update README.md (#26)
+[33mf5a686c[m Update README.md
+[33m96cc40c[m Update README.md (#23)
+[33m1076a41[m Update pack tool (#24)
+[33mf6cf8d4[m Fix typo (#22)
+[33m7cda6b0[m Improve actor fog fade
+[33mf4c8f78[m Some changes
+[33md86ee72[m Update clouds
+[33m1dbdfa1[m Update pack tool
+[33m5e2aab3[m Updated pack tool
+[33m94f03c8[m Add screenshots to README
+[33mefc0f0d[m Fix some texture issues
+[33mab5ede7[m Merge pull request #21 from devendrn/laz
+[33mfe079e7[m Some changes
+[33m4c4e282[m Use cached python version
+[33m685b7d5[m Some changes
+[33m58c29e2[m Update github workflow
+[33m72293a6[m Add support for windows
+[33mc70b95c[m Some changes
+[33mf5a9ec1[m Switch to lazurite main
+[33m0e26722[m Some changes
+[33m336ac45[m Fix some issues
+[33me5be6ce[m Migrate to lazurite [1]
+[33m5fea25f[m Update sky
+[33m04a13ab[m Update end sky (#14)
+[33m2836022[m Update sky
+[33m9f51814[m Add ambient light option
+[33mfceb6ea[m Improve ground reflection
+[33m19a44b5[m Add ground reflection
+[33m7404f0f[m Some changes
+[33mfcc174d[m Update docs
+[33m2226130[m Some fixes
+[33me304f78[m Refactor sky
+[33meaf5d8a[m Some changes
+[33m7429245[m Use RenderDragonData repo to fetch data
+[33m31330df[m Flag compilations errors
+[33m54e98cb[m Add LSP support
+[33md24fe90[m Use multiple runners
+[33m47414d0[m Update build.yml
+[33m4df515e[m Some changes
+[33m1e89302[m Glow enhancement and some changes
+[33m302d10c[m Updated code style
+[33m9af4275[m Refactor 1
+[33m683dcae[m Update setup.sh
+[33m8fcab35[m Some changes
+[33m12c1b40[m Some changes:
+[33m149effd[m Some changes
+[33m8c4ed07[m Update sky config
+[33m610f5f7[m Some changes - Update scripts - Refactor config
+[33mcd5c90a[m Some changes
+[33m7caedf8[m Some changes
+[33m9f934bb[m Fix termux: libc++_shared.so not found (#5)
+[33m2289477[m Fix version fetch
+[33m38f9a26[m Update pack.sh
+[33m485f6e9[m Update build.yaml
+[33m298dd7c[m Update build.yaml
+[33m67533ed[m Autobuild (#4)
+[33md253b4b[m Added multilayer rounded clouds
+[33m12448b7[m Some changes:
+[33me77ba8d[m Some changes
+[33m1c8455a[m Some changes
+[33mdd54cd9[m Some fixes
+[33mbd2f9aa[m Some changes
+[33m99eb811[m Some changes
+[33m3da6c20[m Update scripts - Fix subpack building - Update urls in setup.bat
+[33mcdc56a5[m Some changes - Merged lite and main clouds into legacy - Update shaderc urls - Update bgfx headers
+[33ma29b71b[m Update scripts
+[33m24fa5eb[m Some changes
+[33m35c1452[m Some changes
+[33m9bdc61d[m Update setup scripts
+[33mcfa2118[m Fix clouds
+[33m2e42db5[m Some changes
+[33ma7e3d91[m Fix cloud uniforms
+[33m8ad4b4c[m Fix some issues
+[33m566ab6f[m Add clouds
+[33m66cd3d6[m Update clouds
+[33ma0f4ef0[m Some changes
+[33mec0642e[m Change legacy structure
+[33mc500c08[m Some changes
+[33m07500ac[m Some changes
+[33m858eefd[m Update water
+[33m1c7308e[m Update glowy effect
+[33m3fe35c0[m Update cubemap
+[33m916951c[m Update build script
+[33m959f59c[m Some changes
+[33mbad288c[m Some changes
+[33m1bc9c69[m Added underwater wave
+[33m5377f43[m Change eol
+[33m94ddf30[m Some optimisations
+[33m04738ce[m Add batch script
+[33mc046567[m Some changes
+[33m49759b0[m Added end sky
+[33m62a5b52[m Update water colors
+[33m7e43e1c[m Rain effects
+[33mc9aa375[m Some changes
+[33me4830de[m Added clouds, lantern wave
+[33m0a3b495[m Some changes
+[33m6deb8ad[m Update README.md
+[33m0807451[m Updated biomes_client
+[33m066073b[m Added underwater lighting
+[33mda50ebf[m Added plants wave
+[33m9bc3881[m Added fog
+[33mea5d253[m Some changes
+[33m0269229[m Fixed some compilation issue
+[33md70337e[m Added pack files and ported glowy ores
+[33m1b032f3[m Upload files
+[33m739ee4f[m Initial commit
