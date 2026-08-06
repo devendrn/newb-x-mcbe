@@ -116,11 +116,13 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   }
 
   #ifdef NL_RAINBOW
-    float rainbowFade = 0.5 + 0.5*viewDir.y;
-    rainbowFade *= rainbowFade;
-    rainbowFade *= mix(NL_RAINBOW_CLEAR, NL_RAINBOW_RAIN, env.rainFactor);
-    rainbowFade *= 0.5+0.5*env.dayFactor;
-    sky += spectrum(24.2*(0.85-g.x))*rainbowFade*skyCol.horizon;
+    if(!env.underwater) {
+      float rainbowFade = 0.5 + 0.5*viewDir.y;
+      rainbowFade *= rainbowFade;
+      rainbowFade *= mix(NL_RAINBOW_CLEAR, NL_RAINBOW_RAIN, env.rainFactor);
+      rainbowFade *= 0.5+0.5*env.dayFactor;
+      sky += spectrum(24.2*(0.85-g.x))*rainbowFade*skyCol.horizon;
+    }
   #endif
 
   return sky;
