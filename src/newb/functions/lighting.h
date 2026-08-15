@@ -78,17 +78,16 @@ vec3 nlLighting(
       vec2 projectedPos = gPos.xz + projectionOffset;
       float cloudFade = smoothstep(1.0, 0.5, length(0.002*(wPos.xz + projectionOffset)));
       cloudFade *= (1.0-dawnFactor*dawnFactor)*clamp(-0.12*(cloudRelativeHeight-7.0), 0.0, 1.0);
-      float nc;
+      float cmask;
       #if NL_CLOUD_TYPE == 1
         // shadow cast by simple clouds
-        nc = cloudNoise2D(projectedPos*NL_CLOUD1_SCALE, t, env.rainFactor)*cloudFade;
+        cmask = cloudNoise2D(projectedPos*NL_CLOUD1_SCALE, t, env.rainFactor)*cloudFade;
       #elif NL_CLOUD_TYPE == 2
         // shadow cast by rounded clouds  
-        vec2 cloudOffset = vec2(1.0, 0.5) * (t * NL_CLOUD2_VELOCITY);
-        projectedPos = NL_CLOUD2_SCALE * (projectedPos + cloudOffset);
-        nc = cloudDf(vec3(projectedPos.x, cloudRelativeHeight, projectedPos.y), env.rainFactor, NL_CLOUD2_SHAPE, true)*cloudFade;
+        vec2 shadowPos = NL_CLOUD2_SCALE * (projectedPos + vec2(1.0, 0.5) * (t * NL_CLOUD2_VELOCITY));
+        cmask = cloudDf(vec3(projectedPos.x, 0.5, projectedPos.y), env.rainFactor, NL_CLOUD2_SHAPE)*cloudFade;
       #endif
-      shadow *= 0.3 + 0.7*smoothstep(0.6, 0.0, nc);
+      shadow *= 0.3 + 0.7*smoothstep(0.6, 0.0, cmask);
     #endif
 
     // direct light from top

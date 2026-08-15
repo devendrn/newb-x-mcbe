@@ -37,8 +37,9 @@ vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain)
 }
 
 // rounded clouds
+
 // rounded clouds 3D density map
-float cloudDf(vec3 pos, float rain, vec2 boxiness, bool isGroundShadow) {
+float cloudDf(vec3 pos, float rain, vec2 boxiness) {
   boxiness *= 0.999;
   vec2 p0 = floor(pos.xz);
   vec2 u = max((pos.xz-p0-boxiness.x)/(1.0-boxiness.x), 0.0);
@@ -50,20 +51,12 @@ float cloudDf(vec3 pos, float rain, vec2 boxiness, bool isGroundShadow) {
   float n = mix(mix(r.x,r.y,u.x), mix(r.w,r.z,u.x), u.y);
 
   // round y
-  if(!isGroundShadow) {
-    n *= 1.0 - 1.5*smoothstep(boxiness.y, 2.0 - boxiness.y, 2.0*abs(pos.y-0.5));
-  }
-
+  n *= 1.0 - 1.5*smoothstep(boxiness.y, 2.0 - boxiness.y, 2.0*abs(pos.y-0.5));
 
   n = max(1.25*(n-0.2), 0.0); // smoothstep(0.2, 1.0, n)
   n *= n*(3.0 - 2.0*n);
   return n;
 }
-
-float cloudDf(vec3 pos, float rain, vec2 boxiness) {
-    return cloudDf(pos, rain, boxiness, false);
-}
-
 
 vec4 renderCloudsRounded(
     vec3 vDir, vec3 vPos, float rain, float time, vec3 horizonCol, vec3 zenithCol,
