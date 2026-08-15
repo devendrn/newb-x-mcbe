@@ -24,12 +24,12 @@ jobs:
     runs-on: windows-2022
     if:  ${{ (github.event.inputs.platform == 'Windows') || (github.event.inputs.platform == 'All') }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
       with:
-        python-version: '3.11' 
+        python-version: '3.14' 
         cache: 'pip'
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         key: env-files-win-laz
         path: |
@@ -46,12 +46,12 @@ jobs:
     runs-on: ubuntu-latest
     if:  ${{ (github.event.inputs.platform == 'Android') || (github.event.inputs.platform == 'All') }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
       with:
-        python-version: '3.11' 
+        python-version: '3.14' 
         cache: 'pip'
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         key: env-files-linux-laz
         path: |
@@ -68,14 +68,14 @@ jobs:
     runs-on: ubuntu-latest
     if:  ${{ (github.event.inputs.platform == 'IOS') || (github.event.inputs.platform == 'All') }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v7
       with:
-        python-version: '3.11' 
+        python-version: '3.14' 
         cache: 'pip'
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         key: env-files-linux-laz
         path: |
@@ -92,12 +92,12 @@ jobs:
     runs-on: windows-2022
     if:  ${{ (github.event.inputs.platform == 'Merged') || (github.event.inputs.platform == 'All')}}
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
       with:
-        python-version: '3.11' 
+        python-version: '3.14' 
         cache: 'pip'
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         key: env-files-win-laz
         path: |

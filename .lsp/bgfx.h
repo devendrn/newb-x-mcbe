@@ -147,10 +147,12 @@ typedef struct mat4 {
 } mat4;
 
 typedef struct mat3 {
+  mat3(float, float, float, float, float, float, float, float, float);
   vec3 operator[](unsigned int);
 } mat3;
 
 typedef struct mat2 {
+  mat2(float, float, float, float);
   vec2 operator[](unsigned int);
 } mat2;
 
