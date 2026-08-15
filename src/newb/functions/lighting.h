@@ -84,7 +84,7 @@ vec3 nlLighting(
         cmask = cloudNoise2D(projectedPos*NL_CLOUD1_SCALE, t, env.rainFactor)*cloudFade;
       #elif NL_CLOUD_TYPE == 2
         // shadow cast by rounded clouds  
-        vec2 shadowPos = NL_CLOUD2_SCALE * (projectedPos + vec2(1.0, 0.5) * (t * NL_CLOUD2_VELOCITY));
+        projectedPos = NL_CLOUD2_SCALE * (projectedPos + vec2(1.0, 0.5) * (t * NL_CLOUD2_VELOCITY));
         cmask = cloudDf(vec3(projectedPos.x, 0.5, projectedPos.y), env.rainFactor, NL_CLOUD2_SHAPE)*cloudFade;
       #endif
       shadow *= 0.3 + 0.7*smoothstep(0.6, 0.0, cmask);
