@@ -19,6 +19,8 @@ uniform vec4 TimeOfDay;
 uniform vec4 ViewPositionAndTime;
 uniform vec4 CameraPosition;
 uniform vec4 RenderDistance;
+uniform vec4 DimensionID;
+uniform vec4 Day;
 
 void main() {
   mat4 World = u_model[0];
@@ -39,7 +41,7 @@ void main() {
   vec4 position = jitterVertexPosition(worldPosition);
 
   #if !(defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY) || defined(INSTANCING))
-    nl_environment env = nlDetectEnvironment(TimeOfDay.x, FogColor.rgb, FogControl.xyz);
+    nl_environment env = nlDetectEnvironment(DimensionID.x, TimeOfDay.x, Day.x, FogColor.rgb, FogControl.xyz);
     nl_skycolor skycol = nlSkyColors(env);
 
     float relativeDist = position.z/FogControl.z;
@@ -48,18 +50,15 @@ void main() {
     viewDir.y = -viewDir.y;
 
     vec4 fogColor;
-    fogColor.rgb = nlRenderSky(skycol, env, viewDir, ViewPositionAndTime.w, false, false);
+    fogColor.rgb = nlRenderSky(skycol, env, viewDir, ViewPositionAndTime.w, false);
     fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogControl.xy);
 
-    float netherBiome = 0.0;
     if (env.nether) {
       // blend fog with void color
-      netherBiome = smoothstep(0.0, 0.8, FogColor.b);
-      fogColor.rgb = mix(vec3(1.0, 0.169, 0.0), vec3(0.0, 1.0, 0.949), smoothstep(0.0, 0.8, FogColor.b))*1.5;
-      //fogColor.rgb = colorCorrectionInv(FogColor.rgb);
+      fogColor.rgb = colorCorrectionInv(FogColor.rgb);
     }
 
-    vec3 light = nlEntityLighting(skycol, env, a_position, a_normal, worldPosition.xyz, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w, TimeOfDay.x, RenderDistance.x, CameraPosition.xyz, netherBiome);
+    vec3 light = nlEntityLighting(skycol, env, a_position, a_normal, worldPosition.xyz, World, TileLightColor, OverlayColor, skycol.horizonEdge, ViewPositionAndTime.w, TimeOfDay.x, RenderDistance.x, CameraPosition.xyz);
 
     v_texcoord0 = texcoord0;
     v_color0 = a_color0;
