@@ -37,7 +37,6 @@ vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain)
 }
 
 // rounded clouds
-
 // rounded clouds 3D density map
 float cloudDf(vec3 pos, float rain, vec2 boxiness) {
   boxiness *= 0.999;
@@ -52,6 +51,7 @@ float cloudDf(vec3 pos, float rain, vec2 boxiness) {
 
   // round y
   n *= 1.0 - 1.5*smoothstep(boxiness.y, 2.0 - boxiness.y, 2.0*abs(pos.y-0.5));
+
 
   n = max(1.25*(n-0.2), 0.0); // smoothstep(0.2, 1.0, n)
   n *= n*(3.0 - 2.0*n);
@@ -144,7 +144,7 @@ vec4 renderClouds(vec2 p, float t, float rain, vec3 horizonCol, vec3 zenithCol, 
 
 // aurora is rendered on clouds layer
 #ifdef NL_AURORA
-vec4 renderAurora(vec3 p, float t, float rain, vec3 FOG_COLOR) {
+vec4 renderAurora(vec3 p, float t, float rain, float nightFactor) {
   t *= NL_AURORA_VELOCITY;
   p.xz *= NL_AURORA_SCALE;
   p.xz += 0.05*sin(p.x*4.0 + 20.0*t);
@@ -155,7 +155,7 @@ vec4 renderAurora(vec3 p, float t, float rain, vec3 FOG_COLOR) {
   d0 *= d0; d1 *= d1; d2 *= d2;
   d2 = d0/(1.0 + d2/NL_AURORA_WIDTH);
 
-  float mask = (1.0-0.8*rain)*max(1.0 - 4.0*max(FOG_COLOR.b, FOG_COLOR.g), 0.0);
+  float mask = (1.0-0.8*rain)*nightFactor;
   return vec4(NL_AURORA*mix(NL_AURORA_COL1,NL_AURORA_COL2,d1),1.0)*d2*mask;
 }
 #endif
@@ -169,7 +169,7 @@ vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDi
   vec4 refl = vec4_splat(0.0);
 
   #ifdef NL_AURORA
-    vec4 aurora = renderAurora(cloudPos.xyy, t, env.rainFactor, env.fogCol);
+    vec4 aurora = renderAurora(cloudPos.xyy, t, env.rainFactor, smoothstep(0.2, -0.2, env.dayFactor));
     aurora.a *= fade;
     refl = vec4(2.0*aurora.rgb*aurora.a, aurora.a);
   #endif
