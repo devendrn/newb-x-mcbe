@@ -17,7 +17,6 @@ uniform vec4 TileLightColor;
 uniform vec4 ViewPositionAndTime;
 uniform vec4 RenderDistance;
 uniform vec4 TimeOfDay;
-uniform vec4 Day;
 uniform vec4 CameraPosition;
 
 void main() {
@@ -35,7 +34,7 @@ void main() {
   vec4 position = jitterVertexPosition(wpos);
 
   #if !(defined(DEPTH_ONLY) || defined(INSTANCING))
-    nl_environment env = nlDetectEnvironment(TimeOfDay.x, Day.x, FogColor.rgb, FogControl.xyz);
+    nl_environment env = nlDetectEnvironment(TimeOfDay.x, FogColor.rgb, FogControl.xyz);
     nl_skycolor skycol = nlSkyColors(env);
 
     float relativeDist = position.z/FogControl.z;

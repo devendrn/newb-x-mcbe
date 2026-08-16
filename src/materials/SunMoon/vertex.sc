@@ -8,7 +8,6 @@ $output v_texcoord0
   #include <newb/functions/utils.h>
 
   uniform vec4 TimeOfDay;
-  uniform vec4 Day;
 #endif
 
 void main() {
