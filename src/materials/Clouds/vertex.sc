@@ -41,7 +41,7 @@ void main() {
   nl_skycolor skycol = nlOverworldSkyColors(env);
   vec3 pos = a_position;
   vec3 worldPos;
-  float nightFactor = smoothstep(0.2, -0.2, env.dayFactor);
+  float nightFactor = smoothstep(-0.47, -0.51, env.dayFactor);
 
   #if NL_CLOUD_TYPE <= 2
 
