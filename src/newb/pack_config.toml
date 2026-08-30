@@ -1,6 +1,6 @@
 name = "Newb Classic"
-version = [0, 16, 53]
-min_supported_mc_version = [1, 26, 30]
+version = [0, 16, 55]
+min_supported_mc_version = [1, 26, 40]
 description = '''
 §c%w
 §7- An enchanced vanilla shader for Minecraft!
