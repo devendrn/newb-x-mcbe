@@ -159,7 +159,7 @@ def run(args):
         patch_warning += "Minecraft with Hynis"
     elif profile == 'windows':
         patch_warning += "Wyvern Loader"
-    elif profile == 'merged':
+    elif profile == 'multiplatform':
         patch_warning += "MB Loader (Android) or Wyvern Loader (Windows) or Minecraft with Hynis (iOS)"
 
     pack_description = pack_description.replace("%w", patch_warning).replace("%v", "v" + pack_version + "-" + args.p)

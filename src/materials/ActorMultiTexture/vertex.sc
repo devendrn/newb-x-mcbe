@@ -22,6 +22,7 @@ uniform vec4 RenderDistance;
 uniform vec4 DimensionID;
 uniform vec4 Day;
 
+
 void main() {
   mat4 World = u_model[0];
 

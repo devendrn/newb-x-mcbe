@@ -8,11 +8,11 @@ import setup
 def main():
     parser = argparse.ArgumentParser(
         prog='build',
-        description="Newb Shader Builder: Wrapper for lazurite, to build NXL RenderDragon",
+        description="Shader Builder: Wrapper for Lazurite, to build Newb Shader for RenderDragon",
         epilog="GitHub: https://github.com/devendrn/newb-x-mcbe"
     )
 
-    profiles = ['android', 'windows', 'merged', 'ios']
+    profiles = ['android', 'windows', 'ios', 'multiplatform']
     profile_default = profiles[1 if os.name == 'nt' else 0]
 
     subparsers = parser.add_subparsers(help='sub-command', dest='subcommand')
