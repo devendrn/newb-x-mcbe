@@ -40,7 +40,7 @@ void lanternWave(
 
 #ifdef NL_EXTRA_PLANTS_WAVE
 void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
-  // 1.26.40 (1024x512) vanilla only
+  // 1.26.50 (1024x512) vanilla only
   // not meant to be used
 
   // count texture atlas in left-to-right row wise order (64X32)
