@@ -16,7 +16,6 @@ void main() {
     vec3 pos = a_position;
     pos.x = -pos.x;
 
-    mat4 model = u_model[0];
     vec2 dir = mul(u_model[0], vec4(0.0, 0.0, 0.0, 1.0)).xy;
     float st = 2.0*PI*TimeOfDay.x + 0.5*PI;
     bool isSun = dot(vec2(cos(st), sin(st)), dir) > 0.0;
