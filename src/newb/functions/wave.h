@@ -40,7 +40,7 @@ void lanternWave(
 
 #ifdef NL_EXTRA_PLANTS_WAVE
 void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
-  // 1.26.40 (1024x512) vanilla only
+  // 1.26.50 (1024x512) vanilla only
   // not meant to be used
 
   // count texture atlas in left-to-right row wise order (64X32)
@@ -48,54 +48,59 @@ void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
   int texN = 64*int(uv0.y*32.0) + int(uv0.x*64.0);
 
   if ( // full
-    (texN>=18 && texN<=20) || // Azeala Leaves and Flowering Azeala Leaves
-    (texN>=177 && texN<=180) || // Cave Vines
-    (texN>=186 && texN<=187) || // Cherrry Leaves (Fixed) 
-    (texN>=444 && texN<=459) || (texN==678) || // tall flowers/plants top
-    (texN>=796 && texN<=797) || // Pale Hanging Moss
-    (texN>=803 && texN<=804) || // Pale Oak Leaves
-    (texN>=832 && texN<=834) || (texN>=837 && texN<=838) // Pitcher Plant
+    (texN>=18 && texN<=21) || // Azeala Leaves and Flowering Azeala Leaves (Fixed)
+    (texN>=180 && texN<=183) || // Cave Vines (Fixed)
+    (texN>=189 && texN<=190) || // Cherry Leaves (Fixed) 
+    (texN>=449 && texN<=461) || (texN==687) || // tall flowers/plants top (Fixed)
+    (texN>=780 && texN<=781) || // Orange Poplar Leaves (New)
+    (texN>=810 && texN<=811) || // Pale Hanging Moss (Fixed)
+    (texN>=817 && texN<=818) || // Pale Oak Leaves (Fixed)
+    (texN>=846 && texN<=849) || (texN>=852 && texN<=853) || // Pitcher Plant (Fixed)
+    (texN>=940 && texN<=941) || // Red Poplar Leaves (New)
+    (texN>=1226 && texN<=1227) // Yellow Poplar Leaves (New)
   ) {
     shouldWave = true;
   } else if ( // top only
     (texN==6) || // Acacia Sappling
-    (texN==8) || // Allium (NEW
-    (texN==25) || // Azure Bluet (NEW
+    (texN==8) || // Allium 
+    (texN==25) || // Azure Bluet
     (texN==85) || // Birch sappling
-    (texN==110) || // Blue Orchid
-    (texN==145) || // Cactus Flower
-    (texN==192) || // Cherry Blossom Sapling
-    (texN==223) || // Closed Eyeblossom
-    (texN==336) || // Cornflower
-    (texN==387) || // Dandelion
-    (texN==390) || // Dark Oak Sappling
-    (texN==396) || // Dead Bush
-    (texN>445 && texN<453) || // tall flowers/plants bottom
-    (texN>=530 && texN<=531) || // Firefly Bush
-    (texN==564) || // Golden Dandelion
-    (texN==642) || // Jungle Sappling
-    (texN==679) || // Lily of the Valley
-    (texN>=715 && texN<=717) || // Mangrove Propagule
-    (texN==753) || // Oak Sappling
-    (texN>=761 && texN<=763) || // Open Eyeblossom
-    (texN==773) || // Orange Tulip
-    (texN==774) || // Oxeye Daisy
-    (texN==808) || // Pale Oak Sappling
-    (texN==823) || // Pink Tulip (New)
-    (texN==861) || // Poppy
-    (texN==914) || // Red Tulip
-    (texN==915) || // White Tilip
-    (texN==945) ||  // Spruce Sappling
-    (texN==1011) || // Spore Blossom Petal
-    (texN>=1079 && texN<=1082) || // Sweet Berries Bush
-    (texN==1084) || // Tall Dry Grass
-    (texN>=1090 && texN<=1092) || // Torch Flowers
-    (texN==1187) // Wither Rose
+    (texN==111) || // Blue Orchid (Fixed)
+    (texN==148) || // Cactus Flower (Fixed)
+    (texN==195) || // Cherry Blossom Sapling (Fixed)
+    (texN==226) || // Closed Eyeblossom (Fixed)
+    (texN==339) || // Cornflower (Fixed)
+    (texN==391) || // Dandelion (Fixed)
+    (texN==394) || // Dark Oak Sappling (Fixed)
+    (texN==400) || // Dead Bush (Fixed)
+    // (texN>449 && texN<461) || // tall flowers/plants bottom (Fixed)
+    (texN>=534 && texN<=535) || // Firefly Bush (Fixed)
+    (texN==568) || // Golden Dandelion (Fixed)
+    (texN==649) || // Jungle Sappling (Fixed)
+    (texN==688) || // Lily of the Valley (Fixed)
+    (texN>=726 && texN<=728) || // Mangrove Propagule (Fixed)
+    (texN==764) || // Oak Sappling (Fixed)
+    (texN>=773 && texN<=775) || // Open Eyeblossom (Fixed)
+    (texN==786) || // Orange Tulip (Fixed)
+    (texN==788) || // Oxeye Daisy (Fixed)
+    (texN==822) || // Pale Oak Sappling (Fixed)
+    (texN==838) || // Pink Tulip (Fixed)
+    (texN==881) || // Poplar Sapling (New)
+    (texN==883) || // Poppy (Fixed)
+    (texN==937) || // Red Tulip (Fixed)
+    (texN==938) || // White Tulip (Fixed)
+    (texN==943) || // Red Shrub (New)
+    (texN==973) ||  // Spruce Sappling (Fixed)
+    (texN==1040) || // Spore Blossom Petal (Fixed)
+    (texN>=1111 && texN<=1114) || // Sweet Berries Bush (Fixed)
+    (texN==1116) || // Tall Dry Grass (Fixed)
+    (texN>=1121 && texN<=1123) || // Torch Flowers (Fixed)
+    (texN==1220) // Wither Rose (Fixed)
   ) {
     shouldWave = isTop;
   } else if ( // bottom only
-    (texN==23 || texN==547) ||  // Azeala
-    (texN==610) // Hanging Roots
+    (texN==23 || texN==551) ||  // Azalea (Fixed)
+    (texN==617) // Hanging Roots (Fixed)
   ) { 
     shouldWave = !isTop;
   }

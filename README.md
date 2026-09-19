@@ -62,7 +62,7 @@ Using shaders on iOS is not very straightforward and not recommended for beginne
 - [Git](https://git-scm.com/)
 - [Python](https://www.python.org/) 3.11 or higher required
 - Python packages:
-  - [lazurite](https://veka0.github.io/lazurite/#installation) (Must be `v0.9.0`. Newer or older version may not be supported)
+  - [lazurite](https://veka0.github.io/lazurite/#installation) (Must be `v0.10.0`. Newer or older version may not be supported)
   - [rich](https://rich.readthedocs.io/en/stable/introduction.html#installation) (Must be `v14+`)
 
 ### Get source code
