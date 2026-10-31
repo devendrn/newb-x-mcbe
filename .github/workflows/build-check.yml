@@ -26,4 +26,4 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: newb-x-multiplatform-pr
-        path: ./build/pack-multiplatform-pr
+        path: ./build/pack-multiplatform
