@@ -137,8 +137,8 @@
         // creaking_heart_top_active
         "creaking_heart_top": {
             "textures": [
-                "textures/blocks/creaking_heart_side_inactive", // (doesn't exist in resource pack)
-                "textures/blocks/creaking_heart_side_dormant", // (doesn't exist in resource pack)
+                "textures/blocks/creaking_heart_top_inactive", // (doesn't exist in resource pack)
+                "textures/blocks/creaking_heart_top_dormant", // (doesn't exist in resource pack)
                 "textures/blocks/creaking_heart_top_active"
             ]
         },

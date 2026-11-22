@@ -1,4 +1,5 @@
 name: build
+run-name: "Build subversion ${{ inputs.subversion }} for ${{ inputs.platform }}"
 
 on:
   workflow_dispatch:
@@ -6,7 +7,7 @@ on:
       subversion:
         description: 'Sub-version (eg: 46)'
         required: true
-        type: string
+        type: number
       platform:
         description: 'Target platform to build for'
         required: true
@@ -40,7 +41,7 @@ jobs:
         .\build.bat pack -p windows -v ${{ inputs.subversion }} --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-windows
+        name: newb-x-windows-${{ inputs.subversion }}
         path: ./build/pack-windows
   android:
     runs-on: ubuntu-latest
@@ -62,15 +63,13 @@ jobs:
         ./build.sh pack -p android -v ${{ inputs.subversion }} --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-android
+        name: newb-x-android-${{ inputs.subversion }}
         path: ./build/pack-android
   ios:
     runs-on: ubuntu-latest
     if:  ${{ (github.event.inputs.platform == 'iOS') || (github.event.inputs.platform == 'All') }}
     steps:
     - uses: actions/checkout@v7
-      with:
-        fetch-depth: 0
     - uses: actions/setup-python@v7
       with:
         python-version: '3.14' 
@@ -86,7 +85,7 @@ jobs:
         ./build.sh pack -p ios -v ${{ inputs.subversion }} --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-ios
+        name: newb-x-ios-${{ inputs.subversion }}
         path: ./build/pack-ios
   multiplatform:
     runs-on: windows-2022
@@ -108,5 +107,5 @@ jobs:
         .\build.bat pack -p multiplatform -v ${{ inputs.subversion }} --no-zip
     - uses: actions/upload-artifact@v4
       with:
-        name: newb-x-multiplatform
+        name: newb-x-multiplatform-${{ inputs.subversion }}
         path: ./build/pack-multiplatform
